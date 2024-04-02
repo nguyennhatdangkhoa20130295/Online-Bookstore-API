@@ -25,6 +25,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<Category> getSubCategories(Long parentId) {
+        return categoryRepository.findByParentCategoryId(parentId);
+    }
+
+    @Override
     public Optional<Category> getCategoryById(Long id) {
         return categoryRepository.findById(id);
     }
@@ -47,10 +52,5 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(Long id) {
         categoryRepository.deleteById(id);
-    }
-
-    @Override
-    public List<Category> getSubCategories(Long parentId) {
-        return categoryRepository.findByParentCategoryId(parentId);
     }
 }

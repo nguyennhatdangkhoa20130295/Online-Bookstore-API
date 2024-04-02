@@ -10,6 +10,8 @@ public interface CategoryService {
 
     List<Category> getMainCategories();
 
+    List<Category> getSubCategories(Long parentId);
+
     Optional<Category> getCategoryById(Long id);
 
     Category createCategory(Category category);
@@ -18,5 +20,4 @@ public interface CategoryService {
 
     void deleteCategory(Long id);
 
-    List<Category> getSubCategories(Long parentId);
 }

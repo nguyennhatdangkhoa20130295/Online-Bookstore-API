@@ -26,6 +26,11 @@ public class CategoryController {
         return categoryService.getMainCategories();
     }
 
+    @GetMapping("/{id}/subcategories")
+    public List<Category> getSubCategories(@PathVariable Long id) {
+        return categoryService.getSubCategories(id);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
         Optional<Category> categoryOptional = categoryService.getCategoryById(id);
@@ -52,10 +57,5 @@ public class CategoryController {
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/{id}/subcategories")
-    public List<Category> getSubCategories(@PathVariable Long id) {
-        return categoryService.getSubCategories(id);
     }
 }
