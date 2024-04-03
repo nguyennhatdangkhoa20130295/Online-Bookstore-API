@@ -2,11 +2,13 @@ package vn.edu.hcmuaf.fit.websubject.controller;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,14 +22,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.hcmuaf.fit.websubject.jwt.JwtUtils;
-import vn.edu.hcmuaf.fit.websubject.model.EnumRole;
-import vn.edu.hcmuaf.fit.websubject.model.Roles;
-import vn.edu.hcmuaf.fit.websubject.model.Users;
+import vn.edu.hcmuaf.fit.websubject.model.*;
 import vn.edu.hcmuaf.fit.websubject.payload.request.LoginRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.SignupRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.response.JwtResponse;
 import vn.edu.hcmuaf.fit.websubject.payload.response.MessageResponse;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.security.CustomUserDetails;
 
@@ -43,6 +44,9 @@ public class AuthController {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    TokenRepository tokenRepository;
 
     @Autowired
     PasswordEncoder encoder;
@@ -63,6 +67,11 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
+
+        var user = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        revokeAllUserToken(user);
+        saveUserToken(user, jwt);
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
@@ -121,8 +130,32 @@ public class AuthController {
         }
 
         user.setRoles(roles);
-        userRepository.save(user);
+        var saveUser = userRepository.save(user);
+        var jwtToken = jwtUtils.generateJwtToken((Authentication) user);
+        revokeAllUserToken(saveUser);
+        saveUserToken(saveUser, jwtToken);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+    }
+    private void revokeAllUserToken(Users user) {
+        var validToken = tokenRepository.findAllValidTokenByUser(user.getId());
+        if(validToken.isEmpty())
+            return;
+        validToken.forEach(t -> {
+            t.setExpired(true);
+            t.setRevoked(true);
+        });
+        tokenRepository.saveAll(validToken);
+    }
+
+    private void saveUserToken(Users user, String jwtToken) {
+        var token = Token.builder()
+                .user(user)
+                .token(jwtToken)
+                .tokenType(TokenType.BEARER)
+                .revoked(false)
+                .expired(false)
+                .build();
+        tokenRepository.save(token);
     }
 }

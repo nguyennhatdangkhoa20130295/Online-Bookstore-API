@@ -1,6 +1,7 @@
 package vn.edu.hcmuaf.fit.websubject.model;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 @Entity
+
 @Table(name = "user",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
@@ -37,6 +39,9 @@ public class Users {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Roles> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Token> token;
 
     public Users() {
     }

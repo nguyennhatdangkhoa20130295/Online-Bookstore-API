@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.service.CustomUserDetailService;
 
 import java.io.IOException;
@@ -24,6 +25,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailService userDetailsService;
 
+    @Autowired
+    private TokenRepository tokenRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
     @Override
@@ -31,7 +35,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+            var isTokenValid = tokenRepository.findByToken(jwt)
+                    .map(t-> !t.isExpired() && !t.isRevoked())
+                    .orElse(false);
+            if (jwt != null && jwtUtils.validateJwtToken(jwt) && isTokenValid) {
                 String username = jwtUtils.getUserNameFromJwtToken(jwt);
 
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);

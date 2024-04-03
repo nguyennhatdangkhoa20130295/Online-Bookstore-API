@@ -12,11 +12,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import vn.edu.hcmuaf.fit.websubject.jwt.AuthEntryPointJwt;
 import vn.edu.hcmuaf.fit.websubject.jwt.AuthTokenFilter;
 import vn.edu.hcmuaf.fit.websubject.service.CustomUserDetailService;
@@ -30,6 +32,9 @@ public class WebSecurityConfig {
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
+
+    @Autowired
+    private LogoutHandler logoutHandler;
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -71,7 +76,13 @@ public class WebSecurityConfig {
                 );
         http.authenticationProvider(authenticationProvider());
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class)
+                .logout()
+                .logoutUrl("/api/auth/logout")
+                .addLogoutHandler(logoutHandler)
+                .logoutSuccessHandler((request, response, authentication) ->
+                        SecurityContextHolder.clearContext())
+        ;
 
         return http.build();
     }
