@@ -1,20 +1,19 @@
 package vn.edu.hcmuaf.fit.websubject.controller;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.hcmuaf.fit.websubject.jwt.JwtUtils;
 import vn.edu.hcmuaf.fit.websubject.model.*;
+import vn.edu.hcmuaf.fit.websubject.payload.request.ForgotPassRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.LoginRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.SignupRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.response.JwtResponse;
@@ -31,6 +31,10 @@ import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.security.CustomUserDetails;
+import vn.edu.hcmuaf.fit.websubject.service.EmailService;
+import vn.edu.hcmuaf.fit.websubject.service.OTPService;
+
+import javax.mail.MessagingException;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -53,6 +57,14 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    OTPService otpService;
+
+    @Autowired
+    EmailService emailService;
+
+    private static final int OTP_LENGTH = 6;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -137,6 +149,55 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPassRequest forgotPassRequest) throws MessagingException {
+        // Logic để gửi mã OTP đến email
+        String otp = generateOTP();
+        emailService.sendEmailForgot(forgotPassRequest.getEmail(),otp);
+        otpService.saveOTP(forgotPassRequest.getEmail(), otp);
+        // Gửi mã OTP đến email
+        return ResponseEntity.ok("OTP "+ otp +" sent successfully.");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@Valid @RequestBody ForgotPassRequest forgotPassRequest) {
+        String savedOTP = otpService.getOTP(forgotPassRequest.getEmail());
+        System.out.println(savedOTP);
+        System.out.println(forgotPassRequest.getOtp());
+        if (savedOTP != null && savedOTP.equals(forgotPassRequest.getOtp())) {
+            // Xác thực thành công, thiết lập lại mật khẩu
+            var user = userRepository.findByEmail(forgotPassRequest.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            if (user != null) {
+                user.setPassword(encoder.encode(forgotPassRequest.getNewPassword()));
+                userRepository.save(user);
+                // Xóa mã OTP sau khi đã sử dụng
+                otpService.removeOTP(forgotPassRequest.getEmail());
+                // Trả về thông báo thành công và mật khẩu mới cho người dùng
+                return ResponseEntity.ok("Password reset successfully.");
+            } else {
+                return ResponseEntity.badRequest().body("User not found."); // Không tìm thấy người dùng
+            }
+        } else {
+            return ResponseEntity.badRequest().body("Invalid OTP.");
+        }
+    }
+
+    public String generateOTP() {
+        // Dùng các ký tự từ 0-9 để tạo mã OTP
+        String digits = "0123456789";
+        Random random = new Random();
+        StringBuilder otp = new StringBuilder();
+
+        // Tạo mã OTP bằng cách chọn ngẫu nhiên các ký tự từ digits và thêm vào chuỗi OTP
+        for (int i = 0; i < OTP_LENGTH; i++) {
+            int index = random.nextInt(digits.length());
+            otp.append(digits.charAt(index));
+        }
+
+        return otp.toString();
+    }
+
     private void revokeAllUserToken(Users user) {
         var validToken = tokenRepository.findAllValidTokenByUser(user.getId());
         if(validToken.isEmpty())
@@ -157,5 +218,18 @@ public class AuthController {
                 .expired(false)
                 .build();
         tokenRepository.save(token);
+    }
+    public boolean hasRole(String roleName) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return false;
+        }
+
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if (authority.getAuthority().equals(roleName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
