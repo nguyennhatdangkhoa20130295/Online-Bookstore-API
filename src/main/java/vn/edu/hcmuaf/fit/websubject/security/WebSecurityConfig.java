@@ -19,6 +19,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 import vn.edu.hcmuaf.fit.websubject.jwt.AuthEntryPointJwt;
 import vn.edu.hcmuaf.fit.websubject.jwt.AuthTokenFilter;
 import vn.edu.hcmuaf.fit.websubject.service.CustomUserDetailService;
@@ -83,7 +86,20 @@ public class WebSecurityConfig {
                 .logoutSuccessHandler((request, response, authentication) ->
                         SecurityContextHolder.clearContext())
         ;
-
+        http.cors();
         return http.build();
+    }
+    @Bean
+    public CorsFilter corsFilter() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return new CorsFilter(source);
     }
 }
