@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.hcmuaf.fit.websubject.model.Category;
+import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.service.CategoryService;
 
 import java.util.List;
@@ -27,12 +27,12 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}/subcategories")
-    public List<Category> getSubCategories(@PathVariable Long id) {
+    public List<Category> getSubCategories(@PathVariable Integer id) {
         return categoryService.getSubCategories(id);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<Category> getCategoryById(@PathVariable Integer id) {
         Optional<Category> categoryOptional = categoryService.getCategoryById(id);
         if (categoryOptional.isPresent()) {
             return ResponseEntity.ok(categoryOptional.get());
@@ -48,13 +48,13 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category category) {
+    public ResponseEntity<Category> updateCategory(@PathVariable Integer id, @RequestBody Category category) {
         Category updatedCategory = categoryService.updateCategory(id, category);
         return updatedCategory != null ? ResponseEntity.ok(updatedCategory) : ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable Integer id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }

@@ -2,7 +2,7 @@ package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.edu.hcmuaf.fit.websubject.model.Category;
+import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.repository.CategoryRepository;
 import vn.edu.hcmuaf.fit.websubject.service.CategoryService;
 
@@ -25,12 +25,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getSubCategories(Long parentId) {
+    public List<Category> getSubCategories(Integer parentId) {
         return categoryRepository.findByParentCategoryId(parentId);
     }
 
     @Override
-    public Optional<Category> getCategoryById(Long id) {
+    public Optional<Category> getCategoryById(Integer id) {
         return categoryRepository.findById(id);
     }
 
@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category updateCategory(Long id, Category category) {
+    public Category updateCategory(Integer id, Category category) {
         if (categoryRepository.existsById(id)) {
             category.setId(id);
             return categoryRepository.save(category);
@@ -50,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteCategory(Long id) {
+    public void deleteCategory(Integer id) {
         categoryRepository.deleteById(id);
     }
 }

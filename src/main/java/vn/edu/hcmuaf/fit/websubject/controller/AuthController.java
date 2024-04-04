@@ -2,13 +2,11 @@ package vn.edu.hcmuaf.fit.websubject.controller;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.hcmuaf.fit.websubject.jwt.JwtUtils;
-import vn.edu.hcmuaf.fit.websubject.model.*;
+import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.request.LoginRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.SignupRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.response.JwtResponse;
@@ -30,7 +28,7 @@ import vn.edu.hcmuaf.fit.websubject.payload.response.MessageResponse;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
-import vn.edu.hcmuaf.fit.websubject.security.CustomUserDetails;
+import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -63,7 +61,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        CustomUserDetailsImpl userDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
@@ -95,34 +93,34 @@ public class AuthController {
         }
 
         // Create new user's account
-        Users user = new Users(signUpRequest.getUsername(),
+        User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 
         Set<String> strRoles = signUpRequest.getRole();
-        Set<Roles> roles = new HashSet<>();
+        Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
-            Roles userRole = roleRepository.findByDescription(EnumRole.USER)
+            Role userRole = roleRepository.findByDescription(EnumRole.USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
-                        Roles adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
+                        Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
 
                         break;
                     case "mod":
-                        Roles modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
+                        Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);
 
                         break;
                     default:
-                        Roles userRole = roleRepository.findByDescription(EnumRole.USER)
+                        Role userRole = roleRepository.findByDescription(EnumRole.USER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(userRole);
                 }
@@ -137,9 +135,10 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
-    private void revokeAllUserToken(Users user) {
+
+    private void revokeAllUserToken(User user) {
         var validToken = tokenRepository.findAllValidTokenByUser(user.getId());
-        if(validToken.isEmpty())
+        if (validToken.isEmpty())
             return;
         validToken.forEach(t -> {
             t.setExpired(true);
@@ -148,7 +147,7 @@ public class AuthController {
         tokenRepository.saveAll(validToken);
     }
 
-    private void saveUserToken(Users user, String jwtToken) {
+    private void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)

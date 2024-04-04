@@ -1,18 +1,18 @@
-package vn.edu.hcmuaf.fit.websubject.security;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import vn.edu.hcmuaf.fit.websubject.model.Users;
+import vn.edu.hcmuaf.fit.websubject.entity.User;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 @Data
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     private int id;
@@ -26,8 +26,8 @@ public class CustomUserDetails implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public CustomUserDetails(int id, String username, String email, String password,
-                             Collection<? extends GrantedAuthority> authorities) {
+    public CustomUserDetailsImpl(int id, String username, String email, String password,
+                                 Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -35,12 +35,12 @@ public class CustomUserDetails implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static CustomUserDetails build(Users user) {
+    public static CustomUserDetailsImpl build(User user) {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getDescription().name()))
                 .collect(Collectors.toList());
 
-        return new CustomUserDetails(
+        return new CustomUserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
@@ -97,7 +97,7 @@ public class CustomUserDetails implements UserDetails {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        CustomUserDetails user = (CustomUserDetails) o;
+        CustomUserDetailsImpl user = (CustomUserDetailsImpl) o;
         return Objects.equals(id, user.id);
     }
 }

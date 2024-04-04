@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import vn.edu.hcmuaf.fit.websubject.security.CustomUserDetails;
+import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 
 @Component
 public class JwtUtils {
@@ -26,7 +26,7 @@ public class JwtUtils {
 
     public String generateJwtToken(Authentication authentication) {
 
-        CustomUserDetails userPrincipal = (CustomUserDetails) authentication.getPrincipal();
+        CustomUserDetailsImpl userPrincipal = (CustomUserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))

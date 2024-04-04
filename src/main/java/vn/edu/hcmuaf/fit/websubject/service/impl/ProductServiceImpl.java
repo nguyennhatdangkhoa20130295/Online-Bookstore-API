@@ -2,7 +2,7 @@ package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.edu.hcmuaf.fit.websubject.model.Product;
+import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
 import vn.edu.hcmuaf.fit.websubject.service.ProductService;
 
@@ -21,12 +21,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> getProductById(Long id) {
+    public Optional<Product> getProductById(Integer id) {
         return productRepository.findById(id);
     }
 
     @Override
-    public List<Product> getProductsByCategory(Long categoryId) {
+    public List<Product> getProductsByCategory(Integer categoryId) {
         return productRepository.findByCategoryParentOrCategory(categoryId);
     }
 
