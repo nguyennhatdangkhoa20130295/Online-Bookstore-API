@@ -97,13 +97,13 @@ public class AuthController {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .body("Error: Username is already taken!");
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+                    .body("Error: Email is already in use!");
         }
 
         // Create new user's account
@@ -142,15 +142,18 @@ public class AuthController {
         }
 
         user.setRoles(roles);
-        var saveUser = userRepository.save(user);
-        var jwtToken = jwtUtils.generateJwtToken((Authentication) user);
-        revokeAllUserToken(saveUser);
-        saveUserToken(saveUser, jwtToken);
+        userRepository.save(user);
+//        var jwtToken = jwtUtils.generateJwtToken((Authentication) user);
+//        revokeAllUserToken(saveUser);
+//        saveUserToken(saveUser, jwtToken);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPassRequest forgotPassRequest) throws MessagingException {
+        if(!userRepository.existsByEmail(forgotPassRequest.getEmail())){
+            return ResponseEntity.badRequest().body("Không tìm thấy email.");
+        }
         // Logic để gửi mã OTP đến email
         String otp = generateOTP();
         emailService.sendEmailForgot(forgotPassRequest.getEmail(),otp);
@@ -162,8 +165,6 @@ public class AuthController {
     @PostMapping("/reset-password")
     public ResponseEntity<String> resetPassword(@Valid @RequestBody ForgotPassRequest forgotPassRequest) {
         String savedOTP = otpService.getOTP(forgotPassRequest.getEmail());
-        System.out.println(savedOTP);
-        System.out.println(forgotPassRequest.getOtp());
         if (savedOTP != null && savedOTP.equals(forgotPassRequest.getOtp())) {
             // Xác thực thành công, thiết lập lại mật khẩu
             var user = userRepository.findByEmail(forgotPassRequest.getEmail())
