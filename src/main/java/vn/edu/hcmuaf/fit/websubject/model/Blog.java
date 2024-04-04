@@ -16,11 +16,13 @@ public class Blog {
 
     @OneToOne
     @JoinColumn(name = "blog_cate_id")
-    private BlogCate blog_cate_id;
+    private blog_category blog_cate_id;
+    private String image;
     @OneToOne
     @JoinColumn(name = "creator")
     private Users creator;
     private String title;
     private String content;
+    private String created_at;
 
 }

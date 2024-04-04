@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.hcmuaf.fit.websubject.model.Blog;
-import vn.edu.hcmuaf.fit.websubject.model.Category;
-import vn.edu.hcmuaf.fit.websubject.payload.response.MessageResponse;
+import vn.edu.hcmuaf.fit.websubject.model.blog_category;
 import vn.edu.hcmuaf.fit.websubject.service.BlogService;
+import vn.edu.hcmuaf.fit.websubject.service.BlogCateService;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +19,9 @@ import java.util.Optional;
 public class BlogController {
     @Autowired
     BlogService blogService;
+
+    @Autowired
+    BlogCateService blogCateService;
 
     @GetMapping("/all")
     public List<Blog> getAllBlogs(){
@@ -33,14 +36,18 @@ public class BlogController {
             return ResponseEntity.notFound().build();
         }
     }
-//    @GetMapping("/blogCate/{id}")
-//    public ResponseEntity<Blog> getBlogByCate(@PathVariable int id) {
-//        Optional<Blog> blog = blogService.getBlogByCate(id);
-//        if (blog.isPresent()) {
-//            return ResponseEntity.ok(blog.get());
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    @GetMapping("/cate/all")
+    public List<blog_category> getAllCates(){
+        return blogCateService.getAllCate();
+    }
+    @GetMapping("/cate/{id}")
+    public ResponseEntity<blog_category> getCateById(@PathVariable int id) {
+        Optional<blog_category> blogcate = blogCateService.getCateById(id);
+        if (blogcate.isPresent()) {
+            return ResponseEntity.ok(blogcate.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 }
