@@ -1,6 +1,6 @@
 package vn.edu.hcmuaf.fit.websubject.service;
 
-import vn.edu.hcmuaf.fit.websubject.model.Category;
+import vn.edu.hcmuaf.fit.websubject.entity.Category;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,14 +10,14 @@ public interface CategoryService {
 
     List<Category> getMainCategories();
 
-    List<Category> getSubCategories(Long parentId);
+    List<Category> getSubCategories(Integer parentId);
 
-    Optional<Category> getCategoryById(Long id);
+    Optional<Category> getCategoryById(Integer id);
 
     Category createCategory(Category category);
 
-    Category updateCategory(Long id, Category category);
+    Category updateCategory(Integer id, Category category);
 
-    void deleteCategory(Long id);
+    void deleteCategory(Integer id);
 
 }

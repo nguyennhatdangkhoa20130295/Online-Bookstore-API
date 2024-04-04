@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.model;
+package vn.edu.hcmuaf.fit.websubject.entity;
 
 public enum EnumRole {
     USER,

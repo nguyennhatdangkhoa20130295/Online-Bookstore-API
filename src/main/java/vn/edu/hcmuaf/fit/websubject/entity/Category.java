@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.model;
+package vn.edu.hcmuaf.fit.websubject.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +14,7 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
 
     @ManyToOne()
     @JoinColumn(name = "parent_id")

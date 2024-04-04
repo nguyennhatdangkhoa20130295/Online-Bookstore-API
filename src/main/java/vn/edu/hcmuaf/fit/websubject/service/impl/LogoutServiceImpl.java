@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.service;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +12,7 @@ import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 
 @Service
 @RequiredArgsConstructor
-public class LogoutService implements LogoutHandler {
+public class LogoutServiceImpl implements LogoutHandler {
     @Autowired
     private TokenRepository tokenRepository;
 

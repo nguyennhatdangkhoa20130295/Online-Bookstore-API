@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
-import vn.edu.hcmuaf.fit.websubject.service.CustomUserDetailService;
+import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsServiceImpl;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private JwtUtils jwtUtils;
 
     @Autowired
-    private CustomUserDetailService userDetailsService;
+    private CustomUserDetailsServiceImpl userDetailsService;
 
     @Autowired
     private TokenRepository tokenRepository;
