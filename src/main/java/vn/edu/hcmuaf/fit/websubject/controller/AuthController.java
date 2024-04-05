@@ -9,14 +9,12 @@ import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.hcmuaf.fit.websubject.jwt.JwtUtils;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
-import vn.edu.hcmuaf.fit.websubject.model.*;
 import vn.edu.hcmuaf.fit.websubject.payload.request.ForgotPassRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.LoginRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.SignupRequest;
@@ -35,7 +32,6 @@ import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
-import vn.edu.hcmuaf.fit.websubject.security.CustomUserDetails;
 import vn.edu.hcmuaf.fit.websubject.service.EmailService;
 import vn.edu.hcmuaf.fit.websubject.service.OTPService;
 
@@ -154,8 +150,6 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
-
-    private void revokeAllUserToken(User user) {
       
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPassRequest forgotPassRequest) throws MessagingException {
@@ -207,7 +201,7 @@ public class AuthController {
         return otp.toString();
     }
 
-    private void revokeAllUserToken(Users user) {
+    private void revokeAllUserToken(User user) {
         var validToken = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validToken.isEmpty())
             return;
