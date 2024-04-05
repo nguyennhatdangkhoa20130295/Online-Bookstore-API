@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.model;
+package vn.edu.hcmuaf.fit.websubject.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,11 +16,11 @@ public class Blog {
 
     @OneToOne
     @JoinColumn(name = "blog_cate_id")
-    private blog_category blog_cate_id;
+    private BlogCategory blog_cate_id;
     private String image;
     @OneToOne
     @JoinColumn(name = "creator")
-    private Users creator;
+    private User creator;
     private String title;
     private String content;
     private String created_at;
