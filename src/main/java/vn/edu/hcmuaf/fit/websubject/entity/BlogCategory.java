@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.model;
+package vn.edu.hcmuaf.fit.websubject.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -13,7 +13,7 @@ import lombok.*;
 @ToString
 @Entity
 @Table(name = "blog_category")
-public class blog_category {
+public class BlogCategory {
     @Id
     @JoinColumn(name = "id")
     private int id;
