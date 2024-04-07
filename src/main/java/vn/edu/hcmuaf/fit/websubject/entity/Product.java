@@ -1,7 +1,11 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,11 +31,18 @@ public class Product {
     private String image;
 
     @Column(name = "old_price")
-    private Long oldPrice;
+    private Long old_price;
 
     @Column(name = "current_price")
-    private Long currentPrice;
+    private Long current_price;
 
     @Column(name = "is_on_sale")
-    private boolean isOnSale;
+    private boolean on_sale;
+
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ProductDetail detail;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<ProductImage> images;
 }
