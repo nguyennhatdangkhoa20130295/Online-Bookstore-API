@@ -3,7 +3,6 @@ package vn.edu.hcmuaf.fit.websubject.controller;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.*;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
@@ -31,11 +30,16 @@ import vn.edu.hcmuaf.fit.websubject.payload.response.MessageResponse;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
-import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 import vn.edu.hcmuaf.fit.websubject.service.EmailService;
 import vn.edu.hcmuaf.fit.websubject.service.OTPService;
+import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 
 import javax.mail.MessagingException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -150,18 +154,19 @@ public class AuthController {
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
-      
+
     @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPassRequest forgotPassRequest) throws MessagingException {
-        if(!userRepository.existsByEmail(forgotPassRequest.getEmail())){
+    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPassRequest forgotPassRequest) throws
+            MessagingException {
+        if (!userRepository.existsByEmail(forgotPassRequest.getEmail())) {
             return ResponseEntity.badRequest().body("Không tìm thấy email.");
         }
         // Logic để gửi mã OTP đến email
         String otp = generateOTP();
-        emailService.sendEmailForgot(forgotPassRequest.getEmail(),otp);
+        emailService.sendEmailForgot(forgotPassRequest.getEmail(), otp);
         otpService.saveOTP(forgotPassRequest.getEmail(), otp);
         // Gửi mã OTP đến email
-        return ResponseEntity.ok("OTP "+ otp +" sent successfully.");
+        return ResponseEntity.ok("OTP " + otp + " sent successfully.");
     }
 
     @PostMapping("/reset-password")
@@ -222,6 +227,7 @@ public class AuthController {
                 .build();
         tokenRepository.save(token);
     }
+
     public boolean hasRole(String roleName) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {

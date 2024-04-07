@@ -8,7 +8,4 @@ import java.util.Optional;
 
 @Repository
 public interface BlogRepository extends JpaRepository<Blog, Integer> {
-    Optional<Blog> findById(int id);
-//    Optional<Blog> findByBlogCateId(int cate);
-
 }

@@ -1,7 +1,7 @@
 package vn.edu.hcmuaf.fit.websubject.service;
 
 import org.springframework.stereotype.Component;
-import vn.edu.hcmuaf.fit.websubject.model.Mail;
+import vn.edu.hcmuaf.fit.websubject.entity.Mail;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;

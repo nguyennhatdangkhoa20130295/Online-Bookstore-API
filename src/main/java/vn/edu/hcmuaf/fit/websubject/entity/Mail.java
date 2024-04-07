@@ -1,11 +1,9 @@
-package vn.edu.hcmuaf.fit.websubject.model;
+package vn.edu.hcmuaf.fit.websubject.entity;
 
 public class Mail {
     public static final String HOST = "mail.smtp.host";
 
-
     public static final String SERVER = "smtp.gmail.com";
-
 
     public static final String URL_PORT = "mail.smtp.port";
 
