@@ -44,4 +44,9 @@ public class AddressServiceImpl implements AddressService {
     public void deleteAddress(Integer id) {
         addressRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<Address> getAddressDefaultByUserId(Integer id) {
+        return addressRepository.findByAddressWithDefault(id);
+    }
 }
