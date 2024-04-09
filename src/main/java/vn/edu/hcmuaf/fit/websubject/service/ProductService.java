@@ -9,4 +9,6 @@ public interface ProductService {
     List<Product> getAllProducts();
     Optional<Product> getProductById(Integer id);
     List<Product> getProductsByCategory(Integer categoryId);
+
+    List<Product> getThreeLatestProduct();
 }
