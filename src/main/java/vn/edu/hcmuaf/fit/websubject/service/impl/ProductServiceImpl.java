@@ -30,4 +30,9 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByCategoryParentOrCategory(categoryId);
     }
 
+    @Override
+    public List<Product> getThreeLatestProduct() {
+        return productRepository.findTop3ByOrderByIdDesc();
+    }
+
 }

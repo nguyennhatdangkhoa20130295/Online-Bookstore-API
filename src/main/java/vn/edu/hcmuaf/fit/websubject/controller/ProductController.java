@@ -42,4 +42,9 @@ public class ProductController {
         return productService.getProductsByCategory(categoryId);
     }
 
+    @GetMapping("/latest")
+    public List<Product> getThreeLatestProduct(){
+        return productService.getThreeLatestProduct();
+    }
+
 }
