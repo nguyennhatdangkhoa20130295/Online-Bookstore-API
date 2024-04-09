@@ -10,12 +10,13 @@ import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.repository.CartItemsRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
+import vn.edu.hcmuaf.fit.websubject.service.CartItemsService;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CartItemsServiceImpl implements CartItemsService{
+public class CartItemsServiceImpl implements CartItemsService {
     @Autowired
     CartItemsRepository cartItemsRepository;
     @Autowired
@@ -30,10 +31,7 @@ public class CartItemsServiceImpl implements CartItemsService{
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
         if (user.isPresent()) {
-            User currentUser = new User();
-            currentUser.setId(user.get().getId());
-            currentUser.setUsername(user.get().getUsername());
-            currentUser.setEmail(user.get().getEmail());
+            User currentUser = user.get();
             if (existingCartItem != null) {
                 existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
                 cartItemsRepository.save(existingCartItem);
