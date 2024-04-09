@@ -14,9 +14,9 @@ public class CartController {
     @Autowired
     private CartItemsService cartItemsService;
 
-    @PostMapping("/add/{productId}")
-    public ResponseEntity<String> addToCart(@PathVariable int productId) {
-        cartItemsService.addToCart(productId);
+    @PostMapping("/add")
+    public ResponseEntity<String> addToCart(@RequestBody CartItems cartItems) {
+        cartItemsService.addToCart(cartItems);
         return ResponseEntity.ok("Added to cart successfully");
     }
 
@@ -30,6 +30,12 @@ public class CartController {
     public ResponseEntity<List<CartItems>> getCartItems() {
         List<CartItems> cartItems = cartItemsService.getCartItems();
         return ResponseEntity.ok(cartItems);
+    }
+
+    @PutMapping("/increase/{cartItemId}")
+    public ResponseEntity<String> increaseCartItemQuantity(@PathVariable int cartItemId) {
+        cartItemsService.increaseCartItemQuantity(cartItemId);
+        return ResponseEntity.ok("Cart item quantity increased successfully");
     }
 
     @PutMapping("/decrease/{cartItemId}")
