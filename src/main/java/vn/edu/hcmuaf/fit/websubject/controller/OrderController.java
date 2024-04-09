@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Orders;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.service.OrderService;
@@ -33,6 +31,15 @@ public class OrderController {
         if (user.isPresent()) {
             List<Orders> orders = orderService.getUserOrders(user.get().getId());
             return ResponseEntity.ok().body(orders);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PutMapping("/{orderId}/status/{newStatusId}")
+    public ResponseEntity<String> updateOrderStatus(@PathVariable Integer orderId, @PathVariable Integer newStatusId) {
+        boolean updated = orderService.updateOrderStatus(orderId, newStatusId);
+        if (updated) {
+            return ResponseEntity.ok("Order status updated successfully.");
         } else {
             return ResponseEntity.notFound().build();
         }
