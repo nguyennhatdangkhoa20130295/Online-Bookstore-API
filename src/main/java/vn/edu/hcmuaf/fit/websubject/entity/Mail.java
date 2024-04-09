@@ -17,7 +17,7 @@ public class Mail {
 
     public static final String TLS_STATUS = "true";
 
-    public static final String USERNAME = "Petshop.LTW10@gmail.com";
+    public static final String USERNAME = "goldleaf.cdw@gmail.com";
 
-    public static final String PASSWORD = "fkwrbjfkasplwjyx";
+    public static final String PASSWORD = "kcsjdhtyacvyidrx";
 }

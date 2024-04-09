@@ -6,11 +6,14 @@ import org.springframework.stereotype.Repository;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer>{
     @Query("SELECT p FROM Product p WHERE p.category.id = :categoryId OR p.category.parentCategory.id = :categoryId OR p.category.parentCategory.parentCategory.id = :categoryId")
     List<Product> findByCategoryParentOrCategory(Integer categoryId);
-
+  
     List<Product> findTop3ByOrderByIdDesc();
+  
+    Optional<Product> findById(Integer id);
 }

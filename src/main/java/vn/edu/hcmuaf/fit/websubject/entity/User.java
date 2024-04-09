@@ -52,10 +52,13 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Token> token;
 
-
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
     }
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> address;
 }

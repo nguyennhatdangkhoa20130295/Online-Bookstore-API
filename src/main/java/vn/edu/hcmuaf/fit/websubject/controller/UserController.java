@@ -48,6 +48,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("/addresses/default/{id}")
+    public ResponseEntity<?> getAddressDefaultByUserId(@PathVariable Integer id) {
+        Optional<Address> addressOptional = addressService.getAddressDefaultByUserId(id);
+        if (addressOptional.isPresent()) {
+            return ResponseEntity.ok().body(addressOptional.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping("/addresses")
     public ResponseEntity<?> createAddress(@RequestBody Address address) {
         Address createdAddress = addressService.createAddress(address);
