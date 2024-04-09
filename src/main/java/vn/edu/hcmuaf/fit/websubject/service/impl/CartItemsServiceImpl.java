@@ -25,8 +25,8 @@ public class CartItemsServiceImpl implements CartItemsService {
     @Autowired
     UserRepository userRepository;
 
-    public void addToCart(int productId) {
-        CartItems existingCartItem = cartItemsRepository.findByProductId(productId);
+    public void addToCart(CartItems cartItems) {
+        CartItems existingCartItem = cartItemsRepository.findByProductId(cartItems.getProduct().getId());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
@@ -36,12 +36,12 @@ public class CartItemsServiceImpl implements CartItemsService {
                 existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
                 cartItemsRepository.save(existingCartItem);
             } else {
-                Optional<Product> productOptional = productRepository.findById(productId);
+                Optional<Product> productOptional = productRepository.findById(cartItems.getProduct().getId());
                 if (productOptional.isPresent()) {
                     Product product = productOptional.get();
                     CartItems cartItem = new CartItems();
                     cartItem.setProduct(product);
-                    cartItem.setQuantity(1);
+                    cartItem.setQuantity(cartItems.getQuantity());
                     cartItem.setUser(currentUser);
                     cartItemsRepository.save(cartItem);
                 } else {
@@ -60,6 +60,17 @@ public class CartItemsServiceImpl implements CartItemsService {
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
         return cartItemsRepository.findAllByUserId(user.get().getId());
+    }
+
+    @Override
+    public void increaseCartItemQuantity(int cartItemId) {
+        Optional<CartItems> cartItemOptional = cartItemsRepository.findById(cartItemId);
+        if (cartItemOptional.isPresent()) {
+            CartItems cartItem = cartItemOptional.get();
+            int newQuantity = cartItem.getQuantity() + 1;
+            cartItem.setQuantity(newQuantity);
+            cartItemsRepository.save(cartItem);
+        }
     }
 
     public void decreaseCartItemQuantity(int cartItemId) {
