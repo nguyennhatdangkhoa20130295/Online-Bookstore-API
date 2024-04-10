@@ -31,6 +31,12 @@ public class CommentController {
         System.out.println(productId + " " + commentRequest.getRate() + " " + commentRequest.getDetail());
         return ResponseEntity.ok("Added comment successfully");
     }
+    @PutMapping("/update/{commentId}")
+    public ResponseEntity<String> updateComment(@PathVariable int commentId, @RequestBody CommentRequest commentRequest) {
+        commentService.updateComment(commentId, commentRequest.getRate(), commentRequest.getDetail());
+        System.out.println(commentId + " " + commentRequest.getRate() + " " + commentRequest.getDetail());
+        return ResponseEntity.ok("Updated comment successfully");
+    }
     @DeleteMapping("/delete/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable int commentId) {
         commentService.deleteComment(commentId);

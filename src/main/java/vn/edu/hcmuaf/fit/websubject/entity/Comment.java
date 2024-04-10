@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,5 +34,10 @@ public class Comment {
     private String cmtDetail;
 
     @Column(name = "created_at")
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy")
     private Date created_at;
+
+    @Column(name = "updated_at")
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy")
+    private Date updated_at;
 }
