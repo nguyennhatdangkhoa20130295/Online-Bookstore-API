@@ -15,7 +15,12 @@ public class CommentController {
     @Autowired
     CommentService commentService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/product/{id}")
+    public ResponseEntity<List<Comment>> getListCommentByProductId(@PathVariable int id) {
+        List<Comment> comments = commentService.getListCommentByProductId(id);
+        return ResponseEntity.ok(comments);
+    }
+    @GetMapping("/auth/{id}")
     public ResponseEntity<List<Comment>> getListCommentById(@PathVariable int id) {
         List<Comment> comments = commentService.getListCommentByUserId(id);
         return ResponseEntity.ok(comments);

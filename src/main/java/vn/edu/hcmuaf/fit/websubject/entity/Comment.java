@@ -3,6 +3,8 @@ package vn.edu.hcmuaf.fit.websubject.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -29,4 +31,7 @@ public class Comment {
 
     @Column(name = "comment_detail")
     private String cmtDetail;
+
+    @Column(name = "created_at")
+    private Date created_at;
 }
