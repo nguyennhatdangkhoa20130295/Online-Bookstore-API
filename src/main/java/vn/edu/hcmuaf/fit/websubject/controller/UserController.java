@@ -75,4 +75,10 @@ public class UserController {
         addressService.deleteAddress(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/addresses/default/{id}")
+    public ResponseEntity<?> setDefaultAddress(@PathVariable Integer id) {
+        addressService.setDefaultAddress(id);
+        return ResponseEntity.ok("The user's address has been set by default");
+    }
 }
