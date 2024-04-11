@@ -5,7 +5,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.CartItems;
 import java.util.List;
 
 public interface CartItemsService {
-    void addToCart(CartItems cartItems);
+    void addToCart(int idProduct);
     void removeFromCart(int cartItemId);
     List<CartItems> getCartItems();
     void increaseCartItemQuantity(int cartItemId);

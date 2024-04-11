@@ -20,21 +20,14 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     OrderStatusRepository orderStatusRepository;
 
-    public boolean updateOrderStatus(Integer orderId, Integer newStatusId) {
+    public void updateOrderStatus(Integer orderId, Integer newStatusId) {
         Optional<Orders> optionalOrder = ordersRepository.findById(orderId);
         Optional<OrderStatus> optionalNewStatus = orderStatusRepository.findById(newStatusId);
         if (optionalOrder.isPresent() && optionalNewStatus.isPresent()) {
             Orders order = optionalOrder.get();
             OrderStatus newStatus = optionalNewStatus.get();
-            System.out.println(order);
-            System.out.println(newStatus);
-
             order.setStatus(newStatus);
             ordersRepository.save(order);
-            System.out.println(order);
-            return true;
-        } else {
-            return false;
         }
     }
 

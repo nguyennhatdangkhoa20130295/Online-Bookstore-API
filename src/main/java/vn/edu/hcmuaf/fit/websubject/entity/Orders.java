@@ -39,8 +39,8 @@ public class Orders {
     @Column(name = "payment_method")
     private String paymentMethod;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "status", referencedColumnName = "id", nullable = false)
     private OrderStatus status;
 
     @Column(name = "shipping_cost")

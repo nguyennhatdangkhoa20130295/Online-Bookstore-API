@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface OrderService {
     List<Orders> getUserOrders(Integer userId);
 
-    boolean updateOrderStatus(Integer orderId, Integer newStatusId);
+    void updateOrderStatus(Integer orderId, Integer newStatusId);
 }
