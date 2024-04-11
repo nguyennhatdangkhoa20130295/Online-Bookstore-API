@@ -14,9 +14,9 @@ public class CartController {
     @Autowired
     private CartItemsService cartItemsService;
 
-    @PostMapping("/add")
-    public ResponseEntity<String> addToCart(@RequestBody CartItems cartItems) {
-        cartItemsService.addToCart(cartItems);
+    @PostMapping("/add/{idProduct}")
+    public ResponseEntity<String> addToCart(@PathVariable int idProduct) {
+        cartItemsService.addToCart(idProduct);
         return ResponseEntity.ok("Added to cart successfully");
     }
 

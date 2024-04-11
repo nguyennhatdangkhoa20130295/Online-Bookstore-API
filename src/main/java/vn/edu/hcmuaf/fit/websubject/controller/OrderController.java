@@ -37,11 +37,7 @@ public class OrderController {
     }
     @PutMapping("/{orderId}/status/{newStatusId}")
     public ResponseEntity<String> updateOrderStatus(@PathVariable Integer orderId, @PathVariable Integer newStatusId) {
-        boolean updated = orderService.updateOrderStatus(orderId, newStatusId);
-        if (updated) {
-            return ResponseEntity.ok("Order status updated successfully.");
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        orderService.updateOrderStatus(orderId, newStatusId);
+        return ResponseEntity.ok("Order status updated successfully.");
     }
 }

@@ -25,8 +25,8 @@ public class CartItemsServiceImpl implements CartItemsService {
     @Autowired
     UserRepository userRepository;
 
-    public void addToCart(CartItems cartItems) {
-        CartItems existingCartItem = cartItemsRepository.findByProductId(cartItems.getProduct().getId());
+    public void addToCart(int idProduct) {
+        CartItems existingCartItem = cartItemsRepository.findByProductId(idProduct);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
@@ -36,12 +36,12 @@ public class CartItemsServiceImpl implements CartItemsService {
                 existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
                 cartItemsRepository.save(existingCartItem);
             } else {
-                Optional<Product> productOptional = productRepository.findById(cartItems.getProduct().getId());
+                Optional<Product> productOptional = productRepository.findById(idProduct);
                 if (productOptional.isPresent()) {
                     Product product = productOptional.get();
                     CartItems cartItem = new CartItems();
                     cartItem.setProduct(product);
-                    cartItem.setQuantity(cartItems.getQuantity());
+                    cartItem.setQuantity(1);
                     cartItem.setUser(currentUser);
                     cartItemsRepository.save(cartItem);
                 } else {
