@@ -1,12 +1,14 @@
 package vn.edu.hcmuaf.fit.websubject.service;
 
+import org.springframework.data.domain.Page;
 import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BlogService {
-    List<Blog> getAllBlogs();
-
+    Page<Blog> getAllBlogs(int page, int perPage);
     Optional<Blog> getBlogById(int id);
+    List<Blog> getAllBlogsUser();
+    Page<Blog> findAll(int page, int size, String sort, String order, String filter);
 }
