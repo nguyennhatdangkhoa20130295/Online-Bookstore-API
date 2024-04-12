@@ -1,9 +1,5 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -13,6 +9,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.sql.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -39,6 +40,9 @@ public class User {
     @NotBlank
     @Size(max = 120)
     private String password;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private UserInfo userInfo;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
