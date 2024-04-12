@@ -33,7 +33,7 @@ public class CartItemsServiceImpl implements CartItemsService {
         if (user.isPresent()) {
             User currentUser = user.get();
             if (existingCartItem != null) {
-                existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
+                existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItems.getQuantity());
                 cartItemsRepository.save(existingCartItem);
             } else {
                 Optional<Product> productOptional = productRepository.findById(cartItems.getProduct().getId());

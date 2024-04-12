@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Address;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
+import vn.edu.hcmuaf.fit.websubject.service.UserInfoService;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 import vn.edu.hcmuaf.fit.websubject.service.AddressService;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
@@ -23,7 +25,28 @@ public class UserController {
     private UserService userService;
 
     @Autowired
+    private UserInfoService userInfoService;
+
+    @Autowired
     private AddressService addressService;
+
+    @GetMapping("/info")
+    public ResponseEntity<?> getUserInformation() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+        Optional<User> user = userService.getUserByUsername(customUserDetails.getUsername());
+        if (user.isPresent()) {
+            return ResponseEntity.ok().body(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/info/{id}")
+    public ResponseEntity<?> changeInformation(@PathVariable Integer id, @RequestBody UserInfo userInfo) {
+        userInfoService.changeInformation(id, userInfo);
+        return ResponseEntity.ok("Information changed successfully");
+    }
 
     @GetMapping("/addresses")
     public ResponseEntity<?> getUserAddresses() {
