@@ -1,9 +1,10 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -19,7 +20,7 @@ public class Blog {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne
     @JoinColumn(name = "blog_cate_id")
-    private BlogCategory blog_cate_id;
+    private BlogCategory BlogCate;
 
     private String image;
 
@@ -28,10 +29,16 @@ public class Blog {
     @JoinColumn(name = "creator")
     private User creator;
 
+    @Column(name = "title")
     private String title;
 
+    @Column(name = "content")
     private String content;
 
-    private String created_at;
+    @Column(name = "created_at")
+    private Date created_at;
+
+    @Column(name = "updated_at")
+    private Date updated_at;
 
 }
