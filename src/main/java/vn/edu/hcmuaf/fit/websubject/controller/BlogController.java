@@ -3,9 +3,11 @@ package vn.edu.hcmuaf.fit.websubject.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 import vn.edu.hcmuaf.fit.websubject.entity.BlogCategory;
+import vn.edu.hcmuaf.fit.websubject.payload.request.AddBlogRequest;
 import vn.edu.hcmuaf.fit.websubject.service.BlogCateService;
 import vn.edu.hcmuaf.fit.websubject.service.BlogService;
 
@@ -61,4 +63,10 @@ public class BlogController {
         }
     }
 
+    @PostMapping("/add")
+//    @PreAuthorize("@authController.hasRole('ADMIN')")
+    public ResponseEntity<String> addBlog(@RequestBody AddBlogRequest addBlogRequest) {
+        blogService.addBlog(addBlogRequest.getBlogCate(), addBlogRequest.getTitle(), addBlogRequest.getContent(), addBlogRequest.getImage());
+        return ResponseEntity.ok("Added blog successfully");
+    }
 }

@@ -11,7 +11,7 @@ import lombok.*;
 @Entity
 public class Token {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String token;
     @Enumerated(EnumType.STRING)
