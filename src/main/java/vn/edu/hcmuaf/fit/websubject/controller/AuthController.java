@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.hcmuaf.fit.websubject.jwt.JwtUtils;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
+import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.payload.request.ForgotPassRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.LoginRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.SignupRequest;
@@ -145,7 +146,11 @@ public class AuthController {
                 }
             });
         }
-
+        user.setAvatar("https://cdn-icons-png.flaticon.com/512/6596/6596121.png");
+        user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+        user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+        user.setLocked(false);
+        user.setIsSocial(false);
         user.setRoles(roles);
         userRepository.save(user);
 //        var jwtToken = jwtUtils.generateJwtToken((Authentication) user);

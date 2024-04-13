@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -59,9 +60,11 @@ public class User {
     private String avatar;
 
     @Column(name = "created_at")
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy")
     private Date createdAt;
 
     @Column(name = "updated_at")
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy")
     private Date updatedAt;
 
     @Column(name = "locked")

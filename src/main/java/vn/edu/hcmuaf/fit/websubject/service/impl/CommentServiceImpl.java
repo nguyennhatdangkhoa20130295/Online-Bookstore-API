@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Comment;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.CommentRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
@@ -52,8 +53,8 @@ public class CommentServiceImpl implements CommentService {
                 comment.setUser(currentUser);
                 comment.setRating(rate);
                 comment.setCmtDetail(description);
-                comment.setCreated_at(getCurrentTimeInVietnam());
-                System.out.println(getCurrentTimeInVietnam());
+                comment.setCreated_at(CurrentTime.getCurrentTimeInVietnam());
+                System.out.println(CurrentTime.getCurrentTimeInVietnam());
                 commentRepository.save(comment);
             } else {
                 System.out.println("Không thể lưu bình luận");
@@ -72,7 +73,7 @@ public class CommentServiceImpl implements CommentService {
                 Comment currentCmt = commentOptional.get();
                 currentCmt.setRating(rate);
                 currentCmt.setCmtDetail(description);
-                currentCmt.setUpdated_at(getCurrentTimeInVietnam());
+                currentCmt.setUpdated_at(CurrentTime.getCurrentTimeInVietnam());
                 commentRepository.save(currentCmt);
                 } else {
                     System.out.println("Bình luận không tồn tại");
@@ -80,12 +81,6 @@ public class CommentServiceImpl implements CommentService {
         } else {
             System.out.println("Người dùng không tồn tại");
         }
-    }
-
-    public static Date getCurrentTimeInVietnam() {
-        ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
-        LocalDateTime localDateTime = LocalDateTime.now(zoneId);
-        return Date.from(localDateTime.atZone(zoneId).toInstant());
     }
     @Override
     public void deleteComment(int idComment) {
