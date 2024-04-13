@@ -11,6 +11,8 @@ import vn.edu.hcmuaf.fit.websubject.entity.Address;
 import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
+import vn.edu.hcmuaf.fit.websubject.service.UserInfoService;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 import vn.edu.hcmuaf.fit.websubject.service.AddressService;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
@@ -25,6 +27,9 @@ public class UserController {
     private UserService userService;
 
     @Autowired
+    private UserInfoService userInfoService;
+
+    @Autowired
     private AddressService addressService;
 
     @GetMapping("")
@@ -36,6 +41,24 @@ public class UserController {
         Page<User> users = userService.findAllUsers(page, perPage, sort, order, filter);
         return ResponseEntity.ok(users);
     }
+    @GetMapping("/info")
+    public ResponseEntity<?> getUserInformation() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+        Optional<User> user = userService.getUserByUsername(customUserDetails.getUsername());
+        if (user.isPresent()) {
+            return ResponseEntity.ok().body(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/info/{id}")
+    public ResponseEntity<?> changeInformation(@PathVariable Integer id, @RequestBody UserInfo userInfo) {
+        userInfoService.changeInformation(id, userInfo);
+        return ResponseEntity.ok("Information changed successfully");
+    }
+
     @GetMapping("/addresses")
     public ResponseEntity<?> getUserAddresses() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -85,5 +108,11 @@ public class UserController {
     public ResponseEntity<?> deleteAddress(@PathVariable Integer id) {
         addressService.deleteAddress(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/addresses/default/{id}")
+    public ResponseEntity<?> setDefaultAddress(@PathVariable Integer id) {
+        addressService.setDefaultAddress(id);
+        return ResponseEntity.ok("The user's address has been set by default");
     }
 }

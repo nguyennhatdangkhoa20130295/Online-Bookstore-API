@@ -17,7 +17,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<Address> getUserAddresses(Integer userId) {
-        return addressRepository.findByUserId(userId);
+        return addressRepository.findByUserIdOrderByIsDefaultDesc(userId);
     }
 
     @Override
@@ -48,5 +48,20 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Optional<Address> getAddressDefaultByUserId(Integer id) {
         return addressRepository.findByAddressWithDefault(id);
+    }
+
+    @Override
+    public void setDefaultAddress(Integer id) {
+        addressRepository.setDefaultAddress(id);
+        Optional<Address> address = getAddressById(id);
+        if (address.isPresent()) {
+            int user_id = address.get().getUser().getId();
+            addressRepository.resetDefaultOtherAddress(user_id, id);
+        }
+    }
+
+    @Override
+    public void resetDefaultOtherAddress(int user_id, int selected_address_id) {
+        addressRepository.resetDefaultOtherAddress(user_id, selected_address_id);
     }
 }

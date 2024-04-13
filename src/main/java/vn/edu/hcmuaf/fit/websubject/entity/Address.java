@@ -40,6 +40,6 @@ public class Address {
     private String province_city;
 
     @Column(name = "is_default")
-    private boolean is_default;
+    private boolean isDefault;
 
 }
