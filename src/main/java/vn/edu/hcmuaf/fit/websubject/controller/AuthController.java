@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.edu.hcmuaf.fit.websubject.jwt.JwtUtils;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
+import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.payload.request.ForgotPassRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.LoginRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.SignupRequest;
@@ -35,11 +36,7 @@ import vn.edu.hcmuaf.fit.websubject.service.OTPService;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 
 import javax.mail.MessagingException;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -147,6 +144,11 @@ public class AuthController {
         }
 
         user.setRoles(roles);
+        user.setAvatar("https://cdn-icons-png.flaticon.com/512/6596/6596121.png");
+        user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+        user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+        user.setLocked(false);
+        user.setIsSocial(false);
         userRepository.save(user);
 //        var jwtToken = jwtUtils.generateJwtToken((Authentication) user);
 //        revokeAllUserToken(saveUser);

@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -10,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,6 +52,29 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "avatar")
+    private String avatar;
+
+    @Column(name = "created_at")
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy")
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy")
+    private Date updatedAt;
+
+    @Column(name = "locked")
+    private Boolean locked;
+
+    @Column(name = "is_social")
+    private Boolean isSocial;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")

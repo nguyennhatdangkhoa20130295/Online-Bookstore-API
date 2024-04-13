@@ -2,8 +2,10 @@ package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.edu.hcmuaf.fit.websubject.entity.OrderDetail;
 import vn.edu.hcmuaf.fit.websubject.entity.OrderStatus;
 import vn.edu.hcmuaf.fit.websubject.entity.Orders;
+import vn.edu.hcmuaf.fit.websubject.repository.OrderDetailRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.OrderStatusRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.OrdersRepository;
 import vn.edu.hcmuaf.fit.websubject.service.OrderService;
@@ -20,6 +22,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     OrderStatusRepository orderStatusRepository;
 
+    @Autowired
+    OrderDetailRepository orderDetailRepository;
+
     public void updateOrderStatus(Integer orderId, Integer newStatusId) {
         Optional<Orders> optionalOrder = ordersRepository.findById(orderId);
         Optional<OrderStatus> optionalNewStatus = orderStatusRepository.findById(newStatusId);
@@ -34,5 +39,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Orders> getUserOrders(Integer userId) {
         return ordersRepository.findByUserId(userId);
+    }
+
+    @Override
+    public Optional<OrderDetail> getOrderByProductIdAndUserId(Integer productId, Integer userId){
+        return orderDetailRepository.findByProductIdAndUserId(productId, userId);
     }
 }

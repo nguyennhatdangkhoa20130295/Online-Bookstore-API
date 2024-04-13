@@ -1,12 +1,14 @@
 package vn.edu.hcmuaf.fit.websubject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Address;
+import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
@@ -30,6 +32,15 @@ public class UserController {
     @Autowired
     private AddressService addressService;
 
+    @GetMapping("")
+    public ResponseEntity<Page<User>> getAllBlogs(@RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "") String filter,
+                                                  @RequestParam(defaultValue = "25") int perPage,
+                                                  @RequestParam(defaultValue = "id") String sort,
+                                                  @RequestParam(defaultValue = "DESC") String order) {
+        Page<User> users = userService.findAllUsers(page, perPage, sort, order, filter);
+        return ResponseEntity.ok(users);
+    }
     @GetMapping("/info")
     public ResponseEntity<?> getUserInformation() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

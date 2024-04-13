@@ -5,7 +5,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import vn.edu.hcmuaf.fit.websubject.entity.OrderDetail;
 import vn.edu.hcmuaf.fit.websubject.entity.Orders;
+import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.service.OrderService;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
@@ -39,5 +41,15 @@ public class OrderController {
     public ResponseEntity<String> updateOrderStatus(@PathVariable Integer orderId, @PathVariable Integer newStatusId) {
         orderService.updateOrderStatus(orderId, newStatusId);
         return ResponseEntity.ok("Order status updated successfully.");
+    }
+    @GetMapping("/product/{idProduct}/user/{userId}")
+    public ResponseEntity<OrderDetail> getOrderByProductId(@PathVariable Integer idProduct, @PathVariable Integer userId) {
+        Optional<OrderDetail> orderDetail = orderService.getOrderByProductIdAndUserId(idProduct, userId);
+        if (orderDetail.isPresent()) {
+            OrderDetail order = orderDetail.get();
+            return ResponseEntity.ok().body(order);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
