@@ -1,6 +1,8 @@
 package vn.edu.hcmuaf.fit.websubject.controller;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
@@ -111,32 +113,37 @@ public class AuthController {
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 
-        String strRoles = signUpRequest.getRole();
+        Set<String> strRoles = signUpRequest.getRole();
+        Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByDescription(EnumRole.USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            user.setRole(userRole);
+            roles.add(userRole);
         } else {
-                switch (strRoles) {
-                    case "ADMIN":
+            strRoles.forEach(role -> {
+                switch (role) {
+                    case "admin":
                         Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        user.setRole(adminRole);
+                        roles.add(adminRole);
 
                         break;
-                    case "MODERATOR":
+                    case "mod":
                         Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        user.setRole(modRole);
+                        roles.add(modRole);
 
                         break;
                     default:
                         Role userRole = roleRepository.findByDescription(EnumRole.USER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        user.setRole(userRole);
+                        roles.add(userRole);
                 }
+            });
         }
+
+        user.setRoles(roles);
         user.setAvatar("https://cdn-icons-png.flaticon.com/512/6596/6596121.png");
         user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
         user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());

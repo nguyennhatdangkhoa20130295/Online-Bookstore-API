@@ -12,7 +12,7 @@ public class SignupRequest {
 
     private String email;
 
-    private String role;
+    private Set<String> role;
 
     private String password;
 

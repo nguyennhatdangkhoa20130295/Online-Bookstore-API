@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -37,14 +36,16 @@ public class CustomUserDetailsImpl implements UserDetails {
     }
 
     public static CustomUserDetailsImpl build(User user) {
-        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getDescription().name());
+        List<GrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getDescription().name()))
+                .collect(Collectors.toList());
 
         return new CustomUserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singletonList(authority));
+                authorities);
     }
 
     @Override
