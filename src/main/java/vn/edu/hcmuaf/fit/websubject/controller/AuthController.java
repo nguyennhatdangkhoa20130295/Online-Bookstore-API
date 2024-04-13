@@ -1,8 +1,6 @@
 package vn.edu.hcmuaf.fit.websubject.controller;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
@@ -36,11 +34,7 @@ import vn.edu.hcmuaf.fit.websubject.service.OTPService;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 
 import javax.mail.MessagingException;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -117,41 +111,37 @@ public class AuthController {
                 signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()));
 
-        Set<String> strRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
+        String strRoles = signUpRequest.getRole();
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByDescription(EnumRole.USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
+            user.setRole(userRole);
         } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
+                switch (strRoles) {
+                    case "ADMIN":
                         Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
+                        user.setRole(adminRole);
 
                         break;
-                    case "mod":
+                    case "MODERATOR":
                         Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(modRole);
+                        user.setRole(modRole);
 
                         break;
                     default:
                         Role userRole = roleRepository.findByDescription(EnumRole.USER)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
+                        user.setRole(userRole);
                 }
-            });
         }
         user.setAvatar("https://cdn-icons-png.flaticon.com/512/6596/6596121.png");
         user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
         user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
         user.setLocked(false);
         user.setIsSocial(false);
-        user.setRoles(roles);
         userRepository.save(user);
 //        var jwtToken = jwtUtils.generateJwtToken((Authentication) user);
 //        revokeAllUserToken(saveUser);

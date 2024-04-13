@@ -10,12 +10,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import vn.edu.hcmuaf.fit.websubject.entity.Blog;
-import vn.edu.hcmuaf.fit.websubject.entity.BlogCategory;
-import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.entity.*;
+import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
+import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
 
@@ -26,10 +25,15 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
+
+    private PasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.encoder = encoder;
     }
     public Page<User> getAllUsers(int page, int perPage) {
         Pageable pageable = PageRequest.of(page, perPage);
@@ -61,6 +65,60 @@ public class UserServiceImpl implements UserService {
         };
 
         return userRepository.findAll(specification, pageable);
+    }
+
+    @Override
+    public void addUser(String username, String password, String email,
+                        int role, String avatar, String fullName, String phone,
+                        int locked, int isSocial){
+        if (userRepository.existsByUsername(username)) {
+            System.out.println("Username is already taken!");
+        } else if (userRepository.existsByEmail(email)) {
+            System.out.println("Email is already in use!");
+        } else {
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(encoder.encode(password));
+            user.setEmail(email);
+            user.setFullName(fullName);
+            user.setPhoneNumber(phone);
+            switch (role) {
+                case 1:
+                    Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    user.setRole(adminRole);
+
+                    break;
+                case 2:
+                    Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    user.setRole(modRole);
+
+                    break;
+                case 3:
+                    Role userRole = roleRepository.findByDescription(EnumRole.USER)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    user.setRole(userRole);
+                    break;
+                default:
+                    Role defaultRole = roleRepository.findByDescription(EnumRole.USER)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    user.setRole(defaultRole);
+            }
+            user.setAvatar(avatar);
+            user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+            user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            if(locked == 1)
+                user.setLocked(false);
+            else
+                user.setLocked(true);
+
+            if(isSocial == 1)
+                user.setIsSocial(false);
+            else
+                user.setIsSocial(true);
+            userRepository.save(user);
+        }
     }
 
     @Override
