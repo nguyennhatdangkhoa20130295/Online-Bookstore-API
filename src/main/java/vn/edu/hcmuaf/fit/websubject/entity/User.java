@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +48,27 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @Column(name = "full_name")
+    private String fullName;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "avatar")
+    private String avatar;
+
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
+    @Column(name = "locked")
+    private Boolean locked;
+
+    @Column(name = "is_social")
+    private Boolean isSocial;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user")
