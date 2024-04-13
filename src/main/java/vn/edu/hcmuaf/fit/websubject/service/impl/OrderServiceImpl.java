@@ -42,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Optional<OrderDetail> getOrderByProductId(Integer productId) {
-        return orderDetailRepository.findByProductId(productId);
+    public Optional<OrderDetail> getOrderByProductIdAndUserId(Integer productId, Integer userId){
+        return orderDetailRepository.findByProductIdAndUserId(productId, userId);
     }
 }

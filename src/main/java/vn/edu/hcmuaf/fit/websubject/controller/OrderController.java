@@ -42,9 +42,9 @@ public class OrderController {
         orderService.updateOrderStatus(orderId, newStatusId);
         return ResponseEntity.ok("Order status updated successfully.");
     }
-    @GetMapping("/product/{idProduct}")
-    public ResponseEntity<OrderDetail> getOrderByProductId(@PathVariable Integer idProduct) {
-        Optional<OrderDetail> orderDetail = orderService.getOrderByProductId(idProduct);
+    @GetMapping("/product/{idProduct}/user/{userId}")
+    public ResponseEntity<OrderDetail> getOrderByProductId(@PathVariable Integer idProduct, @PathVariable Integer userId) {
+        Optional<OrderDetail> orderDetail = orderService.getOrderByProductIdAndUserId(idProduct, userId);
         if (orderDetail.isPresent()) {
             OrderDetail order = orderDetail.get();
             return ResponseEntity.ok().body(order);

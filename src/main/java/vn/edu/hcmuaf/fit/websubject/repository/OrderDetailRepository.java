@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Integer> {
     @Query("""
         select o from OrderDetail o inner join Product p on o.product.id = p.id
-        where p.id = :productId
+        where p.id = :productId and o.order.user.id = :userId
     """)
-    Optional<OrderDetail> findByProductId(Integer productId);
+    Optional<OrderDetail> findByProductIdAndUserId(Integer productId, Integer userId);
 }

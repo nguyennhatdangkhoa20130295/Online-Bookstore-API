@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface OrderService {
     List<Orders> getUserOrders(Integer userId);
-    Optional<OrderDetail> getOrderByProductId(Integer productId);
+    Optional<OrderDetail> getOrderByProductIdAndUserId(Integer productId, Integer userId);
     void updateOrderStatus(Integer orderId, Integer newStatusId);
 }
