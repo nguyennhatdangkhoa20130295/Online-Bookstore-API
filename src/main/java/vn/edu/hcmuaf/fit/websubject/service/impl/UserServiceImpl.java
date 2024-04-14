@@ -132,6 +132,66 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void editUser(int id, String email,
+                        int role, String avatar, String fullName, String phone,
+                        int locked, int isSocial) {
+        Optional<User> userOptional = userRepository.findById(id);
+        User newInforUser = userOptional.get();
+        if (userRepository.existsByEmail(email)) {
+            System.out.println("Email is already in use!");
+        } else {
+            newInforUser.setEmail(email);
+            newInforUser.setFullName(fullName);
+            newInforUser.setPhoneNumber(phone);
+            newInforUser.getRoles().clear();
+            Set<Role> roles = new HashSet<>();
+            switch (role) {
+                case 1:
+                    Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(adminRole);
+
+                    break;
+                case 2:
+                    Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(modRole);
+
+                    break;
+                case 3:
+                    Role userRole = roleRepository.findByDescription(EnumRole.USER)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(userRole);
+
+                    break;
+                default:
+                    Role userR = roleRepository.findByDescription(EnumRole.USER)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(userR);
+            }
+
+            newInforUser.setRoles(roles);
+            newInforUser.setAvatar(avatar);
+            newInforUser.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            if (locked == 1)
+                newInforUser.setLocked(false);
+            else
+                newInforUser.setLocked(true);
+
+            if (isSocial == 1)
+                newInforUser.setIsSocial(false);
+            else
+                newInforUser.setIsSocial(true);
+            userRepository.save(newInforUser);
+        }
+    }
+
+    @Override
+    public void deleteUser(int idUser){
+        userRepository.deleteById(idUser);
+    }
+
+    @Override
     public Optional<User> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }

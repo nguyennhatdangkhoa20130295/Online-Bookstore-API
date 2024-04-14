@@ -12,8 +12,13 @@ public interface UserService {
     void addUser(String username, String password, String email,
             int role, String avatar, String fullName, String phone,
             int locked, int isSocial);
+    void editUser(int id, String email,
+             int role, String avatar, String fullName, String phone,
+             int locked, int isSocial);
     Page<User> findAllUsers(int page, int size, String sort, String order, String filter);
     Optional<User> getUserByUsername(String username);
     boolean checkIfUsernameExists(String username);
     boolean checkIfEmailExists(String email);
+
+    void deleteUser(int idUser);
 }

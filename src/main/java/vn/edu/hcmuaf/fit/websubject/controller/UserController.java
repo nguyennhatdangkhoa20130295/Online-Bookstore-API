@@ -13,6 +13,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddUserRequest;
+import vn.edu.hcmuaf.fit.websubject.payload.request.EditUserRequest;
 import vn.edu.hcmuaf.fit.websubject.service.UserInfoService;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 import vn.edu.hcmuaf.fit.websubject.service.AddressService;
@@ -58,6 +59,17 @@ public class UserController {
         userService.addUser(addReq.getUsername(), addReq.getPassword(),addReq.getEmail(), addReq.getRole(),
                 addReq.getAvatar(), addReq.getFullName(), addReq.getPhone(), addReq.getLocked(), addReq.getIsSocial());
         return ResponseEntity.ok("Added user successfully");
+    }
+    @PutMapping("/edit/{idUser}")
+    public ResponseEntity<String> editUser(@RequestBody EditUserRequest editReq, @PathVariable int idUser) {
+        userService.editUser(idUser, editReq.getEmail(), editReq.getRole(),
+                editReq.getAvatar(), editReq.getFullName(), editReq.getPhone(), editReq.getLocked(), editReq.getIsSocial());
+        return ResponseEntity.ok("Edit user successfully");
+    }
+    @DeleteMapping("/delete/{idUser}")
+    public ResponseEntity<String> deleteUser(@PathVariable int idUser) {
+        userService.deleteUser(idUser);
+        return ResponseEntity.ok("Delete user successfully");
     }
     @PatchMapping("/info/{id}")
     public ResponseEntity<?> changeInformation(@PathVariable Integer id, @RequestBody UserInfo userInfo) {

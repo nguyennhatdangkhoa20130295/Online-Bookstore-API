@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
     Page<User> findAll(Specification<User> specification, Pageable pageable);
+    Optional<User> findById(Integer id);
 
     Optional<User> findByUsername(String username);
   
@@ -20,4 +21,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
+
 }
