@@ -1,10 +1,9 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.sql.Date;
 
 @Getter
 @Setter
@@ -20,4 +19,17 @@ public class BlogCategory {
     @JoinColumn(name = "name")
     private String name;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User created_by;
+
+    @Column(name = "created_at")
+    private Date created_at;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by")
+    private User updated_by;
+
+    @Column(name = "updated_at")
+    private Date updated_at;
 }
