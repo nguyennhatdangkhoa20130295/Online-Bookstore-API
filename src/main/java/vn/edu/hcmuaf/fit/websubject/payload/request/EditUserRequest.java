@@ -15,6 +15,6 @@ public class EditUserRequest {
     String avatar;
     String fullName;
     String phone;
-    int locked;
-    int isSocial;
+    String locked;
+    String isSocial;
 }

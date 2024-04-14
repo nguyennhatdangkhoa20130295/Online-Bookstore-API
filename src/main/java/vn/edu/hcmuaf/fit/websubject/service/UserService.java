@@ -9,12 +9,14 @@ import java.util.Optional;
 
 public interface UserService {
     Page<User> getAllUsers(int page, int perPage);
+    Optional<User> getUserById(int idUser);
+
     void addUser(String username, String password, String email,
             int role, String avatar, String fullName, String phone,
-            int locked, int isSocial);
-    void editUser(int id, String email,
+                 String locked, String isSocial);
+    User editUser(int id, String email,
              int role, String avatar, String fullName, String phone,
-             int locked, int isSocial);
+                  String locked, String isSocial);
     Page<User> findAllUsers(int page, int size, String sort, String order, String filter);
     Optional<User> getUserByUsername(String username);
     boolean checkIfUsernameExists(String username);

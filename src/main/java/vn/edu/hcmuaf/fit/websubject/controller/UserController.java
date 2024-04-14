@@ -8,8 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Address;
-import vn.edu.hcmuaf.fit.websubject.entity.Blog;
-import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddUserRequest;
@@ -54,6 +52,15 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/{idUser}")
+    public ResponseEntity<Optional<User>> getUserInformation(@PathVariable int idUser) {
+        Optional<User> user = userService.getUserById(idUser);
+        if (user.isPresent()) {
+            return ResponseEntity.ok().body(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
     @PostMapping("/add")
     public ResponseEntity<String> addUser(@RequestBody AddUserRequest addReq) {
         userService.addUser(addReq.getUsername(), addReq.getPassword(),addReq.getEmail(), addReq.getRole(),
@@ -61,10 +68,14 @@ public class UserController {
         return ResponseEntity.ok("Added user successfully");
     }
     @PutMapping("/edit/{idUser}")
-    public ResponseEntity<String> editUser(@RequestBody EditUserRequest editReq, @PathVariable int idUser) {
-        userService.editUser(idUser, editReq.getEmail(), editReq.getRole(),
+    public ResponseEntity<User> editUser(@RequestBody EditUserRequest editReq, @PathVariable Integer idUser) {
+        User editedUser = userService.editUser(idUser, editReq.getEmail(), editReq.getRole(),
                 editReq.getAvatar(), editReq.getFullName(), editReq.getPhone(), editReq.getLocked(), editReq.getIsSocial());
-        return ResponseEntity.ok("Edit user successfully");
+        if (editedUser != null) {
+            return ResponseEntity.ok(editedUser);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
     @DeleteMapping("/delete/{idUser}")
     public ResponseEntity<String> deleteUser(@PathVariable int idUser) {
