@@ -12,6 +12,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
+import vn.edu.hcmuaf.fit.websubject.payload.request.AddUserRequest;
 import vn.edu.hcmuaf.fit.websubject.service.UserInfoService;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 import vn.edu.hcmuaf.fit.websubject.service.AddressService;
@@ -52,7 +53,12 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    @PostMapping("/add")
+    public ResponseEntity<String> addUser(@RequestBody AddUserRequest addReq) {
+        userService.addUser(addReq.getUsername(), addReq.getPassword(),addReq.getEmail(), addReq.getRole(),
+                addReq.getAvatar(), addReq.getFullName(), addReq.getPhone(), addReq.getLocked(), addReq.getIsSocial());
+        return ResponseEntity.ok("Added user successfully");
+    }
     @PatchMapping("/info/{id}")
     public ResponseEntity<?> changeInformation(@PathVariable Integer id, @RequestBody UserInfo userInfo) {
         userInfoService.changeInformation(id, userInfo);
