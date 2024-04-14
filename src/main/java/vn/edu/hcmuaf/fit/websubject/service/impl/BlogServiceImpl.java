@@ -89,7 +89,7 @@ public class BlogServiceImpl implements BlogService {
                 BlogCategory presentBlogCate = blogCategory.get();
                 Blog newBlog = new Blog();
                 newBlog.setBlogCate(presentBlogCate);
-                newBlog.setCreator(currentUser);
+                newBlog.setCreated_by(currentUser);
                 newBlog.setTitle(title);
                 newBlog.setContent(content);
                 newBlog.setImage(image);
@@ -105,7 +105,7 @@ public class BlogServiceImpl implements BlogService {
                     BlogCategory presentBlogCate = newCate.get();
                     Blog newBlog = new Blog();
                     newBlog.setBlogCate(presentBlogCate);
-                    newBlog.setCreator(currentUser);
+                    newBlog.setCreated_by(currentUser);
                     newBlog.setTitle(title);
                     newBlog.setContent(content);
                     newBlog.setImage(image);
