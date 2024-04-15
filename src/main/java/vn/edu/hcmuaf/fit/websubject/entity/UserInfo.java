@@ -1,10 +1,11 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Getter
 @Setter
