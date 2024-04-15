@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,6 +17,8 @@ public class EditUserRequest {
     String avatar;
     String fullName;
     String phone;
+    String gender;
+    Date dateOfBirth;
     String locked;
     String isSocial;
 }

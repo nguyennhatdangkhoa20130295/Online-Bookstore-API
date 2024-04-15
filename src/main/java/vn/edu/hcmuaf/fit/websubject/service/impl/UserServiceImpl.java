@@ -13,14 +13,15 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
-import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.UserInfoRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -29,15 +30,17 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private UserInfoRepository userInfoRepository;
     private RoleRepository roleRepository;
 
     private PasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, UserInfoRepository userInfoRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
+        this.userInfoRepository = userInfoRepository;
     }
 
     public Page<User> getAllUsers(int page, int perPage) {
@@ -46,8 +49,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserById(int idUser) {
-        return userRepository.findById(idUser);
+    public UserShow getUserById(int idUser) {
+        UserShow userShow = new UserShow();
+        Optional<User> userOptional = userRepository.findById(idUser);
+        if (userOptional.isPresent()) {
+            userShow.setId(userOptional.get().getId());
+            userShow.setUsername(userOptional.get().getUsername());
+            userShow.setPassword(userOptional.get().getPassword());
+            userShow.setEmail(userOptional.get().getEmail());
+            userShow.setRole(userOptional.get().getRoles().iterator().next().getId());
+            userShow.setAvatar(userOptional.get().getUserInfo().getAvatar());
+            userShow.setFullName(userOptional.get().getUserInfo().getFullName());
+            userShow.setGender(userOptional.get().getUserInfo().getGender());
+            userShow.setDateOfBirth(userOptional.get().getUserInfo().getDateOfBirth());
+            userShow.setPhone(userOptional.get().getUserInfo().getPhoneNumber());
+            userShow.setLocked(userOptional.get().getLocked());
+            userShow.setIsSocial(userOptional.get().getIsSocial());
+            userShow.setCreatedAt(userOptional.get().getCreatedAt());
+            userShow.setUpdatedAt(userOptional.get().getUpdatedAt());
+        }
+        return userShow;
     }
 
     public Page<User> findAllUsers(int page, int size, String sort, String order, String filter) {
@@ -80,14 +101,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addUser(String username, String password, String email,
-                        int role, String avatar, String fullName, String phone,
-                        String locked, String isSocial) {
+                        int role, String avatar, String fullName, String gender, Date dateOfBirth,
+                        String phone, String locked, String isSocial) {
         if (userRepository.existsByUsername(username)) {
             System.out.println("Username is already taken!");
         } else if (userRepository.existsByEmail(email)) {
             System.out.println("Email is already in use!");
         } else {
             User user = new User();
+            user.getUserInfo().setGender(gender);
+            user.getUserInfo().setDateOfBirth(dateOfBirth);
+            user.getUserInfo().setAvatar(avatar);
             user.setUsername(username);
             user.setPassword(encoder.encode(password));
             user.setEmail(email);
@@ -137,7 +161,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User editUser(int id, String email,
-                         int role, String avatar, String fullName, String phone,
+                         int role, String avatar, String fullName, String phone, String gender, Date dateOfBirth,
                          String locked, String isSocial) {
         User newInforUser = null;
         Optional<User> userOptional = userRepository.findById(id);
@@ -145,7 +169,10 @@ public class UserServiceImpl implements UserService {
             newInforUser = userOptional.get();
             newInforUser.setEmail(email);
             newInforUser.getUserInfo().setFullName(fullName);
+            newInforUser.getUserInfo().setGender(gender);
+            newInforUser.getUserInfo().setDateOfBirth(dateOfBirth);
             newInforUser.getUserInfo().setPhoneNumber(phone);
+            newInforUser.getUserInfo().setAvatar(avatar);
             newInforUser.getRoles().clear();
             Set<Role> roles = new HashSet<>();
             switch (role) {
@@ -174,7 +201,6 @@ public class UserServiceImpl implements UserService {
             }
 
             newInforUser.setRoles(roles);
-            newInforUser.getUserInfo().setAvatar(avatar);
             newInforUser.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
             if (locked.equals("false"))
                 newInforUser.setLocked(false);

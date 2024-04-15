@@ -54,11 +54,9 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @Column(name = "created_at")
-    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy")
     private Date createdAt;
 
     @Column(name = "updated_at")
-    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy")
     private Date updatedAt;
 
     @Column(name = "locked")
