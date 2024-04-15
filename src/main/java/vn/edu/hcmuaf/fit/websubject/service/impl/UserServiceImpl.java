@@ -92,17 +92,14 @@ public class UserServiceImpl implements UserService {
             System.out.println("Email is already in use!");
         } else {
             User user = new User();
-            UserInfo userInfo = new UserInfo();
-            userInfo.setFull_name(fullName);
-            userInfo.setGender(gender);
-            userInfo.setDate_of_birth(dateOfBirth);
-            userInfo.setPhone_number(phone);
-            userInfo.setAvatar(avatar);
-
+            user.getUserInfo().setGender(gender);
+            user.getUserInfo().setDateOfBirth(dateOfBirth);
+            user.getUserInfo().setAvatar(avatar);
             user.setUsername(username);
             user.setPassword(encoder.encode(password));
             user.setEmail(email);
-            user.setUserInfo(userInfo);
+            user.getUserInfo().setFullName(fullName);
+            user.getUserInfo().setPhoneNumber(phone);
             Set<Role> roles = new HashSet<>();
             switch (role) {
                 case 1:
@@ -130,6 +127,7 @@ public class UserServiceImpl implements UserService {
             }
 
             user.setRoles(roles);
+            user.getUserInfo().setAvatar(avatar);
             user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
             user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
             if (locked.equals("false"))
@@ -149,18 +147,15 @@ public class UserServiceImpl implements UserService {
                          int role, String avatar, String fullName, String phone, String gender, Date dateOfBirth,
                          String locked, String isSocial) {
         User newInforUser = null;
-        UserInfo newInforUserInfo = null;
         Optional<User> userOptional = userRepository.findById(id);
-        Optional<UserInfo> userInfoOptional = userInfoRepository.findByUserId(id);
-        if (userOptional.isPresent() && userInfoOptional.isPresent()) {
+        if (userOptional.isPresent()) {
             newInforUser = userOptional.get();
-            newInforUserInfo = userInfoOptional.get();
                 newInforUser.setEmail(email);
-                newInforUserInfo.setFull_name(fullName);
-                newInforUserInfo.setGender(gender);
-                newInforUserInfo.setDate_of_birth(dateOfBirth);
-                newInforUserInfo.setPhone_number(phone);
-                newInforUserInfo.setAvatar(avatar);
+                newInforUser.getUserInfo().setFullName(fullName);
+                newInforUser.getUserInfo().setGender(gender);
+                newInforUser.getUserInfo().setDateOfBirth(dateOfBirth);
+                newInforUser.getUserInfo().setPhoneNumber(phone);
+                newInforUser.getUserInfo().setAvatar(avatar);
                 newInforUser.getRoles().clear();
                 Set<Role> roles = new HashSet<>();
                 switch (role) {
@@ -198,7 +193,6 @@ public class UserServiceImpl implements UserService {
                     newInforUser.setIsSocial(false);
                 else
                     newInforUser.setIsSocial(true);
-                userInfoRepository.save(newInforUserInfo);
                 userRepository.save(newInforUser);
         }
         return newInforUser;

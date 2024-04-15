@@ -21,16 +21,16 @@ public class UserInfo {
     private Integer id;
 
     @Column(name = "full_name")
-    private String full_name;
+    private String fullName;
 
     @Column(name = "phone_number")
-    private String phone_number;
+    private String phoneNumber;
 
     @Column(name = "gender")
     private String gender;
 
     @Column(name = "date_of_birth")
-    private Date date_of_birth;
+    private Date dateOfBirth;
 
     @Column(name = "avatar")
     private String avatar;

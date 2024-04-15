@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.fit.websubject.service;
 
+import org.springframework.data.domain.Page;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
 
 import java.util.List;
@@ -7,6 +8,8 @@ import java.util.Optional;
 
 public interface CategoryService {
     List<Category> getAllCategories();
+
+    Page<Category> getAllCategories(int page, int perPage, String sortBy, String filter, String order);
 
     List<Category> getMainCategories();
 
