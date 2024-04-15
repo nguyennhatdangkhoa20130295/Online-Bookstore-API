@@ -70,6 +70,10 @@ public class CategoryServiceImpl implements CategoryService {
                     );
                 }
             }
+            if (filterJson.has("active")) {
+                Boolean active = Boolean.valueOf(filterJson.get("active").asText());
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("active"), active));
+            }
 
             return predicate;
         };
@@ -88,12 +92,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getMainCategories() {
-        return categoryRepository.findByParentIdIsNull();
+        return categoryRepository.findByParentIdIsNullAndActiveTrue();
     }
 
     @Override
     public List<Category> getSubCategories(Integer parentId) {
-        return categoryRepository.findByParentId(parentId);
+        return categoryRepository.findByParentIdAndActiveTrue(parentId);
     }
 
     @Override
@@ -115,6 +119,7 @@ public class CategoryServiceImpl implements CategoryService {
                 newCategory.setParentId(category.getParentId());
                 newCategory.setCreatedBy(currentUser);
                 newCategory.setCreatedAt(getCurrentTimeInVietnam());
+                newCategory.setActive(category.isActive());
                 return categoryRepository.save(newCategory);
             } else {
                 System.out.println("Không thể tạo danh mục mới");
@@ -127,12 +132,30 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category updateCategory(Integer id, Category category) {
-        if (categoryRepository.existsById(id)) {
-            category.setId(id);
-            return categoryRepository.save(category);
-        } else {
-            return null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+        System.out.println(customUserDetails);
+        Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
         }
+
+        User currentUser = userOptional.get();
+
+        Optional<Category> existingCategoryOptional = categoryRepository.findById(id);
+
+        if (existingCategoryOptional.isEmpty()) {
+            throw new RuntimeException("Category not found");
+        }
+
+        Category updatingCategory = existingCategoryOptional.get();
+        updatingCategory.setName(category.getName());
+        updatingCategory.setParentId(category.getParentId());
+        updatingCategory.setUpdatedBy(currentUser);
+        updatingCategory.setUpdatedAt(getCurrentTimeInVietnam());
+        updatingCategory.setActive(category.isActive());
+
+        return categoryRepository.save(updatingCategory);
     }
 
     @Override
