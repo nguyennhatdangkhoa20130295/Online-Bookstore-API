@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Address;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
+import vn.edu.hcmuaf.fit.websubject.entity.UserShow;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddUserRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.EditUserRequest;
 import vn.edu.hcmuaf.fit.websubject.service.UserInfoService;
@@ -53,9 +54,9 @@ public class UserController {
         }
     }
     @GetMapping("/{idUser}")
-    public ResponseEntity<Optional<User>> getUserInformation(@PathVariable int idUser) {
-        Optional<User> user = userService.getUserById(idUser);
-        if (user.isPresent()) {
+    public ResponseEntity<UserShow> getUserInformation(@PathVariable int idUser) {
+        UserShow user = userService.getUserById(idUser);
+        if (!user.equals(null)) {
             return ResponseEntity.ok().body(user);
         } else {
             return ResponseEntity.notFound().build();
