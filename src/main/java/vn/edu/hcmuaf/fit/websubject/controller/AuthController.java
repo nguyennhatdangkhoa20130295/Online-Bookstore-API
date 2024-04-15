@@ -144,7 +144,7 @@ public class AuthController {
         }
 
         user.setRoles(roles);
-        user.setAvatar("https://cdn-icons-png.flaticon.com/512/6596/6596121.png");
+        user.getUserInfo().setAvatar("https://cdn-icons-png.flaticon.com/512/6596/6596121.png");
         user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
         user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
         user.setLocked(false);

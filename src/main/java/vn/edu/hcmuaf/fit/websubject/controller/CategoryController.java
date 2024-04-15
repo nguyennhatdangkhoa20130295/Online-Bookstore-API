@@ -26,7 +26,7 @@ public class CategoryController {
     public ResponseEntity<Page<Category>> getAllCategories(@RequestParam(defaultValue = "0") int page,
                                                            @RequestParam(defaultValue = "10") int perPage,
                                                            @RequestParam(defaultValue = "id") String sort,
-                                                           @RequestParam(defaultValue = "") String filter,
+                                                           @RequestParam(defaultValue = "{}") String filter,
                                                            @RequestParam(defaultValue = "ASC") String order) {
         Page<Category> categories = categoryService.getAllCategories(page, perPage, sort, filter, order);
         return ResponseEntity.ok(categories);
@@ -45,14 +45,10 @@ public class CategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable Integer id) {
         Optional<Category> categoryOptional = categoryService.getCategoryById(id);
-        if (categoryOptional.isPresent()) {
-            return ResponseEntity.ok(categoryOptional.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return categoryOptional.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
         Category createdCategory = categoryService.createCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);

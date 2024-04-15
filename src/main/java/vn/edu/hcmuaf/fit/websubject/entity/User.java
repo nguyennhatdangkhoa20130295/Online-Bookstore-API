@@ -53,15 +53,6 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @Column(name = "full_name")
-    private String fullName;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
-    @Column(name = "avatar")
-    private String avatar;
-
     @Column(name = "created_at")
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy")
     private Date createdAt;

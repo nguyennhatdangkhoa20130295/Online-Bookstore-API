@@ -1,5 +1,6 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,6 +36,7 @@ public class Blog {
     @JoinColumn(name = "created_by")
     private User created_by;
 
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     @Column(name = "created_at")
     private Date created_at;
 
@@ -43,6 +45,7 @@ public class Blog {
     @JoinColumn(name = "updated_by")
     private User update_by;
 
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     @Column(name = "updated_at")
     private Date updated_at;
 
