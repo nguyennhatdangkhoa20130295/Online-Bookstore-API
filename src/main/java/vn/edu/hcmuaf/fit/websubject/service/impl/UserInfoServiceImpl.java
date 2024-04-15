@@ -22,17 +22,17 @@ public class UserInfoServiceImpl implements UserInfoService {
     public UserInfo changeInformation(Integer id, UserInfo userInfo) {
         Optional<UserInfo> info = userInfoRepository.findById(id);
         if (info.isPresent()) {
-            if (userInfo.getFull_name() != null) {
-                info.get().setFull_name(userInfo.getFull_name());
+            if (userInfo.getFullName() != null) {
+                info.get().setFullName(userInfo.getFullName());
             }
-            if (userInfo.getPhone_number() != null) {
-                info.get().setPhone_number(userInfo.getPhone_number());
+            if (userInfo.getPhoneNumber() != null) {
+                info.get().setPhoneNumber(userInfo.getPhoneNumber());
             }
             if (userInfo.getGender() != null) {
                 info.get().setGender(userInfo.getGender());
             }
-            if (userInfo.getDate_of_birth() != null) {
-                info.get().setDate_of_birth(userInfo.getDate_of_birth());
+            if (userInfo.getDateOfBirth() != null) {
+                info.get().setDateOfBirth(userInfo.getDateOfBirth());
             }
             if (userInfo.getAvatar() != null) {
                 info.get().setAvatar(userInfo.getAvatar());

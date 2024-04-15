@@ -11,9 +11,11 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
-    List<Category> findByParentCategoryId(Integer parentId);
+    List<Category> findByParentId(Integer parentId);
 
-    List<Category> findByParentCategoryIsNull();
+    List<Category> findByParentIdIsNull();
 
     Page<Category> findAll(Specification<Category> specification, Pageable pageable);
+
+    boolean existsByNameAndParentId(String name, Integer parentId);
 }

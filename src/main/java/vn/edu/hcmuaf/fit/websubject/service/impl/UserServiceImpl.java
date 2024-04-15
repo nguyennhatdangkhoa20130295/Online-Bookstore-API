@@ -86,8 +86,8 @@ public class UserServiceImpl implements UserService {
             user.setUsername(username);
             user.setPassword(encoder.encode(password));
             user.setEmail(email);
-            user.setFullName(fullName);
-            user.setPhoneNumber(phone);
+            user.getUserInfo().setFullName(fullName);
+            user.getUserInfo().setPhoneNumber(phone);
             Set<Role> roles = new HashSet<>();
             switch (role) {
                 case 1:
@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
             }
 
             user.setRoles(roles);
-            user.setAvatar(avatar);
+            user.getUserInfo().setAvatar(avatar);
             user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
             user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
             if (locked == 1)
