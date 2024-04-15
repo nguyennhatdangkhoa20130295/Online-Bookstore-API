@@ -64,13 +64,15 @@ public class UserController {
     @PostMapping("/add")
     public ResponseEntity<String> addUser(@RequestBody AddUserRequest addReq) {
         userService.addUser(addReq.getUsername(), addReq.getPassword(),addReq.getEmail(), addReq.getRole(),
-                addReq.getAvatar(), addReq.getFullName(), addReq.getPhone(), addReq.getLocked(), addReq.getIsSocial());
+                addReq.getAvatar(), addReq.getFullName(), addReq.getGender(), addReq.getDateOfBirth(),
+                addReq.getPhone(), addReq.getLocked(), addReq.getIsSocial());
         return ResponseEntity.ok("Added user successfully");
     }
     @PutMapping("/edit/{idUser}")
     public ResponseEntity<User> editUser(@RequestBody EditUserRequest editReq, @PathVariable Integer idUser) {
         User editedUser = userService.editUser(idUser, editReq.getEmail(), editReq.getRole(),
-                editReq.getAvatar(), editReq.getFullName(), editReq.getPhone(), editReq.getLocked(), editReq.getIsSocial());
+                editReq.getAvatar(), editReq.getFullName(), editReq.getPhone(),
+                editReq.getGender(), editReq.getDateOfBirt(), editReq.getLocked(), editReq.getIsSocial());
         if (editedUser != null) {
             return ResponseEntity.ok(editedUser);
         } else {

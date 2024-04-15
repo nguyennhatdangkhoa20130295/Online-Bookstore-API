@@ -30,6 +30,7 @@ import vn.edu.hcmuaf.fit.websubject.payload.response.JwtResponse;
 import vn.edu.hcmuaf.fit.websubject.payload.response.MessageResponse;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.UserInfoRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.EmailService;
 import vn.edu.hcmuaf.fit.websubject.service.OTPService;
@@ -47,6 +48,9 @@ public class AuthController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    UserInfoRepository userInfoRepository;
 
     @Autowired
     RoleRepository roleRepository;
@@ -144,11 +148,15 @@ public class AuthController {
         }
 
         user.setRoles(roles);
-        user.setAvatar("https://cdn-icons-png.flaticon.com/512/6596/6596121.png");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setFull_name(signUpRequest.getUsername());
+        userInfo.setAvatar("https://cdn-icons-png.flaticon.com/512/6596/6596121.png");
         user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
         user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
         user.setLocked(false);
         user.setIsSocial(false);
+        user.setUserInfo(userInfo);
+        userInfoRepository.save(userInfo);
         userRepository.save(user);
 //        var jwtToken = jwtUtils.generateJwtToken((Authentication) user);
 //        revokeAllUserToken(saveUser);

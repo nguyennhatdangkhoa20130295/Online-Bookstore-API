@@ -17,10 +17,12 @@ import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.UserInfoRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -29,15 +31,17 @@ import java.util.Set;
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
+    private UserInfoRepository userInfoRepository;
     private RoleRepository roleRepository;
 
     private PasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, UserInfoRepository userInfoRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
+        this.userInfoRepository = userInfoRepository;
     }
 
     public Page<User> getAllUsers(int page, int perPage) {
@@ -80,19 +84,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addUser(String username, String password, String email,
-                        int role, String avatar, String fullName, String phone,
-                        String locked, String isSocial) {
+                        int role, String avatar, String fullName,String gender, Date dateOfBirth,
+                        String phone, String locked, String isSocial) {
         if (userRepository.existsByUsername(username)) {
             System.out.println("Username is already taken!");
         } else if (userRepository.existsByEmail(email)) {
             System.out.println("Email is already in use!");
         } else {
             User user = new User();
+            UserInfo userInfo = new UserInfo();
+            userInfo.setFull_name(fullName);
+            userInfo.setGender(gender);
+            userInfo.setDate_of_birth(dateOfBirth);
+            userInfo.setPhone_number(phone);
+            userInfo.setAvatar(avatar);
+
             user.setUsername(username);
             user.setPassword(encoder.encode(password));
             user.setEmail(email);
-            user.setFullName(fullName);
-            user.setPhoneNumber(phone);
+            user.setUserInfo(userInfo);
             Set<Role> roles = new HashSet<>();
             switch (role) {
                 case 1:
@@ -120,7 +130,6 @@ public class UserServiceImpl implements UserService {
             }
 
             user.setRoles(roles);
-            user.setAvatar(avatar);
             user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
             user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
             if (locked.equals("false"))
@@ -137,15 +146,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User editUser(int id, String email,
-                         int role, String avatar, String fullName, String phone,
+                         int role, String avatar, String fullName, String phone, String gender, Date dateOfBirth,
                          String locked, String isSocial) {
         User newInforUser = null;
+        UserInfo newInforUserInfo = null;
         Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) {
+        Optional<UserInfo> userInfoOptional = userInfoRepository.findByUserId(id);
+        if (userOptional.isPresent() && userInfoOptional.isPresent()) {
             newInforUser = userOptional.get();
+            newInforUserInfo = userInfoOptional.get();
                 newInforUser.setEmail(email);
-                newInforUser.setFullName(fullName);
-                newInforUser.setPhoneNumber(phone);
+                newInforUserInfo.setFull_name(fullName);
+                newInforUserInfo.setGender(gender);
+                newInforUserInfo.setDate_of_birth(dateOfBirth);
+                newInforUserInfo.setPhone_number(phone);
+                newInforUserInfo.setAvatar(avatar);
                 newInforUser.getRoles().clear();
                 Set<Role> roles = new HashSet<>();
                 switch (role) {
@@ -174,7 +189,6 @@ public class UserServiceImpl implements UserService {
                 }
 
                 newInforUser.setRoles(roles);
-                newInforUser.setAvatar(avatar);
                 newInforUser.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
                 if (locked.equals("false"))
                     newInforUser.setLocked(false);
@@ -184,6 +198,7 @@ public class UserServiceImpl implements UserService {
                     newInforUser.setIsSocial(false);
                 else
                     newInforUser.setIsSocial(true);
+                userInfoRepository.save(newInforUserInfo);
                 userRepository.save(newInforUser);
         }
         return newInforUser;
