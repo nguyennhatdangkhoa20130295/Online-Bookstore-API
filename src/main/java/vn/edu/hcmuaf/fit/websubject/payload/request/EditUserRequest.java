@@ -18,7 +18,7 @@ public class EditUserRequest {
     String fullName;
     String phone;
     String gender;
-    Date dateOfBirt;
+    Date dateOfBirth;
     String locked;
     String isSocial;
 }

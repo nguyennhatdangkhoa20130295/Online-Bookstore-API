@@ -72,7 +72,7 @@ public class UserController {
     public ResponseEntity<User> editUser(@RequestBody EditUserRequest editReq, @PathVariable Integer idUser) {
         User editedUser = userService.editUser(idUser, editReq.getEmail(), editReq.getRole(),
                 editReq.getAvatar(), editReq.getFullName(), editReq.getPhone(),
-                editReq.getGender(), editReq.getDateOfBirt(), editReq.getLocked(), editReq.getIsSocial());
+                editReq.getGender(), editReq.getDateOfBirth(), editReq.getLocked(), editReq.getIsSocial());
         if (editedUser != null) {
             return ResponseEntity.ok(editedUser);
         } else {
