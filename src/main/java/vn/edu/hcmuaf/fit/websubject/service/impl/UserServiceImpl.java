@@ -143,48 +143,48 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isPresent()) {
             newInforUser = userOptional.get();
-                newInforUser.setEmail(email);
-                newInforUser.setFullName(fullName);
-                newInforUser.setPhoneNumber(phone);
-                newInforUser.getRoles().clear();
-                Set<Role> roles = new HashSet<>();
-                switch (role) {
-                    case 1:
-                        Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
+            newInforUser.setEmail(email);
+            newInforUser.getUserInfo().setFullName(fullName);
+            newInforUser.getUserInfo().setPhoneNumber(phone);
+            newInforUser.getRoles().clear();
+            Set<Role> roles = new HashSet<>();
+            switch (role) {
+                case 1:
+                    Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(adminRole);
 
-                        break;
-                    case 2:
-                        Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(modRole);
+                    break;
+                case 2:
+                    Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(modRole);
 
-                        break;
-                    case 3:
-                        Role userRole = roleRepository.findByDescription(EnumRole.USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
+                    break;
+                case 3:
+                    Role userRole = roleRepository.findByDescription(EnumRole.USER)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(userRole);
 
-                        break;
-                    default:
-                        Role userR = roleRepository.findByDescription(EnumRole.USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userR);
-                }
+                    break;
+                default:
+                    Role userR = roleRepository.findByDescription(EnumRole.USER)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(userR);
+            }
 
-                newInforUser.setRoles(roles);
-                newInforUser.setAvatar(avatar);
-                newInforUser.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-                if (locked.equals("false"))
-                    newInforUser.setLocked(false);
-                else
-                    newInforUser.setLocked(true);
-                if (isSocial.equals("false"))
-                    newInforUser.setIsSocial(false);
-                else
-                    newInforUser.setIsSocial(true);
-                userRepository.save(newInforUser);
+            newInforUser.setRoles(roles);
+            newInforUser.getUserInfo().setAvatar(avatar);
+            newInforUser.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            if (locked.equals("false"))
+                newInforUser.setLocked(false);
+            else
+                newInforUser.setLocked(true);
+            if (isSocial.equals("false"))
+                newInforUser.setIsSocial(false);
+            else
+                newInforUser.setIsSocial(true);
+            userRepository.save(newInforUser);
         }
         return newInforUser;
     }
