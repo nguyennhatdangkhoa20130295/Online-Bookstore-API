@@ -20,8 +20,9 @@ public class Category {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "parent_id")
-    private Integer parentId;
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Category parentCategory;
 
     @Column(name = "name")
     private String name;
@@ -44,7 +45,7 @@ public class Category {
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     private Date updatedAt;
 
-    @Column(name = "active")
+    @Column(name = "active", columnDefinition = "boolean default true")
     private boolean active;
 
     @JsonBackReference

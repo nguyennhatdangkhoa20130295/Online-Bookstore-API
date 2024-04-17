@@ -12,13 +12,13 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Integer> {
-    List<Category> findByParentIdAndActiveTrue(Integer parentId);
+    List<Category> findByParentCategoryIdAndActiveTrue(Integer parentId);
 
-    List<Category> findByParentIdIsNullAndActiveTrue();
+    List<Category> findByParentCategoryIsNullAndActiveTrue();
 
     Page<Category> findAll(Specification<Category> specification, Pageable pageable);
 
-    boolean existsByNameAndParentId(String name, Integer parentId);
+    boolean existsByNameAndParentCategory(String name, Category parentCategory);
 
 
 }
