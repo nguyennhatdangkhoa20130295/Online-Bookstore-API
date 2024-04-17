@@ -24,18 +24,18 @@ public class BlogCategory {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
-    private User created_by;
+    private User createdBy;
 
     @Column(name = "created_at")
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
-    private Date created_at;
+    private Date createdAt;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "updated_by")
-    private User updated_by;
+    private User updatedBy;
 
     @Column(name = "updated_at")
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
-    private Date updated_at;
+    private Date updatedAt;
 }

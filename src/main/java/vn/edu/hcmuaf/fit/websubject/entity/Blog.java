@@ -21,7 +21,7 @@ public class Blog {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne
     @JoinColumn(name = "blog_cate_id")
-    private BlogCategory BlogCate;
+    private BlogCategory blogCate;
 
     private String image;
 
@@ -34,19 +34,19 @@ public class Blog {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne
     @JoinColumn(name = "created_by")
-    private User created_by;
+    private User createdBy;
 
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     @Column(name = "created_at")
-    private Date created_at;
+    private Date createdAt;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne
     @JoinColumn(name = "updated_by")
-    private User update_by;
+    private User updateBy;
 
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     @Column(name = "updated_at")
-    private Date updated_at;
+    private Date updatedAt;
 
 }

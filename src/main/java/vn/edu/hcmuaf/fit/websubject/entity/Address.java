@@ -1,7 +1,11 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Date;
 
 @Getter
 @Setter
@@ -22,22 +26,30 @@ public class Address {
     private User user;
 
     @Column(name = "full_name")
-    private String full_name;
+    private String fullName;
 
     @Column(name = "phone_number")
-    private String phone_number;
+    private String phoneNumber;
 
     @Column(name = "hnum_sname")
-    private String hnum_sname;
+    private String hnumSname;
 
     @Column(name = "ward_commune")
-    private String ward_commune;
+    private String wardCommune;
 
     @Column(name = "county_district")
-    private String county_district;
+    private String countyDistrict;
 
     @Column(name = "province_city")
     private String province_city;
+
+    @Column(name = "created_at")
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+    private Date createdAt;
+
+    @Column(name = "updated_at")
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+    private Date updatedAt;
 
     @Column(name = "is_default")
     private boolean isDefault;

@@ -1,11 +1,9 @@
 package vn.edu.hcmuaf.fit.websubject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.service.ProductService;
 
@@ -19,9 +17,19 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<Product>> getAllProducts(@RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "24") int perPage,
+                                                        @RequestParam(defaultValue = "id") String sort,
+                                                        @RequestParam(defaultValue = "{}") String filter,
+                                                        @RequestParam(defaultValue = "DESC") String order) {
+        Page<Product> products = productService.getAllProducts(page, perPage, sort, filter, order);
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/{id}")
@@ -43,7 +51,7 @@ public class ProductController {
     }
 
     @GetMapping("/latest")
-    public List<Product> getThreeLatestProduct(){
+    public List<Product> getThreeLatestProduct() {
         return productService.getThreeLatestProduct();
     }
 

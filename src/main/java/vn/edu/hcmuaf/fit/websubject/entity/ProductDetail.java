@@ -23,7 +23,7 @@ public class ProductDetail {
     private Product product;
 
     @Column(name = "product_sku")
-    private String product_sku;
+    private String productSku;
 
     @Column(name = "supplier")
     private String supplier;
@@ -53,7 +53,7 @@ public class ProductDetail {
     private String size;
 
     @Column(name = "quantity_of_page")
-    private int quantity_of_page;
+    private int quantityOfPage;
 
     @Column(name = "description")
     private String description;
