@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface CategoryService {
     List<Category> getAllCategories();
 
-    Page<Category> getAllCategories(int page, int perPage, String sortBy, String filter, String order);
+    Page<Category> getAllCategories(int page, int perPage, String sort, String filter, String order);
 
     List<Category> getMainCategories();
 

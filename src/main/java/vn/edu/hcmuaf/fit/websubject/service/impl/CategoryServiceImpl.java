@@ -55,18 +55,18 @@ public class CategoryServiceImpl implements CategoryService {
             if (filterJson.has("name")) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("name"), "%" + filterJson.get("name").asText() + "%"));
             }
-            if (filterJson.has("parentId")) {
-                JsonNode parentIdNode = filterJson.get("parentId");
+            if (filterJson.has("parentCategory")) {
+                JsonNode parentCategoryNode = filterJson.get("parentCategory");
 
-                if (parentIdNode.isNull()) {
+                if (parentCategoryNode.isNull()) {
                     predicate = criteriaBuilder.and(
                             predicate,
-                            criteriaBuilder.isNull(root.get("parentId"))
+                            criteriaBuilder.isNull(root.get("parentCategory"))
                     );
                 } else {
                     predicate = criteriaBuilder.and(
                             predicate,
-                            criteriaBuilder.equal(root.get("parentId"), parentIdNode.asInt())
+                            criteriaBuilder.equal(root.get("parentCategory").get("id"), parentCategoryNode.asInt())
                     );
                 }
             }
@@ -92,12 +92,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getMainCategories() {
-        return categoryRepository.findByParentIdIsNullAndActiveTrue();
+        return categoryRepository.findByParentCategoryIsNullAndActiveTrue();
     }
 
     @Override
     public List<Category> getSubCategories(Integer parentId) {
-        return categoryRepository.findByParentIdAndActiveTrue(parentId);
+        return categoryRepository.findByParentCategoryIdAndActiveTrue(parentId);
     }
 
     @Override
@@ -112,11 +112,11 @@ public class CategoryServiceImpl implements CategoryService {
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
         if (user.isPresent()) {
             User currentUser = user.get();
-            boolean existedCategory = categoryRepository.existsByNameAndParentId(category.getName(), category.getParentId());
+            boolean existedCategory = categoryRepository.existsByNameAndParentCategory(category.getName(), category.getParentCategory());
             if (!existedCategory) {
                 Category newCategory = new Category();
                 newCategory.setName(category.getName());
-                newCategory.setParentId(category.getParentId());
+                newCategory.setParentCategory(category.getParentCategory());
                 newCategory.setCreatedBy(currentUser);
                 newCategory.setCreatedAt(getCurrentTimeInVietnam());
                 newCategory.setActive(category.isActive());
@@ -150,7 +150,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         Category updatingCategory = existingCategoryOptional.get();
         updatingCategory.setName(category.getName());
-        updatingCategory.setParentId(category.getParentId());
+        updatingCategory.setParentCategory(category.getParentCategory());
         updatingCategory.setUpdatedBy(currentUser);
         updatingCategory.setUpdatedAt(getCurrentTimeInVietnam());
         updatingCategory.setActive(category.isActive());
