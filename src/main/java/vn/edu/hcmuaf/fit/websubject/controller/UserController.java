@@ -7,12 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.hcmuaf.fit.websubject.entity.Address;
-import vn.edu.hcmuaf.fit.websubject.entity.User;
-import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
-import vn.edu.hcmuaf.fit.websubject.entity.UserShow;
+import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddUserRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.EditUserRequest;
+import vn.edu.hcmuaf.fit.websubject.service.FavoriteProductService;
 import vn.edu.hcmuaf.fit.websubject.service.UserInfoService;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 import vn.edu.hcmuaf.fit.websubject.service.AddressService;
@@ -33,6 +31,9 @@ public class UserController {
     @Autowired
     private AddressService addressService;
 
+    @Autowired
+    private FavoriteProductService favoriteProductService;
+
     @GetMapping("")
     public ResponseEntity<Page<User>> getAllBlogs(@RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "") String filter,
@@ -42,6 +43,7 @@ public class UserController {
         Page<User> users = userService.findAllUsers(page, perPage, sort, order, filter);
         return ResponseEntity.ok(users);
     }
+
     @GetMapping("/info")
     public ResponseEntity<?> getUserInformation() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -53,6 +55,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping("/{idUser}")
     public ResponseEntity<UserShow> getUserInformation(@PathVariable int idUser) {
         UserShow user = userService.getUserById(idUser);
@@ -62,13 +65,15 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PostMapping("/add")
     public ResponseEntity<String> addUser(@RequestBody AddUserRequest addReq) {
-        userService.addUser(addReq.getUsername(), addReq.getPassword(),addReq.getEmail(), addReq.getRole(),
+        userService.addUser(addReq.getUsername(), addReq.getPassword(), addReq.getEmail(), addReq.getRole(),
                 addReq.getAvatar(), addReq.getFullName(), addReq.getGender(), addReq.getDateOfBirth(),
                 addReq.getPhone(), addReq.getLocked(), addReq.getIsSocial());
         return ResponseEntity.ok("Added user successfully");
     }
+
     @PutMapping("/edit/{idUser}")
     public ResponseEntity<User> editUser(@RequestBody EditUserRequest editReq, @PathVariable Integer idUser) {
         User editedUser = userService.editUser(idUser, editReq.getEmail(), editReq.getRole(),
@@ -80,12 +85,20 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @DeleteMapping("/delete/{idUser}")
     public ResponseEntity<String> deleteUser(@PathVariable int idUser) {
         userService.deleteUser(idUser);
         return ResponseEntity.ok("Delete user successfully");
     }
-    @PatchMapping("/info/{id}")
+
+    @PostMapping("/info")
+    public ResponseEntity<?> changeInformation(@RequestBody UserInfo userInfo) {
+        userInfoService.createInformation(userInfo);
+        return ResponseEntity.ok("Information created successfully");
+    }
+
+    @PutMapping("/info/{id}")
     public ResponseEntity<?> changeInformation(@PathVariable Integer id, @RequestBody UserInfo userInfo) {
         userInfoService.changeInformation(id, userInfo);
         return ResponseEntity.ok("Information changed successfully");
@@ -146,5 +159,11 @@ public class UserController {
     public ResponseEntity<?> setDefaultAddress(@PathVariable Integer id) {
         addressService.setDefaultAddress(id);
         return ResponseEntity.ok("The user's address has been set by default");
+    }
+
+    @GetMapping("/favorites")
+    public ResponseEntity<?> getAllFavoriteProducts() {
+        List<FavoriteProduct> favoriteProducts = favoriteProductService.getAllFavoriteProducts();
+        return ResponseEntity.ok().body(favoriteProducts);
     }
 }

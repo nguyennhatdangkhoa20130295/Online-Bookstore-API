@@ -32,7 +32,7 @@ public class ProductDetail {
     private String publisher;
 
     @Column(name = "publish_year")
-    private String publish_year;
+    private String publishYear;
 
     @Column(name = "author")
     private String author;

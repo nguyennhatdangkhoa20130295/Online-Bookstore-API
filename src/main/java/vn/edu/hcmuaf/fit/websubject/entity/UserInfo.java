@@ -39,4 +39,12 @@ public class UserInfo {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+    @Column(name = "created_at")
+    private Date createdAt;
+
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+    @Column(name = "updated_at")
+    private Date updatedAt;
 }
