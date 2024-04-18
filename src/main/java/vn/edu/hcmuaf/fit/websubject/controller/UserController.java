@@ -166,4 +166,16 @@ public class UserController {
         List<FavoriteProduct> favoriteProducts = favoriteProductService.getAllFavoriteProducts();
         return ResponseEntity.ok().body(favoriteProducts);
     }
+
+    @PostMapping("/favorites/{productId}")
+    public ResponseEntity<?> addFavoriteProduct(@PathVariable Integer productId) {
+        FavoriteProduct favorite = favoriteProductService.addFavorite(productId);
+        return ResponseEntity.ok().body(favorite);
+    }
+
+    @DeleteMapping("/favorites/{id}")
+    public ResponseEntity<?> deleteFavoriteProduct(@PathVariable Integer id) {
+        favoriteProductService.deleteFavorite(id);
+        return ResponseEntity.noContent().build();
+    }
 }

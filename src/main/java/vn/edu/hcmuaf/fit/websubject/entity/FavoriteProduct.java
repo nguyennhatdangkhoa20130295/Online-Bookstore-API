@@ -21,7 +21,6 @@ public class FavoriteProduct {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
