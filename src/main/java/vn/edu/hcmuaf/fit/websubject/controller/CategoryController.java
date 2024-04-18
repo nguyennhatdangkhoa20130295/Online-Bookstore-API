@@ -50,7 +50,6 @@ public class CategoryController {
 
     @PostMapping("/add")
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
-        System.out.println(category);
         Category createdCategory = categoryService.createCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdCategory);
     }
