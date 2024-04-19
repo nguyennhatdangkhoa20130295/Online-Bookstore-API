@@ -32,13 +32,16 @@ public class Product {
     private String image;
 
     @Column(name = "old_price")
-    private Long oldPrice;
+    private Integer oldPrice;
 
     @Column(name = "current_price")
-    private Long currentPrice;
+    private Integer currentPrice;
 
-    @Column(name = "is_on_sale")
-    private boolean onSale;
+    @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "active")
+    private boolean active;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne(fetch = FetchType.LAZY)

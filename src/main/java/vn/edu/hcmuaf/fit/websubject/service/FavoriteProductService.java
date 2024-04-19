@@ -6,4 +6,8 @@ import java.util.List;
 
 public interface FavoriteProductService {
     List<FavoriteProduct> getAllFavoriteProducts();
+
+    FavoriteProduct addFavorite(Integer productId);
+
+    void deleteFavorite(Integer id);
 }

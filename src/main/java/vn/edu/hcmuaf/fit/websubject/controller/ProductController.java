@@ -55,4 +55,10 @@ public class ProductController {
         return productService.getThreeLatestProduct();
     }
 
+//    @PostMapping("/add")
+//    public ResponseEntity<?> saveProduct(@RequestBody Product product) {
+//        Product savedProduct = productService.addProduct(product);
+//        return ResponseEntity.ok(savedProduct);
+//    }
+
 }

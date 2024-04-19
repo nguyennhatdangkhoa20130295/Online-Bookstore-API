@@ -1,19 +1,28 @@
 package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Address;
+import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.repository.AddressRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.AddressService;
 
 import java.util.List;
 import java.util.Optional;
+
+import static vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime.getCurrentTimeInVietnam;
 
 @Service
 public class AddressServiceImpl implements AddressService {
 
     @Autowired
     AddressRepository addressRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public List<Address> getUserAddresses(Integer userId) {
@@ -27,6 +36,15 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address createAddress(Address address) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+        Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+        User user = userOptional.get();
+        address.setUser(user);
+        address.setCreatedAt(getCurrentTimeInVietnam());
         return addressRepository.save(address);
     }
 
