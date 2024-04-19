@@ -16,4 +16,5 @@ public interface ProductService {
     List<Product> getProductsByCategory(Integer categoryId);
 
     List<Product> getThreeLatestProduct();
+
 }

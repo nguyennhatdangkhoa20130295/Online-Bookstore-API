@@ -9,10 +9,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
+import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.repository.ProductDetailRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.ProductImageRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.ProductService;
 
 import java.nio.charset.StandardCharsets;
@@ -68,6 +74,5 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getThreeLatestProduct() {
         return productRepository.findTop3ByOrderByIdDesc();
     }
-
 
 }

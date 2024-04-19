@@ -139,6 +139,7 @@ public class UserController {
 
     @PostMapping("/addresses")
     public ResponseEntity<?> createAddress(@RequestBody Address address) {
+        System.out.println(address);
         Address createdAddress = addressService.createAddress(address);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAddress);
     }

@@ -19,5 +19,6 @@ public interface AddressService {
     Optional<Address> getAddressDefaultByUserId(Integer id);
 
     void setDefaultAddress(Integer id);
+
     void resetDefaultOtherAddress(int user_id, int selected_address_id);
 }
