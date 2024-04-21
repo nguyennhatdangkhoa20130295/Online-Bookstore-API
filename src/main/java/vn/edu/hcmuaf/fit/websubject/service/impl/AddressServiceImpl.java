@@ -50,12 +50,26 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address updateAddress(Integer id, Address address) {
-        if (addressRepository.existsById(id)) {
-            address.setId(id);
-            return addressRepository.save(address);
-        } else {
-            return null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+        Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
         }
+        Optional<Address> existingAddressOptional = addressRepository.findById(id);
+        if (existingAddressOptional.isEmpty()) {
+            throw new RuntimeException("Address not found");
+        }
+        Address updatingAddress = existingAddressOptional.get();
+        updatingAddress.setFullName(address.getFullName());
+        updatingAddress.setPhoneNumber(address.getPhoneNumber());
+        updatingAddress.setProvinceCity(address.getProvinceCity());
+        updatingAddress.setCountyDistrict(address.getCountyDistrict());
+        updatingAddress.setWardCommune(address.getWardCommune());
+        updatingAddress.setHnumSname(address.getHnumSname());
+        updatingAddress.setUpdatedAt(getCurrentTimeInVietnam());
+
+        return addressRepository.save(updatingAddress);
     }
 
     @Override
