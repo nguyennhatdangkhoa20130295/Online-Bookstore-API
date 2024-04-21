@@ -133,7 +133,6 @@ public class CategoryServiceImpl implements CategoryService {
     public Category updateCategory(Integer id, Category category) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-        System.out.println(customUserDetails);
         Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
         if (userOptional.isEmpty()) {
             throw new RuntimeException("User not found");
