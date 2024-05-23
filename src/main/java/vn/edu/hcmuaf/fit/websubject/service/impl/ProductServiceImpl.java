@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        Specification<Category> specification = (root, query, criteriaBuilder) -> {
+        Specification<Product> specification = (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
             if (filterJson.has("title")) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("title"), "%" + filterJson.get("title").asText() + "%"));
@@ -66,8 +66,39 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getProductsByCategory(Integer categoryId) {
-        return productRepository.findByCategoryParentOrCategory(categoryId);
+    public Page<Product> getProductsByCategory(Integer categoryId, int page, int perPage, String sort, String filter, String order) {
+        Sort.Direction direction = Sort.Direction.ASC;
+        if (order.equalsIgnoreCase("DESC")) {
+            direction = Sort.Direction.DESC;
+        }
+
+        JsonNode filterJson;
+        try {
+            filterJson = new ObjectMapper().readTree(java.net.URLDecoder.decode(filter, StandardCharsets.UTF_8));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        Specification<Product> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+
+            // Lọc theo tiêu đề sản phẩm
+//            if (filterJson.has("title")) {
+//                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("title"), "%" + filterJson.get("title").asText() + "%"));
+//            }
+
+            // Lọc theo danh mục, danh mục cha và danh mục cha của danh mục cha
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.or(
+                    criteriaBuilder.equal(root.get("category").get("id"), categoryId),
+                    criteriaBuilder.equal(root.get("category").get("parentCategory").get("id"), categoryId),
+                    criteriaBuilder.equal(root.get("category").get("parentCategory").get("parentCategory").get("id"), categoryId)
+            ));
+
+            return predicate;
+        };
+
+        PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
+        return productRepository.findAll(specification, pageRequest);
     }
 
     @Override

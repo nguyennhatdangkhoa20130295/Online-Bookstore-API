@@ -13,7 +13,7 @@ public interface ProductService {
 
     Optional<Product> getProductById(Integer id);
 
-    List<Product> getProductsByCategory(Integer categoryId);
+    Page<Product> getProductsByCategory(Integer categoryId, int page, int perPage, String sort, String filter, String order);
 
     List<Product> getThreeLatestProduct();
 
