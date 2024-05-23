@@ -37,8 +37,6 @@ public class ProductController {
         Optional<Product> productOptional = productService.getProductById(id);
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
-            product.getDetail();
-            product.getImages();
             return ResponseEntity.ok().body(product);
         } else {
             return ResponseEntity.notFound().build();
@@ -46,8 +44,14 @@ public class ProductController {
     }
 
     @GetMapping("/category/{categoryId}")
-    public List<Product> getProductsByCategory(@PathVariable Integer categoryId) {
-        return productService.getProductsByCategory(categoryId);
+    public ResponseEntity<Page<Product>> getProductsByCategory(@PathVariable Integer categoryId,
+                                                               @RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "24") int perPage,
+                                                               @RequestParam(defaultValue = "id") String sort,
+                                                               @RequestParam(defaultValue = "{}") String filter,
+                                                               @RequestParam(defaultValue = "ASC") String order) {
+        Page<Product> products = productService.getProductsByCategory(categoryId, page, perPage, sort, filter, order);
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/latest")
