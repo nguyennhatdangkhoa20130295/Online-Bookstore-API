@@ -30,8 +30,12 @@ public class BlogCateController {
                                                   @RequestParam(defaultValue = "25") int perPage,
                                                   @RequestParam(defaultValue = "id") String sort,
                                                   @RequestParam(defaultValue = "ASC") String order) {
-        Page<BlogCategory> blogCate = blogCateService.findAll(page, perPage, sort, order, filter);
-        return ResponseEntity.ok(blogCate);
+        try {
+            Page<BlogCategory> blogCate = blogCateService.findAll(page, perPage, sort, order, filter);
+            return ResponseEntity.ok(blogCate);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/{id}")

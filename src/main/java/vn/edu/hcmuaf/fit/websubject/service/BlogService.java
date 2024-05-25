@@ -13,4 +13,7 @@ public interface BlogService {
     Page<Blog> findAll(int page, int size, String sort, String order, String filter);
 
     void addBlog(int blogCate, String title, String content, String image);
+
+    void editBlog(int id, int blogCate, String title, String content, String image);
+    void deleteBlog(int id);
 }

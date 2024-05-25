@@ -16,31 +16,51 @@ public class CartController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestBody CartItems cartItems) {
-        cartItemsService.addToCart(cartItems);
-        return ResponseEntity.ok("Added to cart successfully");
+        try {
+            cartItemsService.addToCart(cartItems);
+            return ResponseEntity.ok("Added to cart successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/remove/{cartItemId}")
     public ResponseEntity<String> removeFromCart(@PathVariable int cartItemId) {
-        cartItemsService.removeFromCart(cartItemId);
-        return ResponseEntity.ok("Removed from cart successfully");
+        try {
+            cartItemsService.removeFromCart(cartItemId);
+            return ResponseEntity.ok("Removed from cart successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/items")
     public ResponseEntity<List<CartItems>> getCartItems() {
-        List<CartItems> cartItems = cartItemsService.getCartItems();
-        return ResponseEntity.ok(cartItems);
+        try {
+            List<CartItems> cartItems = cartItemsService.getCartItems();
+            return ResponseEntity.ok(cartItems);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/increase/{cartItemId}")
     public ResponseEntity<String> increaseCartItemQuantity(@PathVariable int cartItemId) {
-        cartItemsService.increaseCartItemQuantity(cartItemId);
-        return ResponseEntity.ok("Cart item quantity increased successfully");
+        try {
+            cartItemsService.increaseCartItemQuantity(cartItemId);
+            return ResponseEntity.ok("Increased quantity successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to increase quantity");
+        }
     }
 
     @PutMapping("/decrease/{cartItemId}")
     public ResponseEntity<String> decreaseCartItemQuantity(@PathVariable int cartItemId) {
-        cartItemsService.decreaseCartItemQuantity(cartItemId);
-        return ResponseEntity.ok("Cart item quantity decreased successfully");
+        try {
+            cartItemsService.decreaseCartItemQuantity(cartItemId);
+            return ResponseEntity.ok("Decreased quantity successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to decrease quantity");
+        }
     }
 }

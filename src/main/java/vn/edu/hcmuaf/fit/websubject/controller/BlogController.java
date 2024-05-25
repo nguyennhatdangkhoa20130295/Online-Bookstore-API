@@ -29,14 +29,22 @@ public class BlogController {
                                                   @RequestParam(defaultValue = "25") int perPage,
                                                   @RequestParam(defaultValue = "title") String sort,
                                                   @RequestParam(defaultValue = "DESC") String order) {
-        Page<Blog> blogs = blogService.findAll(page, perPage, sort, order, filter);
-        return ResponseEntity.ok(blogs);
+        try {
+            Page<Blog> blogs = blogService.findAll(page, perPage, sort, order, filter);
+            return ResponseEntity.ok(blogs);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<Blog>> getAllBlogsUser() {
-        List<Blog> blogs = blogService.getAllBlogsUser();
-        return ResponseEntity.ok(blogs);
+        try {
+            List<Blog> blogs = blogService.getAllBlogsUser();
+            return ResponseEntity.ok(blogs);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/{id}")
@@ -57,6 +65,24 @@ public class BlogController {
             return ResponseEntity.ok("Added blog successfully");
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to add blog" + addBlogRequest);
+        }
+    }
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<String> editBlog(@PathVariable int id, @RequestBody AddBlogRequest addBlogRequest) {
+        try {
+            blogService.editBlog(id, addBlogRequest.getBlogCate(), addBlogRequest.getTitle(), addBlogRequest.getContent(), addBlogRequest.getImage());
+            return ResponseEntity.ok("Edited blog successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to edit blog" + addBlogRequest);
+        }
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteBlog(@PathVariable int id) {
+        try {
+            blogService.deleteBlog(id);
+            return ResponseEntity.ok("Deleted blog successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to delete blog");
         }
     }
 }
