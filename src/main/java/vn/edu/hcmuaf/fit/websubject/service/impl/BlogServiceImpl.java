@@ -78,13 +78,13 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void addBlog(String blogCate, String title, String content, String image) {
+    public void addBlog(int blogCate, String title, String content, String image) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
         if (user.isPresent()) {
             User currentUser = user.get();
-            Optional<BlogCategory> blogCategory = blogCateRepository.findByName(blogCate);
+            Optional<BlogCategory> blogCategory = blogCateRepository.findById(blogCate);
             if (blogCategory.isPresent()) {
                 BlogCategory presentBlogCate = blogCategory.get();
                 Blog newBlog = new Blog();
@@ -92,29 +92,16 @@ public class BlogServiceImpl implements BlogService {
                 newBlog.setCreatedBy(currentUser);
                 newBlog.setTitle(title);
                 newBlog.setContent(content);
+                if(content.length() > 100){
+                    newBlog.setShortDesc(content.substring(0, 100));
+                } else {
+                    newBlog.setShortDesc(content);
+                }
                 newBlog.setImage(image);
+                newBlog.setUpdateBy(currentUser);
                 newBlog.setCreatedAt(getCurrentTimeInVietnam());
                 newBlog.setUpdatedAt(getCurrentTimeInVietnam());
                 blogRepository.save(newBlog);
-            } else {
-                BlogCategory newBlogCate = new BlogCategory();
-                newBlogCate.setName(blogCate);
-                blogCateRepository.save(newBlogCate);
-                Optional<BlogCategory> newCate = blogCateRepository.findByName(blogCate);
-                if (newCate.isPresent()) {
-                    BlogCategory presentBlogCate = newCate.get();
-                    Blog newBlog = new Blog();
-                    newBlog.setBlogCate(presentBlogCate);
-                    newBlog.setCreatedBy(currentUser);
-                    newBlog.setTitle(title);
-                    newBlog.setContent(content);
-                    newBlog.setImage(image);
-                    newBlog.setCreatedAt(getCurrentTimeInVietnam());
-                    newBlog.setUpdatedAt(getCurrentTimeInVietnam());
-                    blogRepository.save(newBlog);
-                } else {
-                    System.out.println("Không thể tạo cate blog mới");
-                }
             }
         } else {
             System.out.println("Không tìm thấy user hiện tại");
