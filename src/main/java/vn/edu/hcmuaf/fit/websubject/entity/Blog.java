@@ -31,6 +31,9 @@ public class Blog {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "short_description")
+    private String shortDesc;
+
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne
     @JoinColumn(name = "created_by")
