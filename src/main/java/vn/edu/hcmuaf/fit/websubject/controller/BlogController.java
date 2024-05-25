@@ -29,14 +29,22 @@ public class BlogController {
                                                   @RequestParam(defaultValue = "25") int perPage,
                                                   @RequestParam(defaultValue = "title") String sort,
                                                   @RequestParam(defaultValue = "DESC") String order) {
-        Page<Blog> blogs = blogService.findAll(page, perPage, sort, order, filter);
-        return ResponseEntity.ok(blogs);
+        try {
+            Page<Blog> blogs = blogService.findAll(page, perPage, sort, order, filter);
+            return ResponseEntity.ok(blogs);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<Blog>> getAllBlogsUser() {
-        List<Blog> blogs = blogService.getAllBlogsUser();
-        return ResponseEntity.ok(blogs);
+        try {
+            List<Blog> blogs = blogService.getAllBlogsUser();
+            return ResponseEntity.ok(blogs);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @GetMapping("/{id}")

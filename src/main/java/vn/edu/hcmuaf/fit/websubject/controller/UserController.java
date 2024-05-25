@@ -68,10 +68,14 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addUser(@RequestBody AddUserRequest addReq) {
-        userService.addUser(addReq.getUsername(), addReq.getPassword(), addReq.getEmail(), addReq.getRole(),
-                addReq.getAvatar(), addReq.getFullName(), addReq.getGender(), addReq.getDateOfBirth(),
-                addReq.getPhone(), addReq.getLocked(), addReq.getIsSocial());
-        return ResponseEntity.ok("Added user successfully");
+        try {
+            userService.addUser(addReq.getUsername(), addReq.getPassword(), addReq.getEmail(), addReq.getRole(),
+                    addReq.getAvatar(), addReq.getFullName(), addReq.getGender(), addReq.getDateOfBirth(),
+                    addReq.getPhone(), addReq.getLocked(), addReq.getIsSocial());
+            return ResponseEntity.ok("Added user successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to add user");
+        }
     }
 
     @PutMapping("/edit/{idUser}")
@@ -94,14 +98,22 @@ public class UserController {
 
     @PostMapping("/info")
     public ResponseEntity<?> changeInformation(@RequestBody UserInfo userInfo) {
-        userInfoService.createInformation(userInfo);
-        return ResponseEntity.ok("Information created successfully");
+        try{
+            userInfoService.createInformation(userInfo);
+            return ResponseEntity.ok("Information created successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to create information");
+        }
     }
 
     @PutMapping("/info/{id}")
     public ResponseEntity<?> changeInformation(@PathVariable Integer id, @RequestBody UserInfo userInfo) {
-        userInfoService.changeInformation(id, userInfo);
-        return ResponseEntity.ok("Information changed successfully");
+        try{
+            userInfoService.changeInformation(id, userInfo);
+            return ResponseEntity.ok("Information changed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to change information");
+        }
     }
 
     @GetMapping("/addresses")
