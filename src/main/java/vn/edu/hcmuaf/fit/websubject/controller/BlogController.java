@@ -67,4 +67,22 @@ public class BlogController {
             return ResponseEntity.badRequest().body("Failed to add blog" + addBlogRequest);
         }
     }
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<String> editBlog(@PathVariable int id, @RequestBody AddBlogRequest addBlogRequest) {
+        try {
+            blogService.editBlog(id, addBlogRequest.getBlogCate(), addBlogRequest.getTitle(), addBlogRequest.getContent(), addBlogRequest.getImage());
+            return ResponseEntity.ok("Edited blog successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to edit blog" + addBlogRequest);
+        }
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteBlog(@PathVariable int id) {
+        try {
+            blogService.deleteBlog(id);
+            return ResponseEntity.ok("Deleted blog successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to delete blog");
+        }
+    }
 }
