@@ -18,4 +18,5 @@ public class OrderStatus {
 
     @Column(name = "name")
     private String name;
+
 }
