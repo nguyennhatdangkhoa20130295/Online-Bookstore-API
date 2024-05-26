@@ -9,7 +9,7 @@ import lombok.*;
 @ToString
 public class AddBlogRequest {
 
-    private String blogCate;
+    private int blogCate;
 
     private String title;
 

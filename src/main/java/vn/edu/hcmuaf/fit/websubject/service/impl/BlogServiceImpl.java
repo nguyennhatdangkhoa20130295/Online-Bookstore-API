@@ -78,13 +78,13 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void addBlog(String blogCate, String title, String content, String image) {
+    public void addBlog(int blogCate, String title, String content, String image) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
         if (user.isPresent()) {
             User currentUser = user.get();
-            Optional<BlogCategory> blogCategory = blogCateRepository.findByName(blogCate);
+            Optional<BlogCategory> blogCategory = blogCateRepository.findById(blogCate);
             if (blogCategory.isPresent()) {
                 BlogCategory presentBlogCate = blogCategory.get();
                 Blog newBlog = new Blog();
@@ -92,33 +92,56 @@ public class BlogServiceImpl implements BlogService {
                 newBlog.setCreatedBy(currentUser);
                 newBlog.setTitle(title);
                 newBlog.setContent(content);
+                if(content.length() > 100){
+                    newBlog.setShortDesc(content.substring(0, 100));
+                } else {
+                    newBlog.setShortDesc(content);
+                }
                 newBlog.setImage(image);
+                newBlog.setUpdateBy(currentUser);
                 newBlog.setCreatedAt(getCurrentTimeInVietnam());
                 newBlog.setUpdatedAt(getCurrentTimeInVietnam());
                 blogRepository.save(newBlog);
-            } else {
-                BlogCategory newBlogCate = new BlogCategory();
-                newBlogCate.setName(blogCate);
-                blogCateRepository.save(newBlogCate);
-                Optional<BlogCategory> newCate = blogCateRepository.findByName(blogCate);
-                if (newCate.isPresent()) {
-                    BlogCategory presentBlogCate = newCate.get();
-                    Blog newBlog = new Blog();
-                    newBlog.setBlogCate(presentBlogCate);
-                    newBlog.setCreatedBy(currentUser);
-                    newBlog.setTitle(title);
-                    newBlog.setContent(content);
-                    newBlog.setImage(image);
-                    newBlog.setCreatedAt(getCurrentTimeInVietnam());
-                    newBlog.setUpdatedAt(getCurrentTimeInVietnam());
-                    blogRepository.save(newBlog);
-                } else {
-                    System.out.println("Không thể tạo cate blog mới");
+            }
+        } else {
+            System.out.println("Không tìm thấy user hiện tại");
+        }
+    }
+
+    @Override
+    public void editBlog(int id, int blogCate, String title, String content, String image) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+        Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
+        if (user.isPresent()) {
+            User currentUser = user.get();
+            Optional<BlogCategory> blogCategory = blogCateRepository.findByBlogId(blogCate);
+            if (blogCategory.isPresent()) {
+                BlogCategory presentBlogCate = blogCategory.get();
+                Optional<Blog> blog = blogRepository.findById(id);
+                if (blog.isPresent()) {
+                    Blog presentBlog = blog.get();
+                    presentBlog.setBlogCate(presentBlogCate);
+                    presentBlog.setUpdateBy(currentUser);
+                    presentBlog.setTitle(title);
+                    presentBlog.setContent(content);
+                    if(content.length() > 100){
+                        presentBlog.setShortDesc(content.substring(0, 100));
+                    } else {
+                        presentBlog.setShortDesc(content);
+                    }
+                    presentBlog.setImage(image);
+                    presentBlog.setUpdatedAt(getCurrentTimeInVietnam());
+                    blogRepository.save(presentBlog);
                 }
             }
         } else {
             System.out.println("Không tìm thấy user hiện tại");
         }
+    }
+    @Override
+    public void deleteBlog(int id) {
+        blogRepository.deleteById(id);
     }
     public static Date getCurrentTimeInVietnam() {
         ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
