@@ -144,9 +144,13 @@ public class AuthController {
             });
         }
 
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUser(user);
+        userInfo.setFullName(signUpRequest.getUsername());
+        userInfo.setAvatar("https://cdn-icons-png.flaticon.com/512/6596/6596121.png");
+        user.setUserInfo(userInfo);
+
         user.setRoles(roles);
-        user.getUserInfo().setFullName(signUpRequest.getUsername());
-        user.getUserInfo().setAvatar("https://cdn-icons-png.flaticon.com/512/6596/6596121.png");
         user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
         user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
         user.setLocked(false);
