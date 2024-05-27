@@ -14,7 +14,9 @@ import java.util.Optional;
 @Repository
 public interface BlogCateRepository extends JpaRepository<BlogCategory, Integer> {
     Optional<BlogCategory> findById(int id);
+
     Page<BlogCategory> findAll(Specification<Blog> specification, Pageable pageable);
+
     Optional<BlogCategory> findByName(String name);
 
     @Query("SELECT bc FROM BlogCategory bc inner join Blog b on b.blogCate.id = bc.id WHERE b.id = :id")
