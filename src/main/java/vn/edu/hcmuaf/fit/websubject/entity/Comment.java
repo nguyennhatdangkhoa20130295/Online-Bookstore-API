@@ -1,6 +1,8 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,10 +21,12 @@ public class Comment {
     @Column(name = "id")
     private Integer id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

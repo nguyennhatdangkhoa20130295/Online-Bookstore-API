@@ -8,12 +8,16 @@ import java.util.Optional;
 
 public interface BlogService {
     Page<Blog> getAllBlogs(int page, int perPage);
+
     Optional<Blog> getBlogById(int id);
+
     List<Blog> getAllBlogsUser();
+
     Page<Blog> findAll(int page, int size, String sort, String order, String filter);
 
     void addBlog(int blogCate, String title, String content, String image);
 
     void editBlog(int id, int blogCate, String title, String content, String image);
+
     void deleteBlog(int id);
 }

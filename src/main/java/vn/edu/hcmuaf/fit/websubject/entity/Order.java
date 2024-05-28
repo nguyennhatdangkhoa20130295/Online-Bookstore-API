@@ -1,9 +1,11 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -11,22 +13,24 @@ import java.util.Date;
 @ToString
 @Entity
 @Table(name = "orders")
-public class Orders {
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "order_code", unique = true)
+    private String orderCode;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "store_id")
-    private int storeId;
+    @OneToOne
+    @JoinColumn(name = "shipping_address")
+    private Address shippingAddress;
 
-    @Column(name = "shipping_address")
-    private int shipAddress;
-
+    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     @Column(name = "order_date")
     private Date orderDate;
 
@@ -40,10 +44,12 @@ public class Orders {
     private String paymentMethod;
 
     @OneToOne
-    @JoinColumn(name = "status", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "status")
     private OrderStatus status;
 
     @Column(name = "shipping_cost")
     private int shippingCost;
 
+    @Column(name = "note")
+    private String note;
 }
