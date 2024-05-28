@@ -70,11 +70,11 @@ public class UserController {
     public ResponseEntity<String> addUser(@RequestBody AddUserRequest addReq) {
         try {
             userService.addUser(addReq.getUsername(), addReq.getPassword(), addReq.getEmail(), addReq.getRole(),
-                    addReq.getAvatar(), addReq.getFullName(), addReq.getGender(), addReq.getDateOfBirth(),
+                    addReq.getAvatar(), addReq.getFullName(),
                     addReq.getPhone(), addReq.getLocked(), addReq.getIsSocial());
             return ResponseEntity.ok("Added user successfully");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to add user");
+            return ResponseEntity.badRequest().body("Failed to add user" + e.getMessage());
         }
     }
 
@@ -82,7 +82,7 @@ public class UserController {
     public ResponseEntity<User> editUser(@RequestBody EditUserRequest editReq, @PathVariable Integer idUser) {
         User editedUser = userService.editUser(idUser, editReq.getEmail(), editReq.getRole(),
                 editReq.getAvatar(), editReq.getFullName(), editReq.getPhone(),
-                editReq.getGender(), editReq.getDateOfBirth(), editReq.getLocked(), editReq.getIsSocial());
+                editReq.getLocked(), editReq.getIsSocial());
         if (editedUser != null) {
             return ResponseEntity.ok(editedUser);
         } else {

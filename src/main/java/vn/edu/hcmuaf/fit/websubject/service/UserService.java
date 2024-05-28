@@ -12,10 +12,10 @@ public interface UserService {
     UserShow getUserById(int idUser);
 
     void addUser(String username, String password, String email,
-                 int role, String avatar, String fullName,String gender, Date dateOfBirth,
+                 int role, String avatar, String fullName,
                  String phone, String locked, String isSocial);
     User editUser(int id, String email,
-                  int role, String avatar, String fullName, String phone, String gender, Date dateOfBirth,
+                  int role, String avatar, String fullName, String phone,
                   String locked, String isSocial);
     Page<User> findAllUsers(int page, int size, String sort, String order, String filter);
     Optional<User> getUserByUsername(String username);

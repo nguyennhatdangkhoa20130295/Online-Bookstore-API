@@ -16,6 +16,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserInfoRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
@@ -33,14 +34,17 @@ public class UserServiceImpl implements UserService {
     private UserInfoRepository userInfoRepository;
     private RoleRepository roleRepository;
 
+    private TokenRepository tokenRepository;
+
     private PasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, UserInfoRepository userInfoRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, UserInfoRepository userInfoRepository, TokenRepository tokenRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
         this.userInfoRepository = userInfoRepository;
+        this.tokenRepository = tokenRepository;
     }
 
     public Page<User> getAllUsers(int page, int perPage) {
@@ -101,7 +105,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addUser(String username, String password, String email,
-                        int role, String avatar, String fullName, String gender, Date dateOfBirth,
+                        int role, String avatar, String fullName,
                         String phone, String locked, String isSocial) {
         if (userRepository.existsByUsername(username)) {
             System.out.println("Username is already taken!");
@@ -109,14 +113,15 @@ public class UserServiceImpl implements UserService {
             System.out.println("Email is already in use!");
         } else {
             User user = new User();
-            user.getUserInfo().setGender(gender);
-            user.getUserInfo().setDateOfBirth(dateOfBirth);
-            user.getUserInfo().setAvatar(avatar);
+            UserInfo userInfo = new UserInfo();
+            userInfo.setUser(user);
+            userInfo.setAvatar(avatar);
+            userInfo.setFullName(fullName);
+            userInfo.setPhoneNumber(phone);
+            user.setUserInfo(userInfo);
             user.setUsername(username);
             user.setPassword(encoder.encode(password));
             user.setEmail(email);
-            user.getUserInfo().setFullName(fullName);
-            user.getUserInfo().setPhoneNumber(phone);
             Set<Role> roles = new HashSet<>();
             switch (role) {
                 case 1:
@@ -144,7 +149,6 @@ public class UserServiceImpl implements UserService {
             }
 
             user.setRoles(roles);
-            user.getUserInfo().setAvatar(avatar);
             user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
             user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
             if (locked.equals("false"))
@@ -161,7 +165,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User editUser(int id, String email,
-                         int role, String avatar, String fullName, String phone, String gender, Date dateOfBirth,
+                         int role, String avatar, String fullName, String phone,
                          String locked, String isSocial) {
         User newInforUser = null;
         Optional<User> userOptional = userRepository.findById(id);
@@ -169,8 +173,6 @@ public class UserServiceImpl implements UserService {
             newInforUser = userOptional.get();
             newInforUser.setEmail(email);
             newInforUser.getUserInfo().setFullName(fullName);
-            newInforUser.getUserInfo().setGender(gender);
-            newInforUser.getUserInfo().setDateOfBirth(dateOfBirth);
             newInforUser.getUserInfo().setPhoneNumber(phone);
             newInforUser.getUserInfo().setAvatar(avatar);
             newInforUser.getRoles().clear();
@@ -217,6 +219,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(int idUser) {
+        tokenRepository.deleteAll(tokenRepository.findAllTokenByUser(idUser));
         userRepository.deleteById(idUser);
     }
 

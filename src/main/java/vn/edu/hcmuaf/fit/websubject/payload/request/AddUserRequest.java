@@ -17,8 +17,6 @@ public class AddUserRequest {
     String email;
     int role;
     String avatar;
-    String gender;
-    Date dateOfBirth;
     String fullName;
     String phone;
     String locked;
