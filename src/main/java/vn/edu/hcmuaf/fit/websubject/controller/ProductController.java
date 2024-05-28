@@ -65,8 +65,13 @@ public class ProductController {
     }
 
     @GetMapping("/feature")
-    public List<Product> getFeatureProducts(){
+    public List<Product> getFeatureProducts() {
         return productService.getFeatureProducts();
+    }
+
+    @GetMapping("/top_review")
+    public List<Product> getTopReviewProducts() {
+        return productService.getTopReviewProducts();
     }
 
 //    @PostMapping("/add")

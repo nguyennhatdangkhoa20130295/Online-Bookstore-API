@@ -20,4 +20,6 @@ public interface ProductService {
     List<Product> getProductsByCategoryId(Integer categoryId);
 
     List<Product> getFeatureProducts();
+
+    List<Product> getTopReviewProducts();
 }
