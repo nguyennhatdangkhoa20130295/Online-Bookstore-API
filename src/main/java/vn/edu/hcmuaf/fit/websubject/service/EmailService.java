@@ -45,10 +45,17 @@ public class EmailService {
 
     }
 
-    public boolean sendEmailForgot(String recipientEmail, String otp) {
+    public boolean sendEmailForgot(String recipientEmail, String otp, int type) {
         boolean test = false;
-        String subject = "Đặt lại mật khẩu tài khoản GoldLeaf";
-        String text = "<h1 style=\"padding: 0; font-size: 25px;color: #ff0000;font-family:sans-serif\">Đặt lại mật khẩu tài khoản GoldLeaf</h1><p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Để đặt lại mật khẩu cho tài khoản, hãy nhập OTP: <strong style=\"font-size: 18px; color: #ff0000; font-family:sans-serif\">" + otp + "</strong></p><p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Cảm ơn bạn,</p><p style=\"padding: 0;font-size: 14px;color: #00BFFF;font-family:sans-serif\">GoldLeaf.</p>";
+        String subject = "";
+        String text = "";
+                if(type == 1) {
+                    subject = "Đặt lại mật khẩu tài khoản GoldLeaf";
+                    text = "<h1 style=\"padding: 0; font-size: 25px;color: #ff0000;font-family:sans-serif\">Đặt lại mật khẩu tài khoản GoldLeaf</h1><p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Để đặt lại mật khẩu cho tài khoản, hãy nhập OTP: <strong style=\"font-size: 18px; color: #ff0000; font-family:sans-serif\">" + otp + "</strong></p><p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Cảm ơn bạn,</p><p style=\"padding: 0;font-size: 14px;color: #00BFFF;font-family:sans-serif\">GoldLeaf.</p>";
+                } else {
+                    subject = "Tạo tài khoản GoldLeaf";
+                    text = "<h1 style=\"padding: 0; font-size: 25px;color: #ff0000;font-family:sans-serif\">Tạo tài khoản GoldLeaf</h1><p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Để xác nhận tạo tài khoản, hãy nhập OTP: <strong style=\"font-size: 18px; color: #ff0000; font-family:sans-serif\">" + otp + "</strong></p><p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Cảm ơn bạn,</p><p style=\"padding: 0;font-size: 14px;color: #00BFFF;font-family:sans-serif\">GoldLeaf.</p>";
+                }
 
         String toEmail = recipientEmail;
         String fromEmail = Mail.USERNAME;

@@ -23,14 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.edu.hcmuaf.fit.websubject.jwt.JwtUtils;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
-import vn.edu.hcmuaf.fit.websubject.payload.request.ForgotPassRequest;
+import vn.edu.hcmuaf.fit.websubject.payload.request.SendEmailRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.LoginRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.SignupRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.response.JwtResponse;
 import vn.edu.hcmuaf.fit.websubject.payload.response.MessageResponse;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
-import vn.edu.hcmuaf.fit.websubject.repository.UserInfoRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.EmailService;
 import vn.edu.hcmuaf.fit.websubject.service.OTPService;
@@ -97,88 +96,100 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error: Username is already taken!");
-        }
+        String savedOTP = otpService.getOTP(signUpRequest.getEmail());
+        if (savedOTP != null && savedOTP.equals(signUpRequest.getOtp())) {
+            if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+                return ResponseEntity
+                        .badRequest()
+                        .body("Error: Username is already taken!");
+            }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error: Email is already in use!");
-        }
+            if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+                return ResponseEntity
+                        .badRequest()
+                        .body("Error: Email is already in use!");
+            }
 
-        // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+            // Create new user's account
+            User user = new User(signUpRequest.getUsername(),
+                    signUpRequest.getEmail(),
+                    encoder.encode(signUpRequest.getPassword()));
 
-        Set<String> strRoles = signUpRequest.getRole();
-        Set<Role> roles = new HashSet<>();
+            Set<String> strRoles = signUpRequest.getRole();
+            Set<Role> roles = new HashSet<>();
 
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByDescription(EnumRole.USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
+            if (strRoles == null) {
+                Role userRole = roleRepository.findByDescription(EnumRole.USER)
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                roles.add(userRole);
+            } else {
+                strRoles.forEach(role -> {
+                    switch (role) {
+                        case "admin":
+                            Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(adminRole);
 
-                        break;
-                    case "mod":
-                        Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(modRole);
+                            break;
+                        case "mod":
+                            Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(modRole);
 
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByDescription(EnumRole.USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
-                }
-            });
-        }
+                            break;
+                        default:
+                            Role userRole = roleRepository.findByDescription(EnumRole.USER)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(userRole);
+                    }
+                });
+            }
 
-        UserInfo userInfo = new UserInfo();
-        userInfo.setUser(user);
-        userInfo.setAvatar("https://i.ibb.co/C1ymX1n/user.png");
-        userInfo.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-        user.setUserInfo(userInfo);
+            UserInfo userInfo = new UserInfo();
+            userInfo.setUser(user);
+            userInfo.setFullName(signUpRequest.getUsername());
+            userInfo.setAvatar("https://i.ibb.co/C1ymX1n/user.png");
+            userInfo.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+            user.setUserInfo(userInfo);
 
-        user.setRoles(roles);
-        user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-        user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-        user.setLocked(false);
-        user.setIsSocial(false);
-        userRepository.save(user);
+            user.setRoles(roles);
+            user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+            user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            user.setLocked(false);
+            user.setIsSocial(false);
+            userRepository.save(user);
 //        var jwtToken = jwtUtils.generateJwtToken((Authentication) user);
 //        revokeAllUserToken(saveUser);
 //        saveUserToken(saveUser, jwtToken);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-    }
-
-    @PostMapping("/forgot-password")
-    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPassRequest forgotPassRequest) throws
-            MessagingException {
-        if (!userRepository.existsByEmail(forgotPassRequest.getEmail())) {
-            return ResponseEntity.badRequest().body("Không tìm thấy email.");
+            return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        }else {
+            return ResponseEntity.badRequest().body("Invalid OTP.");
         }
+    }
+    @PostMapping("/send-email")
+    public ResponseEntity<String> createAccount(@Valid @RequestBody SendEmailRequest sendMailRequest) throws
+            MessagingException {
+        if (sendMailRequest.getType() == 1) {
+            if (!userRepository.existsByEmail(sendMailRequest.getEmail())) {
+                return ResponseEntity.badRequest().body("Không tìm thấy email.");
+            }
+        } else if(sendMailRequest.getType() == 0){
+            if (userRepository.existsByEmail(sendMailRequest.getEmail())) {
+                return ResponseEntity.badRequest().body("Email đã tồn tại.");
+            }
+        }
+        System.out.println(sendMailRequest.getType());
         // Logic để gửi mã OTP đến email
         String otp = generateOTP();
-        emailService.sendEmailForgot(forgotPassRequest.getEmail(), otp);
-        otpService.saveOTP(forgotPassRequest.getEmail(), otp);
+        emailService.sendEmailForgot(sendMailRequest.getEmail(), otp, 2);
+        otpService.saveOTP(sendMailRequest.getEmail(), otp);
         // Gửi mã OTP đến email
         return ResponseEntity.ok("OTP " + otp + " sent successfully.");
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@Valid @RequestBody ForgotPassRequest forgotPassRequest) {
+    public ResponseEntity<String> resetPassword(@Valid @RequestBody SendEmailRequest forgotPassRequest) {
         String savedOTP = otpService.getOTP(forgotPassRequest.getEmail());
         if (savedOTP != null && savedOTP.equals(forgotPassRequest.getOtp())) {
             // Xác thực thành công, thiết lập lại mật khẩu
