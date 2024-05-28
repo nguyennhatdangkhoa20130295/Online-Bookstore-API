@@ -21,4 +21,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
     @Query(value = "SELECT * FROM Product ORDER BY RAND() LIMIT 3", nativeQuery = true)
     List<Product> findRandomProducts();
+
+    @Query("SELECT p FROM Product p LEFT JOIN p.comments c GROUP BY p.id ORDER BY COUNT(c) DESC LIMIT 2")
+    List<Product> findTopReviewProducts();
 }

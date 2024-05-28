@@ -152,4 +152,9 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findRandomProducts();
     }
 
+    @Override
+    public List<Product> getTopReviewProducts() {
+        return productRepository.findTopReviewProducts();
+    }
+
 }

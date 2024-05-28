@@ -7,8 +7,12 @@ import java.util.List;
 
 public interface OrderService {
     List<Order> getUserOrders(Integer userId);
+
     Order getLatestOrder(Integer userId);
+
     Order createOrder(Order order);
+
     void createOrderDetail(OrderDetail orderDetail);
+
     String generateOrderCode();
 }
