@@ -13,6 +13,9 @@ public interface BlogService {
 
     List<Blog> getAllBlogsUser();
 
+    List<Blog> getBlogsByCateId(int cateId);
+    Page<Blog> getBlogByCate(Integer categoryId, int page, int perPage, String sort, String filter, String order);
+
     Page<Blog> findAll(int page, int size, String sort, String order, String filter);
 
     void addBlog(int blogCate, String title, String content, String image);

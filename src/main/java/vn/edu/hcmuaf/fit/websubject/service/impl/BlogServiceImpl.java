@@ -49,6 +49,44 @@ public class BlogServiceImpl implements BlogService {
         return blogRepository.findAll();
     }
 
+    @Override
+    public List<Blog> getBlogsByCateId(int cateId) {
+        return blogRepository.findAllByBlogCateId(cateId);
+    }
+
+    @Override
+    public Page<Blog> getBlogByCate(Integer categoryId, int page, int perPage, String sort, String filter, String order) {
+        Sort.Direction direction = Sort.Direction.ASC;
+        if (order.equalsIgnoreCase("DESC")) {
+            direction = Sort.Direction.DESC;
+        }
+
+        JsonNode filterJson;
+        try {
+            filterJson = new ObjectMapper().readTree(java.net.URLDecoder.decode(filter, StandardCharsets.UTF_8));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        Specification<Product> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+
+            // Lọc theo tiêu đề sản phẩm
+            if (filterJson.has("title")) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("title"), "%" + filterJson.get("title").asText() + "%"));
+            }
+            // Lọc theo danh mục
+            predicate = criteriaBuilder.and(predicate, criteriaBuilder.or(
+                    criteriaBuilder.equal(root.get("blogCate").get("id"), categoryId)
+            ));
+
+            return predicate;
+        };
+
+        PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
+        return blogRepository.findAll(specification, pageRequest);
+    }
+
     public Page<Blog> findAll(int page, int size, String sort, String order, String filter) {
         Sort.Direction direction = Sort.Direction.ASC;
         if (order.equalsIgnoreCase("desc")) {

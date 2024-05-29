@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 import vn.edu.hcmuaf.fit.websubject.entity.BlogCategory;
+import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddBlogRequest;
 import vn.edu.hcmuaf.fit.websubject.service.BlogCateService;
 import vn.edu.hcmuaf.fit.websubject.service.BlogService;
@@ -47,14 +48,30 @@ public class BlogController {
         }
     }
 
+    @GetMapping("/cate/{categoryId}")
+    public ResponseEntity<?> getBlogByCate(@PathVariable Integer categoryId,
+                                                    @RequestParam(defaultValue = "0") Integer page,
+                                                    @RequestParam(defaultValue = "3") Integer perPage,
+                                                    @RequestParam(defaultValue = "id") String sort,
+                                                    @RequestParam(defaultValue = "{}") String filter,
+                                                    @RequestParam(defaultValue = "ASC") String order) {
+        try {
+            if(categoryId==0){
+                Page<Blog> blogs = blogService.getAllBlogs(page, perPage);
+                return ResponseEntity.ok(blogs);
+            } else {
+                Page<Blog> blogs = blogService.getBlogByCate(categoryId, page, perPage, sort, filter, order);
+                return ResponseEntity.ok(blogs);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Blog> getBlogById(@PathVariable int id) {
         Optional<Blog> blog = blogService.getBlogById(id);
-        if (blog.isPresent()) {
-            return ResponseEntity.ok(blog.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return blog.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/add")
