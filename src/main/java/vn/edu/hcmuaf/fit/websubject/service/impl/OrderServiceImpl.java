@@ -80,4 +80,8 @@ public class OrderServiceImpl implements OrderService {
         }
         return sb.toString();
     }
+    @Override
+    public Optional<OrderDetail> getOrderByProductIdAndUserId(Integer productId, Integer userId){
+        return orderDetailRepository.findByProductIdAndUserId(productId, userId);
+    }
 }

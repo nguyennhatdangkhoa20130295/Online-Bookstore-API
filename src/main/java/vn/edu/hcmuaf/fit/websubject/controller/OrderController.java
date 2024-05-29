@@ -15,6 +15,7 @@ import vn.edu.hcmuaf.fit.websubject.service.OrderService;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -51,5 +52,20 @@ public class OrderController {
             cartItemsService.removeFromCart(cartItem.getId());
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
+    }
+    @GetMapping("/product/{idProduct}/user/{userId}")
+    public ResponseEntity<OrderDetail> getOrderByProductId(@PathVariable Integer idProduct, @PathVariable Integer userId) {
+        Optional<OrderDetail> orderDetail = orderService.getOrderByProductIdAndUserId(idProduct, userId);
+        if (orderDetail.isPresent()) {
+            OrderDetail order = orderDetail.get();
+            return ResponseEntity.ok().body(order);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Order>> getUserOrders(@PathVariable Integer userId) {
+        List<Order> orders = orderService.getUserOrders(userId);
+        return ResponseEntity.ok().body(orders);
     }
 }
