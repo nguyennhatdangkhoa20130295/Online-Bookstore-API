@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface CommentService {
     List<Comment> getListCommentByProductId(int idProduct);
 
-    List<Comment> getListCommentByUserId(int idUser);
+    List<Comment> getListCommentByUserIdAndProductId(int idUser, int idProduct);
 
     void addComment(int idProduct, int rate, String description);
 

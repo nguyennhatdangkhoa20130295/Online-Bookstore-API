@@ -34,9 +34,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> getListCommentByUserId(int idUser) {
-        return commentRepository.findAllByUserId(idUser);
+    public List<Comment> getListCommentByUserIdAndProductId(int idUser, int idProduct) {
+        return commentRepository.findAllByUserIdAndProductId(idUser, idProduct);
     }
+
 
     @Override
     public void addComment(int idProduct, int rate, String description) {
@@ -75,13 +76,14 @@ public class CommentServiceImpl implements CommentService {
                 currentCmt.setCmtDetail(description);
                 currentCmt.setUpdated_at(CurrentTime.getCurrentTimeInVietnam());
                 commentRepository.save(currentCmt);
-                } else {
-                    System.out.println("Bình luận không tồn tại");
-                }
+            } else {
+                System.out.println("Bình luận không tồn tại");
+            }
         } else {
             System.out.println("Người dùng không tồn tại");
         }
     }
+
     @Override
     public void deleteComment(int idComment) {
         commentRepository.deleteById(idComment);
