@@ -1,5 +1,7 @@
 package vn.edu.hcmuaf.fit.websubject.service;
 
+import org.springframework.data.domain.Page;
+import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 import vn.edu.hcmuaf.fit.websubject.entity.Comment;
 
 import java.util.List;
@@ -11,6 +13,10 @@ public interface CommentService {
     List<Comment> getListCommentByUserIdAndProductId(int idUser, int idProduct);
 
     void addComment(int idProduct, int rate, String description);
+
+    Page<Comment> getAllComments(int page, int perPage);
+
+    Page<Comment> findAll(int page, int size, String sort, String order, String filter);
 
     void updateComment(int idComment, int rate, String description);
 

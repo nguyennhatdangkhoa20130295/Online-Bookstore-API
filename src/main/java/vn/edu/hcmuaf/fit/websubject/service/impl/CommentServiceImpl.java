@@ -1,9 +1,19 @@
 package vn.edu.hcmuaf.fit.websubject.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 import vn.edu.hcmuaf.fit.websubject.entity.Comment;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
@@ -13,6 +23,7 @@ import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.CommentService;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -37,7 +48,37 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> getListCommentByUserIdAndProductId(int idUser, int idProduct) {
         return commentRepository.findAllByUserIdAndProductId(idUser, idProduct);
     }
+    public Page<Comment> getAllComments(int page, int perPage) {
+        Pageable pageable = PageRequest.of(page, perPage);
+        return commentRepository.findAll(pageable);
+    }
+    public Page<Comment> findAll(int page, int size, String sort, String order, String filter) {
+        Sort.Direction direction = Sort.Direction.ASC;
+        if (order.equalsIgnoreCase("asc")) {
+            direction = Sort.Direction.ASC;
+        }
+        Sort sortPa = Sort.by(direction, sort);
+        Pageable pageable = PageRequest.of(page, size, sortPa);
 
+        JsonNode jsonFilter;
+        try {
+            jsonFilter = new ObjectMapper().readTree(java.net.URLDecoder.decode(filter, StandardCharsets.UTF_8));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        Specification<Blog> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+
+            if (jsonFilter.has("q")) {
+                String searchStr = jsonFilter.get("q").asText();
+                predicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("cmtDetail")), "%" + searchStr.toLowerCase() + "%");
+            }
+            return predicate;
+        };
+
+        return commentRepository.findAll(specification, pageable);
+    }
 
     @Override
     public void addComment(int idProduct, int rate, String description) {
