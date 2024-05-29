@@ -4,6 +4,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.Order;
 import vn.edu.hcmuaf.fit.websubject.entity.OrderDetail;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderService {
     List<Order> getUserOrders(Integer userId);
@@ -13,6 +14,7 @@ public interface OrderService {
     Order createOrder(Order order);
 
     void createOrderDetail(OrderDetail orderDetail);
+    Optional<OrderDetail> getOrderByProductIdAndUserId(Integer productId, Integer userId);
 
     String generateOrderCode();
 }
