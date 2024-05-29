@@ -147,7 +147,6 @@ public class AuthController {
 
             UserInfo userInfo = new UserInfo();
             userInfo.setUser(user);
-            userInfo.setFullName(signUpRequest.getUsername());
             userInfo.setAvatar("https://i.ibb.co/C1ymX1n/user.png");
             userInfo.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
             user.setUserInfo(userInfo);
