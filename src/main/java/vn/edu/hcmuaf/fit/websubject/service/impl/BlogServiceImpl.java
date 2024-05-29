@@ -153,7 +153,7 @@ public class BlogServiceImpl implements BlogService {
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
         if (user.isPresent()) {
             User currentUser = user.get();
-            Optional<BlogCategory> blogCategory = blogCateRepository.findByBlogId(blogCate);
+            Optional<BlogCategory> blogCategory = blogCateRepository.findById(blogCate);
             if (blogCategory.isPresent()) {
                 BlogCategory presentBlogCate = blogCategory.get();
                 Optional<Blog> blog = blogRepository.findById(id);
