@@ -76,13 +76,14 @@ public class CommentServiceImpl implements CommentService {
                 currentCmt.setCmtDetail(description);
                 currentCmt.setUpdated_at(CurrentTime.getCurrentTimeInVietnam());
                 commentRepository.save(currentCmt);
-                } else {
-                    System.out.println("Bình luận không tồn tại");
-                }
+            } else {
+                System.out.println("Bình luận không tồn tại");
+            }
         } else {
             System.out.println("Người dùng không tồn tại");
         }
     }
+
     @Override
     public void deleteComment(int idComment) {
         commentRepository.deleteById(idComment);

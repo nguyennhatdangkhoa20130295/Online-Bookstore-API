@@ -80,8 +80,9 @@ public class OrderServiceImpl implements OrderService {
         }
         return sb.toString();
     }
+
     @Override
-    public List<Order> getOrderByProductIdAndUserId(Integer productId, Integer userId){
-        return orderRepository.findByProductIdAndUserId(productId, userId);
+    public Optional<Order> getOrder(Integer orderId) {
+        return orderRepository.findById(orderId);
     }
 }
