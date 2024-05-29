@@ -34,9 +34,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<Comment> getListCommentByUserId(int idUser) {
-        return commentRepository.findAllByUserId(idUser);
+    public List<Comment> getListCommentByUserIdAndProductId(int idUser, int idProduct) {
+        return commentRepository.findAllByUserIdAndProductId(idUser, idProduct);
     }
+
 
     @Override
     public void addComment(int idProduct, int rate, String description) {
