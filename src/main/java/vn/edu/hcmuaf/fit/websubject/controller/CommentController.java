@@ -25,10 +25,10 @@ public class CommentController {
         }
     }
 
-    @GetMapping("/auth/{id}")
-    public ResponseEntity<List<Comment>> getListCommentById(@PathVariable int id) {
+    @GetMapping("/auth/{idAuth}/product/{productId}")
+    public ResponseEntity<List<Comment>> getListCommentById(@PathVariable int idAuth, @PathVariable int productId) {
         try {
-            List<Comment> comments = commentService.getListCommentByUserId(id);
+            List<Comment> comments = commentService.getListCommentByUserIdAndProductId(idAuth, productId);
             return ResponseEntity.ok(comments);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

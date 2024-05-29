@@ -14,7 +14,7 @@ public interface OrderService {
     Order createOrder(Order order);
 
     void createOrderDetail(OrderDetail orderDetail);
-    Optional<OrderDetail> getOrderByProductIdAndUserId(Integer productId, Integer userId);
+    List<Order> getOrderByProductIdAndUserId(Integer productId, Integer userId);
 
     String generateOrderCode();
 }

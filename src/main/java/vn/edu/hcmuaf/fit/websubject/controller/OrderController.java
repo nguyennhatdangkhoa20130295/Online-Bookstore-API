@@ -54,11 +54,10 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
     }
     @GetMapping("/product/{idProduct}/user/{userId}")
-    public ResponseEntity<OrderDetail> getOrderByProductId(@PathVariable Integer idProduct, @PathVariable Integer userId) {
-        Optional<OrderDetail> orderDetail = orderService.getOrderByProductIdAndUserId(idProduct, userId);
-        if (orderDetail.isPresent()) {
-            OrderDetail order = orderDetail.get();
-            return ResponseEntity.ok().body(order);
+    public ResponseEntity<List<Order>> getOrderByProductId(@PathVariable Integer idProduct, @PathVariable Integer userId) {
+        List<Order> orderDetail = orderService.getOrderByProductIdAndUserId(idProduct, userId);
+        if (orderDetail != null) {
+            return ResponseEntity.ok().body(orderDetail);
         } else {
             return ResponseEntity.notFound().build();
         }
