@@ -57,11 +57,10 @@ public class OrderController {
     }
 
     @GetMapping("/product/{idProduct}/user/{userId}")
-    public ResponseEntity<OrderDetail> getOrderByProductId(@PathVariable Integer idProduct, @PathVariable Integer userId) {
-        Optional<OrderDetail> orderDetail = orderService.getOrderByProductIdAndUserId(idProduct, userId);
-        if (orderDetail.isPresent()) {
-            OrderDetail order = orderDetail.get();
-            return ResponseEntity.ok().body(order);
+    public ResponseEntity<List<Order>> getOrderByProductId(@PathVariable Integer idProduct, @PathVariable Integer userId) {
+        List<Order> orders = orderService.getOrderByProductIdAndUserId(idProduct, userId);
+        if (orders != null) {
+            return ResponseEntity.ok().body(orders);
         } else {
             return ResponseEntity.notFound().build();
         }
