@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getUserOrders(Integer userId) {
-        return orderRepository.findByUserId(userId);
+        return orderRepository.findByUserIdOrderByIdDesc(userId);
     }
 
     @Override
@@ -84,5 +84,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Optional<Order> getOrder(Integer orderId) {
         return orderRepository.findById(orderId);
+    }
+
+    @Override
+    public Optional<OrderDetail> getOrderByProductIdAndUserId(Integer productId, Integer userId){
+        return orderDetailRepository.findByProductIdAndUserId(productId, userId);
     }
 }
