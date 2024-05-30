@@ -19,5 +19,5 @@ public interface OrderService {
 
     Optional<Order> getOrder(Integer orderId);
 
-    Optional<OrderDetail> getOrderByProductIdAndUserId(Integer productId, Integer userId);
+    List<Order> getOrderByProductIdAndUserId(Integer productId, Integer userId);
 }

@@ -87,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Optional<OrderDetail> getOrderByProductIdAndUserId(Integer productId, Integer userId){
-        return orderDetailRepository.findByProductIdAndUserId(productId, userId);
+    public List<Order> getOrderByProductIdAndUserId(Integer productId, Integer userId){
+        return orderRepository.findByProductIdAndUserId(productId, userId);
     }
 }
