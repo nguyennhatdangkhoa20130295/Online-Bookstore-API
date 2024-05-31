@@ -181,7 +181,7 @@ public class AuthController {
         System.out.println(sendMailRequest.getType());
         // Logic để gửi mã OTP đến email
         String otp = generateOTP();
-        emailService.sendEmailForgot(sendMailRequest.getEmail(), otp, 2);
+        emailService.sendEmailForgot(sendMailRequest.getEmail(), otp, sendMailRequest.getType());
         otpService.saveOTP(sendMailRequest.getEmail(), otp);
         // Gửi mã OTP đến email
         return ResponseEntity.ok("OTP " + otp + " sent successfully.");

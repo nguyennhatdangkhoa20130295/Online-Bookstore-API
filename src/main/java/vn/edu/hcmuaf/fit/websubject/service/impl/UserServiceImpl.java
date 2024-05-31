@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
 
             if (jsonFilter.has("q")) {
                 String searchStr = jsonFilter.get("q").asText();
-                predicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("fullName")), "%" + searchStr.toLowerCase() + "%");
+                predicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("userInfo").get("fullName")), "%" + searchStr.toLowerCase() + "%");
             }
             return predicate;
         };
