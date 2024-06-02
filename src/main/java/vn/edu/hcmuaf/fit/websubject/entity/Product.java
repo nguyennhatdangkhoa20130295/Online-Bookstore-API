@@ -33,10 +33,10 @@ public class Product {
     private String image;
 
     @Column(name = "old_price")
-    private BigDecimal oldPrice;
+    private int oldPrice;
 
     @Column(name = "current_price")
-    private BigDecimal currentPrice;
+    private int currentPrice;
 
     @Column(name = "active")
     private boolean active;

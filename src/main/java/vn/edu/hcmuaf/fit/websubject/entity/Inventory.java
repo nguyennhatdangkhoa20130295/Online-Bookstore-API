@@ -28,7 +28,7 @@ public class Inventory {
     private int quantity;
 
     @Column(name = "import_price")
-    private BigDecimal importPrice;
+    private int importPrice;
 
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     @Column(name = "created_at")
