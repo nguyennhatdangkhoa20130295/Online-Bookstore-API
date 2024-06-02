@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "blog_category")
+@Table(name = "blog_categories")
 public class BlogCategory {
     @Id
     @JoinColumn(name = "id")

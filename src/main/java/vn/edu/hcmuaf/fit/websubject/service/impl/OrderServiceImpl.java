@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import vn.edu.hcmuaf.fit.websubject.entity.Address;
-import vn.edu.hcmuaf.fit.websubject.entity.OrderDetail;
-import vn.edu.hcmuaf.fit.websubject.entity.Order;
-import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.*;
 import vn.edu.hcmuaf.fit.websubject.service.OrderService;
@@ -28,6 +25,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    InventoryRepository inventoryRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -69,6 +69,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void createOrderDetail(OrderDetail orderDetail) {
+        updateInventory(orderDetail.getProduct(), orderDetail.getQuantity());
         orderDetailRepository.save(orderDetail);
     }
 
@@ -79,6 +80,17 @@ public class OrderServiceImpl implements OrderService {
             sb.append(CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length())));
         }
         return sb.toString();
+    }
+
+    private void updateInventory(Product product, int quantity){
+        Inventory inventory = inventoryRepository.findByProduct(product)
+                .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + product.getId()));
+        if (inventory.getQuantity() < quantity) {
+            throw new RuntimeException("Không đủ hàng cho sản phẩm: " + product.getTitle());
+        }
+        inventory.setQuantity(inventory.getQuantity() - quantity);
+        inventory.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+        inventoryRepository.save(inventory);
     }
 
     @Override

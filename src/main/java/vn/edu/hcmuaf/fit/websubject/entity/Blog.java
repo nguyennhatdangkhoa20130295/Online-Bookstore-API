@@ -13,6 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 @Entity
+@Table(name = "blogs")
 public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

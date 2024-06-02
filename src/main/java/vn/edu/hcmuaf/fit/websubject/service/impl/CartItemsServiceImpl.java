@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import vn.edu.hcmuaf.fit.websubject.entity.CartItems;
+import vn.edu.hcmuaf.fit.websubject.entity.CartItem;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.repository.CartItemsRepository;
@@ -25,8 +25,8 @@ public class CartItemsServiceImpl implements CartItemsService {
     @Autowired
     UserRepository userRepository;
 
-    public void addToCart(CartItems cartItems) {
-        CartItems existingCartItem = cartItemsRepository.findByProductId(cartItems.getProduct().getId());
+    public void addToCart(CartItem cartItems) {
+        CartItem existingCartItem = cartItemsRepository.findByProductId(cartItems.getProduct().getId());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
@@ -39,7 +39,7 @@ public class CartItemsServiceImpl implements CartItemsService {
                 Optional<Product> productOptional = productRepository.findById(cartItems.getProduct().getId());
                 if (productOptional.isPresent()) {
                     Product product = productOptional.get();
-                    CartItems cartItem = new CartItems();
+                    CartItem cartItem = new CartItem();
                     cartItem.setProduct(product);
                     cartItem.setQuantity(cartItems.getQuantity());
                     cartItem.setUser(currentUser);
@@ -55,7 +55,7 @@ public class CartItemsServiceImpl implements CartItemsService {
         cartItemsRepository.deleteById(cartItemId);
     }
 
-    public List<CartItems> getCartItems() {
+    public List<CartItem> getCartItems() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
@@ -64,9 +64,9 @@ public class CartItemsServiceImpl implements CartItemsService {
 
     @Override
     public void increaseCartItemQuantity(int cartItemId) {
-        Optional<CartItems> cartItemOptional = cartItemsRepository.findById(cartItemId);
+        Optional<CartItem> cartItemOptional = cartItemsRepository.findById(cartItemId);
         if (cartItemOptional.isPresent()) {
-            CartItems cartItem = cartItemOptional.get();
+            CartItem cartItem = cartItemOptional.get();
             int newQuantity = cartItem.getQuantity() + 1;
             cartItem.setQuantity(newQuantity);
             cartItemsRepository.save(cartItem);
@@ -74,9 +74,9 @@ public class CartItemsServiceImpl implements CartItemsService {
     }
 
     public void decreaseCartItemQuantity(int cartItemId) {
-        Optional<CartItems> cartItemOptional = cartItemsRepository.findById(cartItemId);
+        Optional<CartItem> cartItemOptional = cartItemsRepository.findById(cartItemId);
         if (cartItemOptional.isPresent()) {
-            CartItems cartItem = cartItemOptional.get();
+            CartItem cartItem = cartItemOptional.get();
             int newQuantity = cartItem.getQuantity() - 1;
             if (newQuantity <= 0) {
                 System.out.println("không thể giảm thêm số lượng");

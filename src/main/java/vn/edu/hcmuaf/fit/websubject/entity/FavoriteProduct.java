@@ -10,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "favorite_product")
+@Table(name = "favorite_products")
 public class FavoriteProduct {
 
     @Id

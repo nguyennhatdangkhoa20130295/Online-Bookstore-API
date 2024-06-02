@@ -22,4 +22,6 @@ public interface ProductService {
     List<Product> getFeatureProducts();
 
     List<Product> getTopReviewProducts();
+
+    List<Product> getTopSellingProducts();
 }
