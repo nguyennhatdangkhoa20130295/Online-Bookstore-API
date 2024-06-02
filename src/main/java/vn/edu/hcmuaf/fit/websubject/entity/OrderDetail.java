@@ -32,12 +32,12 @@ public class OrderDetail {
     private int quantity;
 
     @Column(name = "total_money")
-    private BigDecimal totalMoney;
+    private int totalMoney;
 
     public OrderDetail(Order order, Product product, int quantity) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;
-        this.totalMoney = product.getCurrentPrice().multiply(BigDecimal.valueOf(quantity));
+        this.totalMoney = product.getCurrentPrice() * quantity;
     }
 }

@@ -37,7 +37,7 @@ public class Order {
     private Date orderDate;
 
     @Column(name = "order_total")
-    private BigDecimal orderTotal;
+    private int orderTotal;
 
     @Column(name = "total_quantity")
     private int totalQuantity;
@@ -50,7 +50,7 @@ public class Order {
     private OrderStatus status;
 
     @Column(name = "shipping_cost")
-    private BigDecimal shippingCost;
+    private int shippingCost;
 
     @Column(name = "note")
     private String note;
