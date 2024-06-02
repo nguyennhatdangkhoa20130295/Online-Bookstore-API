@@ -14,22 +14,25 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
+import vn.edu.hcmuaf.fit.websubject.entity.Promotion;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
-import vn.edu.hcmuaf.fit.websubject.repository.ProductDetailRepository;
-import vn.edu.hcmuaf.fit.websubject.repository.ProductImageRepository;
-import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
-import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.*;
 import vn.edu.hcmuaf.fit.websubject.service.ProductService;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private PromotionRepository promotionRepository;
 
     @Override
     public List<Product> getAllProducts() {
@@ -64,6 +67,35 @@ public class ProductServiceImpl implements ProductService {
     public Optional<Product> getProductById(Integer id) {
         return productRepository.findById(id);
     }
+
+    @Override
+    public List<Product> getAllProductWithPromotion() {
+        List<Product> allProducts = productRepository.findAll();
+        List<Product> productsWithPromotion = new ArrayList<>();
+        for (Product product : allProducts) {
+            Optional<Promotion> promotion = promotionRepository.findByProductId(product.getId());
+            if (promotion.isPresent()) {
+                productsWithPromotion.add(product);
+            }
+        }
+        return productsWithPromotion;
+    }
+
+    @Override
+    public void setDiscountPrice(int id, int discountPrice) {
+        Optional<Product> optionalProduct = productRepository.findById(id);
+        if (optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+            if(discountPrice==product.getOldPrice()){
+                product.setCurrentPrice(product.getOldPrice());
+                System.out.println(product);
+            } else {
+                product.setCurrentPrice(discountPrice);
+            }
+            productRepository.save(product);
+            }
+    }
+
 
     @Override
     public Page<Product> getProductsByCategory(Integer categoryId, int page, int perPage, String sort, String filter, String order) {

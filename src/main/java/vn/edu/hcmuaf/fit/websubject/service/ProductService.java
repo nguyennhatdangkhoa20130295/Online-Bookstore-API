@@ -13,6 +13,10 @@ public interface ProductService {
 
     Optional<Product> getProductById(Integer id);
 
+    List<Product> getAllProductWithPromotion();
+
+    void setDiscountPrice(int id, int discountPrice);
+
     Page<Product> getProductsByCategory(Integer categoryId, int page, int perPage, String sort, String filter, String order);
 
     List<Product> getThreeLatestProduct();
