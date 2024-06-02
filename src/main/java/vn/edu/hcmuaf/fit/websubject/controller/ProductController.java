@@ -43,6 +43,11 @@ public class ProductController {
         }
     }
 
+    @GetMapping("/promotion")
+    public List<Product> getPromotionProducts() {
+        return productService.getAllProductWithPromotion();
+    }
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<?> getProductsByCategory(@PathVariable Integer categoryId,
                                                    @RequestParam(required = false) Integer page,
@@ -56,6 +61,16 @@ public class ProductController {
         } else {
             Page<Product> products = productService.getProductsByCategory(categoryId, page, perPage, sort, filter, order);
             return ResponseEntity.ok(products);
+        }
+    }
+
+    @PutMapping("/set_discount/{id}/price/{newPrice}")
+    public ResponseEntity<?> setDiscount(@PathVariable Integer id, @PathVariable Integer newPrice) {
+        if(id == null) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            productService.setDiscountPrice(id, newPrice);
+            return ResponseEntity.ok().build();
         }
     }
 
