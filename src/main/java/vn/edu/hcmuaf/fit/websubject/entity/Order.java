@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class Order {
     private Date orderDate;
 
     @Column(name = "order_total")
-    private int orderTotal;
+    private BigDecimal orderTotal;
 
     @Column(name = "total_quantity")
     private int totalQuantity;
@@ -49,7 +50,7 @@ public class Order {
     private OrderStatus status;
 
     @Column(name = "shipping_cost")
-    private int shippingCost;
+    private BigDecimal shippingCost;
 
     @Column(name = "note")
     private String note;

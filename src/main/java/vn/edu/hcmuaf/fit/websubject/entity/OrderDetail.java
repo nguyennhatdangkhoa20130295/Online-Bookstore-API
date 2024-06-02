@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,12 +32,12 @@ public class OrderDetail {
     private int quantity;
 
     @Column(name = "total_money")
-    private int totalMoney;
+    private BigDecimal totalMoney;
 
-    public OrderDetail(Order order, Product product, int quantity, int totalMoney) {
+    public OrderDetail(Order order, Product product, int quantity) {
         this.order = order;
         this.product = product;
         this.quantity = quantity;
-        this.totalMoney = totalMoney;
+        this.totalMoney = product.getCurrentPrice().multiply(BigDecimal.valueOf(quantity));
     }
 }
