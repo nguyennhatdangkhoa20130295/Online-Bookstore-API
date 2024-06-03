@@ -11,7 +11,10 @@ public interface OrderService {
 
     Order getLatestOrder(Integer userId);
 
-    Order createOrder(Order order);
+    Order createOrder(Order order, Integer promoId);
+
+    Order getOrderByPromoCode(String code, Integer userId);
+
 
     void createOrderDetail(OrderDetail orderDetail);
 

@@ -57,4 +57,9 @@ public class Order {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<OrderDetail> orderDetails;
+
+    @OneToOne
+    @JoinColumn(name = "discount_id")
+    private Promotion promotion;
+
 }

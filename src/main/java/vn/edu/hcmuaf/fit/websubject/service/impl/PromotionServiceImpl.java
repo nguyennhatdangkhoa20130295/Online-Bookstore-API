@@ -1,12 +1,12 @@
 package vn.edu.hcmuaf.fit.websubject.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Promotion;
 import vn.edu.hcmuaf.fit.websubject.repository.PromotionRepository;
 import vn.edu.hcmuaf.fit.websubject.service.PromotionService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PromotionServiceImpl implements PromotionService {
@@ -24,8 +24,15 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public Promotion getPromotionById(int id) {
-        return null;
+        return promotionRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public Promotion getPromotionByCode(String code) {
+        Optional<Promotion> promoCode = promotionRepository.findByCode(code);
+        return promoCode.orElse(null);
+    }
+
 
     @Override
     public void addPromotion(Promotion promotion) {

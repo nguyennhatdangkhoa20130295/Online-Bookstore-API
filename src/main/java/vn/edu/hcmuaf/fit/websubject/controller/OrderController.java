@@ -11,6 +11,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.service.CartItemsService;
 import vn.edu.hcmuaf.fit.websubject.service.InventoryService;
 import vn.edu.hcmuaf.fit.websubject.service.OrderService;
+import vn.edu.hcmuaf.fit.websubject.service.PromotionService;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 
@@ -29,6 +30,9 @@ public class OrderController {
     @Autowired
     private InventoryService inventoryService;
 
+    @Autowired
+    private PromotionService promotionService;
+
     @GetMapping
     public ResponseEntity<?> getUserOrders() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -42,10 +46,10 @@ public class OrderController {
         }
     }
 
-    @PostMapping
+    @PostMapping("{promoId}")
     @Transactional
-    public ResponseEntity<?> createOrder(@RequestBody Order order) {
-
+    public ResponseEntity<?> createOrder(@RequestBody Order order, @PathVariable Integer promoId) {
+        Order newOrder = orderService.createOrder(order, promoId);
         List<CartItem> cartItems = cartItemsService.getCartItems();
         for (CartItem cartItem : cartItems) {
             Optional<Inventory> inventoryOptional = inventoryService.getByProductId(cartItem.getProduct().getId());
@@ -58,7 +62,6 @@ public class OrderController {
                         .body("Không đủ hàng cho sản phẩm: " + cartItem.getProduct().getTitle());
             }
         }
-        Order newOrder = orderService.createOrder(order);
         Order latestOrder = orderService.getLatestOrder(newOrder.getUser().getId());
         for (CartItem cartItem : cartItems) {
             OrderDetail orderDetail = new OrderDetail(latestOrder, cartItem.getProduct(), cartItem.getQuantity());
@@ -73,6 +76,19 @@ public class OrderController {
         List<Order> orders = orderService.getOrderByProductIdAndUserId(idProduct, userId);
         if (orders != null) {
             return ResponseEntity.ok().body(orders);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/promo/{promoCode}/user/{userId}")
+    public ResponseEntity<?> getOrderByPromoCode(@PathVariable String promoCode, @PathVariable Integer userId) {
+        Order order = orderService.getOrderByPromoCode(promoCode, userId);
+        Promotion promotion = promotionService.getPromotionByCode(promoCode);
+        if (order != null) {
+            return ResponseEntity.ok().body(order);
+        } else if(promotion != null) {
+            return ResponseEntity.badRequest().body(promotion);
         } else {
             return ResponseEntity.notFound().build();
         }

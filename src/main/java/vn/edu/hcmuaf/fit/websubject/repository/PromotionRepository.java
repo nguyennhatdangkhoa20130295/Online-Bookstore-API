@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
     Optional<Promotion> findByProductId(Integer productId);
+
+    Optional<Promotion> findByCode(String code);
 }
