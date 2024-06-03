@@ -1,6 +1,8 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,12 +22,16 @@ public class Inventory {
     @Column(name = "id")
     private Integer id;
 
-    @OneToOne
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
 
-    @Column(name = "quantity")
-    private int quantity;
+    @Column(name = "imported_quantity")
+    private int importedQuantity;
+
+    @Column(name = "remaining_quantity")
+    private int remainingQuantity;
 
     @Column(name = "import_price")
     private int importPrice;
@@ -37,4 +43,8 @@ public class Inventory {
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @Column(name = "active", columnDefinition = "boolean default true")
+    private boolean active;
+
 }

@@ -48,12 +48,12 @@ public class OrderController {
 
         List<CartItem> cartItems = cartItemsService.getCartItems();
         for (CartItem cartItem : cartItems) {
-            Optional<Inventory> inventoryOptional = inventoryService.getByProduct(cartItem.getProduct());
+            Optional<Inventory> inventoryOptional = inventoryService.getByProductId(cartItem.getProduct().getId());
             if (inventoryOptional.isEmpty()) {
                 throw new RuntimeException("Inventory not found");
             }
             Inventory inventory = inventoryOptional.get();
-            if (inventory.getQuantity() < cartItem.getQuantity()) {
+            if (inventory.getRemainingQuantity() < cartItem.getQuantity()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("Không đủ hàng cho sản phẩm: " + cartItem.getProduct().getTitle());
             }
