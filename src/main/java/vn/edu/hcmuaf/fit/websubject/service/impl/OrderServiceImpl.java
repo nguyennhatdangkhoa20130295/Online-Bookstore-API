@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import vn.edu.hcmuaf.fit.websubject.entity.Address;
-import vn.edu.hcmuaf.fit.websubject.entity.OrderDetail;
-import vn.edu.hcmuaf.fit.websubject.entity.Order;
-import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.*;
 import vn.edu.hcmuaf.fit.websubject.service.OrderService;
@@ -35,6 +32,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     AddressRepository addressRepository;
 
+    @Autowired
+    PromotionRepository promotionRepository;
+
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int ORDER_CODE_LENGTH = 10;
     private static final Random RANDOM = new SecureRandom();
@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrder(Order order) {
+    public Order createOrder(Order order, Integer promoId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
@@ -59,12 +59,25 @@ public class OrderServiceImpl implements OrderService {
         }
         User user = userOptional.get();
         order.setUser(user);
+        Optional<Promotion> promotionOptional = promotionRepository.findById(promoId);
+        if(promotionOptional.isEmpty()){
+            return null;
+        } else {
+            Promotion promotion = promotionOptional.get();
+            order.setPromotion(promotion);
+        }
         order.setOrderCode(generateOrderCode());
         order.setOrderDate(CurrentTime.getCurrentTimeInVietnam());
         if (order.getPaymentMethod().equals("cashondelivery")) {
             order.setPaymentMethod("Thanh toán khi nhận hàng");
         }
         return orderRepository.save(order);
+    }
+
+    @Override
+    public Order getOrderByPromoCode(String code, Integer userId) {
+        List<Order> orders = orderRepository.findByPromoCode(code, userId);
+        return orders.isEmpty() ? null : orders.get(0);
     }
 
     @Override

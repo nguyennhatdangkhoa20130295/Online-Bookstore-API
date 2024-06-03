@@ -17,6 +17,11 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     """)
     List<Order> findByProductIdAndUserId(Integer productId, Integer userId);
 
+    @Query("""
+        select o from Order o inner join Promotion p on o.promotion.id = p.id where p.code = :promoCode and o.user.id = :userId
+    """)
+    List<Order> findByPromoCode(String promoCode, Integer userId);
+
     Order findTopByUserIdOrderByIdDesc(Integer userId);
 
 }

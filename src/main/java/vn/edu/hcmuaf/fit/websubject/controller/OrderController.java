@@ -7,12 +7,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.hcmuaf.fit.websubject.entity.CartItems;
-import vn.edu.hcmuaf.fit.websubject.entity.Order;
-import vn.edu.hcmuaf.fit.websubject.entity.OrderDetail;
-import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.service.CartItemsService;
 import vn.edu.hcmuaf.fit.websubject.service.OrderService;
+import vn.edu.hcmuaf.fit.websubject.service.PromotionService;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 
@@ -29,6 +27,9 @@ public class OrderController {
     @Autowired
     private CartItemsService cartItemsService;
 
+    @Autowired
+    private PromotionService promotionService;
+
     @GetMapping
     public ResponseEntity<?> getUserOrders() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -42,10 +43,10 @@ public class OrderController {
         }
     }
 
-    @PostMapping
+    @PostMapping("{promoId}")
     @Transactional
-    public ResponseEntity<?> createOrder(@RequestBody Order order) {
-        Order newOrder = orderService.createOrder(order);
+    public ResponseEntity<?> createOrder(@RequestBody Order order, @PathVariable Integer promoId) {
+        Order newOrder = orderService.createOrder(order, promoId);
         List<CartItems> cartItems = cartItemsService.getCartItems();
         Order latestOrder = orderService.getLatestOrder(newOrder.getUser().getId());
         for (CartItems cartItem : cartItems) {
@@ -61,6 +62,19 @@ public class OrderController {
         List<Order> orders = orderService.getOrderByProductIdAndUserId(idProduct, userId);
         if (orders != null) {
             return ResponseEntity.ok().body(orders);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/promo/{promoCode}/user/{userId}")
+    public ResponseEntity<?> getOrderByPromoCode(@PathVariable String promoCode, @PathVariable Integer userId) {
+        Order order = orderService.getOrderByPromoCode(promoCode, userId);
+        Promotion promotion = promotionService.getPromotionByCode(promoCode);
+        if (order != null) {
+            return ResponseEntity.ok().body(order);
+        } else if(promotion != null) {
+            return ResponseEntity.badRequest().body(promotion);
         } else {
             return ResponseEntity.notFound().build();
         }
