@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.service.CartItemsService;
+import vn.edu.hcmuaf.fit.websubject.service.InventoryService;
 import vn.edu.hcmuaf.fit.websubject.service.OrderService;
 import vn.edu.hcmuaf.fit.websubject.service.PromotionService;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
@@ -26,6 +27,8 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
     private CartItemsService cartItemsService;
+    @Autowired
+    private InventoryService inventoryService;
 
     @Autowired
     private PromotionService promotionService;
@@ -47,10 +50,21 @@ public class OrderController {
     @Transactional
     public ResponseEntity<?> createOrder(@RequestBody Order order, @PathVariable Integer promoId) {
         Order newOrder = orderService.createOrder(order, promoId);
-        List<CartItems> cartItems = cartItemsService.getCartItems();
+        List<CartItem> cartItems = cartItemsService.getCartItems();
+        for (CartItem cartItem : cartItems) {
+            Optional<Inventory> inventoryOptional = inventoryService.getByProductId(cartItem.getProduct().getId());
+            if (inventoryOptional.isEmpty()) {
+                throw new RuntimeException("Inventory not found");
+            }
+            Inventory inventory = inventoryOptional.get();
+            if (inventory.getRemainingQuantity() < cartItem.getQuantity()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Không đủ hàng cho sản phẩm: " + cartItem.getProduct().getTitle());
+            }
+        }
         Order latestOrder = orderService.getLatestOrder(newOrder.getUser().getId());
-        for (CartItems cartItem : cartItems) {
-            OrderDetail orderDetail = new OrderDetail(latestOrder, cartItem.getProduct(), cartItem.getQuantity(), cartItem.getQuantity() * cartItem.getProduct().getCurrentPrice());
+        for (CartItem cartItem : cartItems) {
+            OrderDetail orderDetail = new OrderDetail(latestOrder, cartItem.getProduct(), cartItem.getQuantity());
             orderService.createOrderDetail(orderDetail);
             cartItemsService.removeFromCart(cartItem.getId());
         }

@@ -99,7 +99,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<Product> getProductsByCategory(Integer categoryId, int page, int perPage, String sort, String filter, String order) {
-        System.out.println(filter);
         Sort.Direction direction = Sort.Direction.ASC;
         if (order.equalsIgnoreCase("DESC")) {
             direction = Sort.Direction.DESC;
@@ -108,7 +107,6 @@ public class ProductServiceImpl implements ProductService {
         JsonNode filterJson;
         try {
             filterJson = new ObjectMapper().readTree(java.net.URLDecoder.decode(filter, StandardCharsets.UTF_8));
-            System.out.println(filterJson);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -129,16 +127,13 @@ public class ProductServiceImpl implements ProductService {
                         double maxPrice = Double.parseDouble(prices[1]);
                         predicate = criteriaBuilder.and(predicate, criteriaBuilder.between(root.get("currentPrice"), minPrice, maxPrice));
                     } catch (NumberFormatException e) {
-                        // Handle the error if the price values are not valid numbers
                         e.printStackTrace();
                     }
                 } else if (prices.length == 1) {
-                    // Only one price given, assume it's the minimum price
                     try {
                         double minPrice = Double.parseDouble(prices[0]);
                         predicate = criteriaBuilder.and(predicate, criteriaBuilder.greaterThanOrEqualTo(root.get("currentPrice"), minPrice));
                     } catch (NumberFormatException e) {
-                        // Handle the error if the price values are not valid numbers
                         e.printStackTrace();
                     }
                 }
@@ -187,6 +182,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getTopReviewProducts() {
         return productRepository.findTopReviewProducts();
+    }
+
+    @Override
+    public List<Product> getTopSellingProducts() {
+        return List.of();
     }
 
 }

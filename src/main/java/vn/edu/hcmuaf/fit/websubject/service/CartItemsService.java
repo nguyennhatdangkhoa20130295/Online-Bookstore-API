@@ -1,15 +1,15 @@
 package vn.edu.hcmuaf.fit.websubject.service;
 
-import vn.edu.hcmuaf.fit.websubject.entity.CartItems;
+import vn.edu.hcmuaf.fit.websubject.entity.CartItem;
 
 import java.util.List;
 
 public interface CartItemsService {
-    void addToCart(CartItems cartItems);
+    void addToCart(CartItem cartItem);
 
     void removeFromCart(int cartItemId);
 
-    List<CartItems> getCartItems();
+    List<CartItem> getCartItems();
 
     void increaseCartItemQuantity(int cartItemId);
 

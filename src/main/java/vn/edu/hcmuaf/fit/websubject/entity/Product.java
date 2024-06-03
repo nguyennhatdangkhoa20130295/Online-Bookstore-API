@@ -1,10 +1,12 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "product")
+@Table(name = "products")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +34,10 @@ public class Product {
     private String image;
 
     @Column(name = "old_price")
-    private Integer oldPrice;
+    private int oldPrice;
 
     @Column(name = "current_price")
-    private Integer currentPrice;
-
-    @Column(name = "quantity")
-    private Integer quantity;
+    private int currentPrice;
 
     @Column(name = "active")
     private boolean active;
@@ -72,4 +71,9 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Inventory> inventories;
+
 }

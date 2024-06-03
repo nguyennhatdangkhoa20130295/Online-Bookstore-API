@@ -1,10 +1,12 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Getter
@@ -13,44 +15,36 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "blogs")
-public class Blog {
+@Table(name = "inventories")
+public class Inventory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "id")
+    private Integer id;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @OneToOne
-    @JoinColumn(name = "blog_cate_id")
-    private BlogCategory blogCate;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
-    private String image;
+    @Column(name = "imported_quantity")
+    private int importedQuantity;
 
-    @Column(name = "title")
-    private String title;
+    @Column(name = "remaining_quantity")
+    private int remainingQuantity;
 
-    @Column(name = "content")
-    private String content;
-
-    @Column(name = "short_description")
-    private String shortDesc;
-
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @OneToOne
-    @JoinColumn(name = "created_by")
-    private User createdBy;
+    @Column(name = "import_price")
+    private int importPrice;
 
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     @Column(name = "created_at")
     private Date createdAt;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @OneToOne
-    @JoinColumn(name = "updated_by")
-    private User updateBy;
-
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     @Column(name = "updated_at")
     private Date updatedAt;
+
+    @Column(name = "active", columnDefinition = "boolean default true")
+    private boolean active;
 
 }

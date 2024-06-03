@@ -27,6 +27,9 @@ public class OrderServiceImpl implements OrderService {
     OrderDetailRepository orderDetailRepository;
 
     @Autowired
+    InventoryRepository inventoryRepository;
+
+    @Autowired
     UserRepository userRepository;
 
     @Autowired
@@ -34,6 +37,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     PromotionRepository promotionRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int ORDER_CODE_LENGTH = 10;
@@ -82,6 +88,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void createOrderDetail(OrderDetail orderDetail) {
+        updateInventory(orderDetail.getProduct().getId(), orderDetail.getQuantity());
         orderDetailRepository.save(orderDetail);
     }
 
@@ -94,13 +101,28 @@ public class OrderServiceImpl implements OrderService {
         return sb.toString();
     }
 
+    private void updateInventory(int productId, int quantity) {
+        Product existingProduct = productRepository.findById(productId).get();
+        Inventory inventory = inventoryRepository.findByProductIdAndActiveTrue(productId)
+                .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + productId));
+        if (inventory.getRemainingQuantity() < quantity) {
+            throw new RuntimeException("Không đủ hàng cho sản phẩm: " + existingProduct.getTitle());
+        }
+        inventory.setRemainingQuantity(inventory.getRemainingQuantity() - quantity);
+        inventory.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+        if (inventory.getRemainingQuantity() == 0) {
+            inventory.setActive(false);
+        }
+        inventoryRepository.save(inventory);
+    }
+
     @Override
     public Optional<Order> getOrder(Integer orderId) {
         return orderRepository.findById(orderId);
     }
 
     @Override
-    public List<Order> getOrderByProductIdAndUserId(Integer productId, Integer userId){
+    public List<Order> getOrderByProductIdAndUserId(Integer productId, Integer userId) {
         return orderRepository.findByProductIdAndUserId(productId, userId);
     }
 }
