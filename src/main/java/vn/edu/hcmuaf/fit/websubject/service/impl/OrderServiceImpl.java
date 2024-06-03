@@ -35,6 +35,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     AddressRepository addressRepository;
 
+    @Autowired
+    private ProductRepository productRepository;
+
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final int ORDER_CODE_LENGTH = 10;
     private static final Random RANDOM = new SecureRandom();
@@ -69,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void createOrderDetail(OrderDetail orderDetail) {
-        updateInventory(orderDetail.getProduct(), orderDetail.getQuantity());
+        updateInventory(orderDetail.getProduct().getId(), orderDetail.getQuantity());
         orderDetailRepository.save(orderDetail);
     }
 
@@ -82,14 +85,18 @@ public class OrderServiceImpl implements OrderService {
         return sb.toString();
     }
 
-    private void updateInventory(Product product, int quantity){
-        Inventory inventory = inventoryRepository.findByProduct(product)
-                .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + product.getId()));
-        if (inventory.getQuantity() < quantity) {
-            throw new RuntimeException("Không đủ hàng cho sản phẩm: " + product.getTitle());
+    private void updateInventory(int productId, int quantity) {
+        Product existingProduct = productRepository.findById(productId).get();
+        Inventory inventory = inventoryRepository.findByProductIdAndActiveTrue(productId)
+                .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + productId));
+        if (inventory.getRemainingQuantity() < quantity) {
+            throw new RuntimeException("Không đủ hàng cho sản phẩm: " + existingProduct.getTitle());
         }
-        inventory.setQuantity(inventory.getQuantity() - quantity);
+        inventory.setRemainingQuantity(inventory.getRemainingQuantity() - quantity);
         inventory.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+        if (inventory.getRemainingQuantity() == 0) {
+            inventory.setActive(false);
+        }
         inventoryRepository.save(inventory);
     }
 
@@ -99,7 +106,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> getOrderByProductIdAndUserId(Integer productId, Integer userId){
+    public List<Order> getOrderByProductIdAndUserId(Integer productId, Integer userId) {
         return orderRepository.findByProductIdAndUserId(productId, userId);
     }
 }
