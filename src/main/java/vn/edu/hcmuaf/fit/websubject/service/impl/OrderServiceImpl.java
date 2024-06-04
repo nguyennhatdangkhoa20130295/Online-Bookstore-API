@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrder(Order order, Integer promoId) {
+    public Order createOrder(Order order) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
@@ -65,9 +65,9 @@ public class OrderServiceImpl implements OrderService {
         }
         User user = userOptional.get();
         order.setUser(user);
-        Optional<Promotion> promotionOptional = promotionRepository.findById(promoId);
-        if(promotionOptional.isEmpty()){
-            return null;
+        Optional<Promotion> promotionOptional = promotionRepository.findById(order.getPromotion().getId());
+        if (promotionOptional.isEmpty()) {
+            order.setPromotion(null);
         } else {
             Promotion promotion = promotionOptional.get();
             order.setPromotion(promotion);

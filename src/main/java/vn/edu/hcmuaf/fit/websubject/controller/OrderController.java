@@ -46,10 +46,9 @@ public class OrderController {
         }
     }
 
-    @PostMapping("{promoId}")
+    @PostMapping
     @Transactional
-    public ResponseEntity<?> createOrder(@RequestBody Order order, @PathVariable Integer promoId) {
-        Order newOrder = orderService.createOrder(order, promoId);
+    public ResponseEntity<?> createOrder(@RequestBody Order order) {
         List<CartItem> cartItems = cartItemsService.getCartItems();
         for (CartItem cartItem : cartItems) {
             Optional<Inventory> inventoryOptional = inventoryService.getByProductId(cartItem.getProduct().getId());
@@ -62,6 +61,7 @@ public class OrderController {
                         .body("Không đủ hàng cho sản phẩm: " + cartItem.getProduct().getTitle());
             }
         }
+        Order newOrder = orderService.createOrder(order);
         Order latestOrder = orderService.getLatestOrder(newOrder.getUser().getId());
         for (CartItem cartItem : cartItems) {
             OrderDetail orderDetail = new OrderDetail(latestOrder, cartItem.getProduct(), cartItem.getQuantity());

@@ -1,8 +1,6 @@
 package vn.edu.hcmuaf.fit.websubject.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,8 +19,8 @@ public class Promotion {
     @Column(name = "id")
     private Integer id;
 
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "idProduct")
     private Product product;
 
@@ -37,4 +35,5 @@ public class Promotion {
 
     @Column(name = "end_date")
     private Date endDate;
+
 }
