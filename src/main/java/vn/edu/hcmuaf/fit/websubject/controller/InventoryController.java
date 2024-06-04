@@ -10,6 +10,7 @@ import vn.edu.hcmuaf.fit.websubject.payload.request.InventoryRequest;
 import vn.edu.hcmuaf.fit.websubject.service.InventoryService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/inventories")
@@ -32,5 +33,15 @@ public class InventoryController {
     public ResponseEntity<?> createInventories(@RequestBody List<InventoryRequest> inventoryRequests) {
         List<Inventory> createdInventories = inventoryService.createInventories(inventoryRequests);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdInventories);
+    }
+
+    @GetMapping("/inventory/{productId}")
+    public ResponseEntity<?> getByProductId(@PathVariable int productId) {
+        Optional<Inventory> inventoryOptional = inventoryService.getByProductId(productId);
+        if (inventoryOptional.isEmpty()) {
+            throw new RuntimeException("Inventory not found");
+        }
+        Inventory inventory = inventoryOptional.get();
+        return ResponseEntity.ok(inventory);
     }
 }
