@@ -86,14 +86,13 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> optionalProduct = productRepository.findById(id);
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
-            if(discountPrice==product.getOldPrice()){
+            if (discountPrice == product.getOldPrice()) {
                 product.setCurrentPrice(product.getOldPrice());
-                System.out.println(product);
             } else {
                 product.setCurrentPrice(discountPrice);
             }
             productRepository.save(product);
-            }
+        }
     }
 
 
