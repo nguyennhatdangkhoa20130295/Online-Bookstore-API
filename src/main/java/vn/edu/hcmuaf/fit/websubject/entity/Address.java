@@ -37,6 +37,12 @@ public class Address {
     @Column(name = "ward_commune")
     private String wardCommune;
 
+    @Column(name = "districtId")
+    private int districtId;
+
+    @Column(name = "wardCode")
+    private String wardCode;
+
     @Column(name = "county_district")
     private String countyDistrict;
 
