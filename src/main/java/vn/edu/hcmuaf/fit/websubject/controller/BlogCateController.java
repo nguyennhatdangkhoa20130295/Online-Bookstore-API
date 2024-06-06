@@ -27,7 +27,7 @@ public class BlogCateController {
     @GetMapping("")
     public ResponseEntity<Page<BlogCategory>> getAllBlogCate(@RequestParam(defaultValue = "0") int page,
                                                   @RequestParam(defaultValue = "") String filter,
-                                                  @RequestParam(defaultValue = "25") int perPage,
+                                                  @RequestParam(defaultValue = "5") int perPage,
                                                   @RequestParam(defaultValue = "id") String sort,
                                                   @RequestParam(defaultValue = "ASC") String order) {
         try {
@@ -44,6 +44,41 @@ public class BlogCateController {
         if (blogcate.isPresent()) {
             return ResponseEntity.ok(blogcate.get());
         } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PostMapping("/add")
+    public ResponseEntity<?> addBlogCate(@RequestBody BlogCategory blogCategory) {
+        try {
+            blogCateService.addBlogCategory(blogCategory.getName(), blogCategory.getCreatedBy().getId(), blogCategory.getUpdatedBy().getId());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            if(e.getMessage().equals("User not found"))
+                return ResponseEntity.badRequest().body("User not found");
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<?> editBlogCate(@PathVariable int id, @RequestBody BlogCategory blogCategory) {
+        try {
+            blogCateService.editBlogCategory(id, blogCategory.getName(), blogCategory.getUpdatedBy().getId());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            if(e.getMessage().equals("Blog category not found"))
+                return ResponseEntity.badRequest().body("Blog category not found");
+            if(e.getMessage().equals("User not found"))
+                return ResponseEntity.badRequest().body("User not found");
+            return ResponseEntity.notFound().build();
+        }
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteBlogCate(@PathVariable int id) {
+        try {
+            blogCateService.deleteBlogCategory(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            if(e.getMessage().equals("This category is being used by some blogs"))
+                return ResponseEntity.badRequest().body("This category is being used by some blogs");
             return ResponseEntity.notFound().build();
         }
     }

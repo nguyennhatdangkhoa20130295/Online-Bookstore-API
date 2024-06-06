@@ -92,13 +92,23 @@ public class UserController {
 
     @DeleteMapping("/delete/{idUser}")
     public ResponseEntity<String> deleteUser(@PathVariable int idUser) {
-        userService.deleteUser(idUser);
-        return ResponseEntity.ok("Delete user successfully");
+        try {
+            userService.deleteUser(idUser);
+            return ResponseEntity.ok("Delete user successfully");
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("User not found")) {
+                return ResponseEntity.badRequest().body("User not found");
+            } else if (e.getMessage().equals("Cannot delete admin")) {
+                return ResponseEntity.badRequest().body("Cannot delete admin");
+            } else {
+                return ResponseEntity.badRequest().body("Failed to delete user: " + e.getMessage());
+            }
+        }
     }
 
     @PostMapping("/info")
     public ResponseEntity<?> changeInformation(@RequestBody UserInfo userInfo) {
-        try{
+        try {
             userInfoService.createInformation(userInfo);
             return ResponseEntity.ok("Information created successfully");
         } catch (Exception e) {
@@ -108,7 +118,7 @@ public class UserController {
 
     @PutMapping("/info/{id}")
     public ResponseEntity<?> changeInformation(@PathVariable Integer id, @RequestBody UserInfo userInfo) {
-        try{
+        try {
             userInfoService.changeInformation(id, userInfo);
             return ResponseEntity.ok("Information changed successfully");
         } catch (Exception e) {

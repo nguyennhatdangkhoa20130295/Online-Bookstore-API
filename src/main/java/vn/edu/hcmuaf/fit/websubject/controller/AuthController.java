@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.jwt.JwtUtils;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
@@ -162,10 +159,21 @@ public class AuthController {
 //        saveUserToken(saveUser, jwtToken);
 
             return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-        }else {
+        } else {
             return ResponseEntity.badRequest().body("Invalid OTP.");
         }
     }
+
+    @PostMapping("/checkToken/{token}")
+    public ResponseEntity<?> checkToken(@Valid @PathVariable String token) {
+        try {
+            jwtUtils.validateJwtToken(token);
+            return ResponseEntity.ok("Token is valid");
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.badRequest().body("Token is expired");
+        }
+    }
+
     @PostMapping("/send-email")
     public ResponseEntity<String> createAccount(@Valid @RequestBody SendEmailRequest sendMailRequest) throws
             MessagingException {
@@ -173,7 +181,7 @@ public class AuthController {
             if (!userRepository.existsByEmail(sendMailRequest.getEmail())) {
                 return ResponseEntity.badRequest().body("Không tìm thấy email.");
             }
-        } else if(sendMailRequest.getType() == 0){
+        } else if (sendMailRequest.getType() == 0) {
             if (userRepository.existsByEmail(sendMailRequest.getEmail())) {
                 return ResponseEntity.badRequest().body("Email đã tồn tại.");
             }

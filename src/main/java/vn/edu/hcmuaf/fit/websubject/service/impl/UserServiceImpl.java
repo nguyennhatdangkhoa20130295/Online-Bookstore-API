@@ -22,10 +22,7 @@ import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.UserService;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -219,8 +216,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUser(int idUser) {
-        tokenRepository.deleteAll(tokenRepository.findAllTokenByUser(idUser));
-        userRepository.deleteById(idUser);
+        User user = userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("User not found"));
+        List<User> admins = userRepository.findAllByRoles(idUser, EnumRole.ADMIN.toString());
+        List<User> mods = userRepository.findAllByRoles(idUser, EnumRole.MODERATOR.toString());
+        if(user.getRoles().contains(roleRepository.findByDescription(EnumRole.ADMIN).get()) && admins.size() == 1) {
+            throw new RuntimeException("Cannot delete admin");
+        } if(user.getRoles().contains(roleRepository.findByDescription(EnumRole.MODERATOR).get()) && mods.size() == 1) {
+            throw new RuntimeException("Cannot delete moderator");
+        } else {
+            tokenRepository.deleteAll(tokenRepository.findAllTokenByUser(idUser));
+            userRepository.deleteById(idUser);
+        }
     }
 
     @Override
