@@ -39,6 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Page<Category> getAllCategories(int page, int perPage, String sort, String filter, String order) {
+        System.out.println(filter);
         Sort.Direction direction = Sort.Direction.ASC;
         if (order.equalsIgnoreCase("DESC"))
             direction = Sort.Direction.DESC;
