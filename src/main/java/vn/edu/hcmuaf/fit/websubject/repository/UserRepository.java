@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByEmail(String email);
 
-    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.description = :role")
+    @Query("SELECT u FROM User u JOIN u.roles r WHERE r.description = :role AND u.id = :idUser")
     List<User> findAllByRoles(int idUser, String role);
 
     boolean existsByUsername(String username);
