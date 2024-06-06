@@ -15,5 +15,11 @@ public interface BlogCateService {
 
     Page<BlogCategory> getAllBlogCate(int page, int perPage);
 
+    void addBlogCategory(String name, int createBy, int updateBy);
+
+    void editBlogCategory(int id, String name, int updateBy);
+
+    void deleteBlogCategory(int id);
+
     Optional<BlogCategory> findByBlogId(int id);
 }
