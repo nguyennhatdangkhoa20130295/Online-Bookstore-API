@@ -12,6 +12,7 @@ import java.util.Date;
 public class InventoryRequest {
     private int productId;
     private int importPrice;
+    private int salePrice;
     private int quantity;
     private Date createdAt;
 }

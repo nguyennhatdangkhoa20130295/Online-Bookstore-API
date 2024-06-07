@@ -28,4 +28,6 @@ public interface ProductService {
     List<Product> getTopReviewProducts();
 
     List<Product> getTopSellingProducts();
+
+    Product createProduct(Product product);
 }

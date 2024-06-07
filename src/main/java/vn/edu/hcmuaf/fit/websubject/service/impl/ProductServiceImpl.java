@@ -12,18 +12,17 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import vn.edu.hcmuaf.fit.websubject.entity.Category;
-import vn.edu.hcmuaf.fit.websubject.entity.Product;
-import vn.edu.hcmuaf.fit.websubject.entity.Promotion;
-import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.entity.*;
+import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.*;
 import vn.edu.hcmuaf.fit.websubject.service.ProductService;
 
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Random;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -33,6 +32,32 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private PromotionRepository promotionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ProductImageRepository productImageRepository;
+
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
+
+    private static final String PREFIX = "978"; // Prefix cố định của SKU
+    private static final int TOTAL_LENGTH = 13; // Độ dài tổng cộng của SKU
+    private static final Random RANDOM = new SecureRandom();
+
+    public static String generateRandomSKU() {
+        StringBuilder skuBuilder = new StringBuilder(PREFIX);
+
+        int remainingLength = TOTAL_LENGTH - PREFIX.length();
+
+        for (int i = 0; i < remainingLength; i++) {
+            int digit = RANDOM.nextInt(10);
+            skuBuilder.append(digit);
+        }
+
+        return skuBuilder.toString();
+    }
 
     @Override
     public List<Product> getAllProducts() {
@@ -60,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
             return predicate;
         };
         PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
-        return productRepository.findAll(specification, pageRequest);
+        return productRepository.findAllByActiveIsTrue(specification, pageRequest);
     }
 
     @Override
@@ -149,18 +174,18 @@ public class ProductServiceImpl implements ProductService {
         };
         switch (sort) {
             case "atoz", "ztoa" -> {
-                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "title")));
+                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "title")));
             }
             case "price-asc", "price-desc" -> {
-                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "currentPrice")));
+                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "currentPrice")));
             }
             case "latest" -> {
-                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "id")));
+                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "id")));
             }
         }
 
         PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
-        return productRepository.findAll(specification, pageRequest);
+        return productRepository.findAllByActiveIsTrue(specification, pageRequest);
     }
 
     @Override
@@ -186,6 +211,72 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<Product> getTopSellingProducts() {
         return List.of();
+    }
+
+    @Override
+    public Product createProduct(Product product) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+        Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+        User user = userOptional.get();
+
+        product.setCategory(product.getCategory());
+        product.setTitle(product.getTitle());
+        product.setImage(product.getImage());
+        product.setOldPrice(product.getOldPrice());
+        product.setCurrentPrice(product.getCurrentPrice());
+        product.setActive(product.isActive());
+        product.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+        product.setCreatedBy(user);
+        product.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+        product.setUpdatedBy(user);
+
+        ProductDetail detail = new ProductDetail();
+        detail.setProduct(product);
+        detail.setProductSku(generateRandomSKU());
+        detail.setSupplier(product.getDetail().getSupplier());
+        detail.setPublisher(product.getDetail().getPublisher());
+        detail.setPublishYear(product.getDetail().getPublishYear());
+        detail.setAuthor(product.getDetail().getAuthor());
+        detail.setBrand(product.getDetail().getBrand());
+        detail.setOrigin(product.getDetail().getOrigin());
+        detail.setColor(product.getDetail().getColor());
+        detail.setWeight(product.getDetail().getWeight());
+        detail.setSize(product.getDetail().getSize());
+        detail.setQuantityOfPage(product.getDetail().getQuantityOfPage());
+        detail.setDescription(product.getDetail().getDescription());
+        productDetailRepository.save(detail);
+
+        product.setDetail(detail);
+
+
+        if (product.getImages() == null) {
+            product.setImages(new ArrayList<>());
+        }
+
+        List<ProductImage> productImages = new ArrayList<>();
+
+        ProductImage mainImage = new ProductImage();
+        mainImage.setProduct(product);
+        mainImage.setImage(product.getImage());
+        mainImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+        mainImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+        mainImage.setDeleted(false);
+        productImages.add(mainImage);
+
+        for (ProductImage productImage : product.getImages()) {
+            productImage.setProduct(product);
+            productImage.setImage(productImage.getImage());
+            productImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+            productImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            productImage.setDeleted(false);
+        }
+        product.setImages(productImages);
+
+        return product;
     }
 
 }

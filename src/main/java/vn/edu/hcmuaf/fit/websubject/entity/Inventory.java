@@ -36,6 +36,9 @@ public class Inventory {
     @Column(name = "import_price")
     private int importPrice;
 
+    @Column(name = "sale_price")
+    private int salePrice;
+
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     @Column(name = "created_at")
     private Date createdAt;

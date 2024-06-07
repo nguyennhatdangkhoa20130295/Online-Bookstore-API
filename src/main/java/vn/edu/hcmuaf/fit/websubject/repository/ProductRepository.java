@@ -1,5 +1,8 @@
 package vn.edu.hcmuaf.fit.websubject.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -10,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor {
+public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
 
     List<Product> findTop3ByOrderByIdDesc();
 
@@ -24,4 +27,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
 
     @Query("SELECT p FROM Product p LEFT JOIN p.comments c GROUP BY p.id ORDER BY COUNT(c) DESC LIMIT 2")
     List<Product> findTopReviewProducts();
+
+    @Query("SELECT p FROM Product p WHERE p.active = true")
+    Page<Product> findAllByActiveIsTrue(Specification<Product> specification, Pageable pageable);
 }

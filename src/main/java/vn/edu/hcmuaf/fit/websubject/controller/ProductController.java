@@ -2,7 +2,9 @@ package vn.edu.hcmuaf.fit.websubject.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.service.ProductService;
@@ -66,7 +68,7 @@ public class ProductController {
 
     @PutMapping("/set_discount/{id}/price/{newPrice}")
     public ResponseEntity<?> setDiscount(@PathVariable Integer id, @PathVariable Integer newPrice) {
-        if(id == null) {
+        if (id == null) {
             return ResponseEntity.badRequest().build();
         } else {
             productService.setDiscountPrice(id, newPrice);
@@ -89,10 +91,12 @@ public class ProductController {
         return productService.getTopReviewProducts();
     }
 
-//    @PostMapping("/add")
-//    public ResponseEntity<?> saveProduct(@RequestBody Product product) {
-//        Product savedProduct = productService.addProduct(product);
-//        return ResponseEntity.ok(savedProduct);
-//    }
+    @PostMapping("/add")
+    @Transactional
+    public ResponseEntity<?> saveProduct(@RequestBody Product product) {
+        System.out.println(product);
+        Product savedProduct = productService.createProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+    }
 
 }
