@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.BlogCategory;
+import vn.edu.hcmuaf.fit.websubject.payload.request.AddBlogCateRequest;
 import vn.edu.hcmuaf.fit.websubject.service.BlogCateService;
 
 import java.util.List;
@@ -48,9 +49,9 @@ public class BlogCateController {
         }
     }
     @PostMapping("/add")
-    public ResponseEntity<?> addBlogCate(@RequestBody BlogCategory blogCategory) {
+    public ResponseEntity<?> addBlogCate(@RequestBody AddBlogCateRequest addBlogCateRequest) {
         try {
-            blogCateService.addBlogCategory(blogCategory.getName(), blogCategory.getCreatedBy().getId(), blogCategory.getUpdatedBy().getId());
+            blogCateService.addBlogCategory(addBlogCateRequest.getName(), addBlogCateRequest.getCreatedBy(), addBlogCateRequest.getUpdatedBy());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             if(e.getMessage().equals("User not found"))
@@ -59,9 +60,9 @@ public class BlogCateController {
         }
     }
     @PutMapping("/edit/{id}")
-    public ResponseEntity<?> editBlogCate(@PathVariable int id, @RequestBody BlogCategory blogCategory) {
+    public ResponseEntity<?> editBlogCate(@PathVariable int id, @RequestBody AddBlogCateRequest addBlogCateRequest) {
         try {
-            blogCateService.editBlogCategory(id, blogCategory.getName(), blogCategory.getUpdatedBy().getId());
+            blogCateService.editBlogCategory(id, addBlogCateRequest.getName(), addBlogCateRequest.getUpdatedBy());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             if(e.getMessage().equals("Blog category not found"))
