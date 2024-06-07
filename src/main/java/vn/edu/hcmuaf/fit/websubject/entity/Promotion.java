@@ -19,7 +19,7 @@ public class Promotion {
     @Column(name = "id")
     private Integer id;
 
-    @JsonIgnore
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne
     @JoinColumn(name = "idProduct")
     private Product product;
@@ -35,5 +35,8 @@ public class Promotion {
 
     @Column(name = "end_date")
     private Date endDate;
+
+    @Column(name = "isCode")
+    private Boolean isCode;
 
 }
