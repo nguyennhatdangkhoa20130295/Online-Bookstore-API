@@ -27,7 +27,7 @@ public class BlogCategory {
     private User createdBy;
 
     @Column(name = "created_at")
-    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+//    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     private Date createdAt;
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -36,6 +36,6 @@ public class BlogCategory {
     private User updatedBy;
 
     @Column(name = "updated_at")
-    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
+//    @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     private Date updatedAt;
 }

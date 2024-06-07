@@ -100,7 +100,7 @@ public class BlogCateServiceImpl implements BlogCateService {
 
             if (jsonFilter.has("q")) {
                 String searchStr = jsonFilter.get("q").asText();
-                predicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + searchStr.toLowerCase() + "%");
+                predicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + searchStr.toLowerCase() + "%");
             }
             return predicate;
         };

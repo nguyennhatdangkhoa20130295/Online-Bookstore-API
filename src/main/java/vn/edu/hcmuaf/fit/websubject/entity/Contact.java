@@ -3,6 +3,8 @@ package vn.edu.hcmuaf.fit.websubject.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,6 +32,18 @@ public class Contact {
 
     @Column(name = "content")
     private String content;
+
+    @Column(name = "isReply")
+    private boolean isReply;
+
+    @Column(name = "replyContent")
+    private String replyContent;
+
+    @Column(name = "createdDate")
+    private Date createdDate;
+
+    @Column(name = "replyDate")
+    private Date replyDate;
 
 
 }

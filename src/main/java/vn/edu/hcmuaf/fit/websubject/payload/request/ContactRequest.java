@@ -10,4 +10,5 @@ public class ContactRequest {
     private String email;
     private String title;
     private String content;
+    private String contentReply;
 }
