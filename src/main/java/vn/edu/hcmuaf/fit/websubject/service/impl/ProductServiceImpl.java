@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -86,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
             return predicate;
         };
         PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
-        return productRepository.findAll(specification, pageRequest);
+        return productRepository.findAllByActiveIsTrue(specification, pageRequest);
     }
 
     @Override
@@ -175,18 +174,18 @@ public class ProductServiceImpl implements ProductService {
         };
         switch (sort) {
             case "atoz", "ztoa" -> {
-                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "title")));
+                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "title")));
             }
             case "price-asc", "price-desc" -> {
-                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "currentPrice")));
+                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "currentPrice")));
             }
             case "latest" -> {
-                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "id")));
+                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "id")));
             }
         }
 
         PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
-        return productRepository.findAll(specification, pageRequest);
+        return productRepository.findAllByActiveIsTrue(specification, pageRequest);
     }
 
     @Override

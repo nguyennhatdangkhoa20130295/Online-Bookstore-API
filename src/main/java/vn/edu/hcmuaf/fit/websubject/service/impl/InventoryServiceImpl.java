@@ -53,7 +53,7 @@ public class InventoryServiceImpl implements InventoryService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        Specification<Product> specification = (root, query, criteriaBuilder) -> {
+        Specification<Inventory> specification = (root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
             if (filterJson.has("q")) {
                 String searchStr = filterJson.get("q").asText().toLowerCase();
@@ -82,22 +82,26 @@ public class InventoryServiceImpl implements InventoryService {
     public List<Inventory> createInventories(List<InventoryRequest> inventoryRequests) {
         List<Inventory> inventories = new ArrayList<>();
         for (InventoryRequest inventoryRequest : inventoryRequests) {
-            Inventory existedInventory = inventoryRepository.findByProductIdAndActiveTrue(inventoryRequest.getProductId()).get();
-            Inventory inventory = new Inventory();
+            Optional<Inventory> inventoryOptional = inventoryRepository.findByProductIdAndActiveTrue(inventoryRequest.getProductId());
             Optional<Product> productOptional = productRepository.findById(inventoryRequest.getProductId());
             if (productOptional.isEmpty()) {
                 throw new RuntimeException("Product not found");
             }
             Product product = productOptional.get();
-            if (!existedInventory.isActive()) {
+            Inventory inventory = new Inventory();
+            if (inventoryOptional.isEmpty()) {
                 inventory.setProduct(product);
                 inventory.setImportPrice(inventoryRequest.getImportPrice());
+                inventory.setSalePrice(inventoryRequest.getSalePrice());
                 inventory.setImportedQuantity(inventoryRequest.getQuantity());
                 inventory.setRemainingQuantity(inventoryRequest.getQuantity());
                 inventory.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
                 inventory.setActive(true);
                 inventoryRepository.save(inventory);
                 inventories.add(inventory);
+                product.setOldPrice(inventoryRequest.getSalePrice());
+                product.setActive(true);
+                productRepository.save(product);
             }
         }
         return inventories;
