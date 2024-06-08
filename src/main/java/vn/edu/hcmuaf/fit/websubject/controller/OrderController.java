@@ -111,4 +111,13 @@ public class OrderController {
         }
     }
 
+    @PutMapping("/cancel/{orderId}")
+    public ResponseEntity<String> cancelOrder(@PathVariable Integer orderId) {
+        try {
+        orderService.cancelOrder(orderId);
+        return ResponseEntity.ok().body("Đã hủy đơn hàng");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

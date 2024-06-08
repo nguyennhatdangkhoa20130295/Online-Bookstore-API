@@ -22,4 +22,6 @@ public interface OrderService {
     Optional<Order> getOrder(Integer orderId);
 
     List<Order> getOrderByProductIdAndUserId(Integer productId, Integer userId);
+
+    void cancelOrder(Integer orderId);
 }
