@@ -125,4 +125,18 @@ public class OrderServiceImpl implements OrderService {
     public List<Order> getOrderByProductIdAndUserId(Integer productId, Integer userId) {
         return orderRepository.findByProductIdAndUserId(productId, userId);
     }
+
+    @Override
+    public void cancelOrder(Integer orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        if(order.getStatus().getId() == 6) {
+            throw new RuntimeException("Đơn hàng đã bị hủy");
+        } else if(order.getStatus().getId() >= 4) {
+            throw new RuntimeException("Đơn hàng đã được vận chuyển, không thể hủy");
+        } else {
+            OrderStatus orderStatus = orderStatusRepository.findById(6).orElseThrow(() -> new RuntimeException("Order status not found"));
+            order.setStatus(orderStatus);
+            orderRepository.save(order);
+        }
+    }
 }

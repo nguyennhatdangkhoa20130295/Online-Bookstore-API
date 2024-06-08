@@ -3,6 +3,7 @@ package vn.edu.hcmuaf.fit.websubject.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -60,7 +61,7 @@ public class Product {
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
     private Date updatedAt;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("product")
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Promotion> promotion;
 
