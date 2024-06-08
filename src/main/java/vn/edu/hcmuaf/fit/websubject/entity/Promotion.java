@@ -19,7 +19,7 @@ public class Promotion {
     @Column(name = "id")
     private Integer id;
 
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JsonIgnoreProperties("promotion")
     @ManyToOne
     @JoinColumn(name = "idProduct")
     private Product product;
