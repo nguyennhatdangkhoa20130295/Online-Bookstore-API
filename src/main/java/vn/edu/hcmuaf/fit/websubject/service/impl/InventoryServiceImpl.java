@@ -41,7 +41,6 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public Page<Inventory> getAllInventories(int page, int perPage, String sort, String filter, String order) {
-        System.out.println(filter);
         Sort.Direction direction = Sort.Direction.ASC;
         if (order.equalsIgnoreCase("DESC"))
             direction = Sort.Direction.DESC;
@@ -49,7 +48,6 @@ public class InventoryServiceImpl implements InventoryService {
         JsonNode filterJson;
         try {
             filterJson = new ObjectMapper().readTree(java.net.URLDecoder.decode(filter, StandardCharsets.UTF_8));
-            System.out.println(filterJson);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

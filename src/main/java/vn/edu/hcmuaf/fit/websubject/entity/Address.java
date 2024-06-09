@@ -40,14 +40,14 @@ public class Address {
     @Column(name = "districtId")
     private int districtId;
 
+    @Column(name = "province_city")
+    private String provinceCity;
+
     @Column(name = "wardCode")
     private String wardCode;
 
     @Column(name = "county_district")
     private String countyDistrict;
-
-    @Column(name = "province_city")
-    private String provinceCity;
 
     @Column(name = "created_at")
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")
@@ -59,5 +59,8 @@ public class Address {
 
     @Column(name = "is_default")
     private boolean isDefault;
+
+    @Column(name = "active", columnDefinition = "boolean default true")
+    private boolean active;
 
 }

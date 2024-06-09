@@ -1,6 +1,16 @@
 package vn.edu.hcmuaf.fit.websubject.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -9,6 +19,7 @@ import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.*;
 import vn.edu.hcmuaf.fit.websubject.service.OrderService;
 
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
@@ -129,9 +140,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(Integer orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
-        if(order.getStatus().getId() == 6) {
+        if (order.getStatus().getId() == 6) {
             throw new RuntimeException("Đơn hàng đã bị hủy");
-        } else if(order.getStatus().getId() >= 4) {
+        } else if (order.getStatus().getId() >= 4) {
             throw new RuntimeException("Đơn hàng đã được vận chuyển, không thể hủy");
         } else {
             OrderStatus orderStatus = orderStatusRepository.findById(6).orElseThrow(() -> new RuntimeException("Order status not found"));
@@ -139,4 +150,36 @@ public class OrderServiceImpl implements OrderService {
             orderRepository.save(order);
         }
     }
+
+    @Override
+    public Page<Order> getAllOrders(int page, int perPage, String sort, String filter, String order) {
+        Sort.Direction direction = Sort.Direction.ASC;
+        if (order.equalsIgnoreCase("DESC"))
+            direction = Sort.Direction.DESC;
+
+        JsonNode filterJson;
+        try {
+            filterJson = new ObjectMapper().readTree(java.net.URLDecoder.decode(filter, StandardCharsets.UTF_8));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        Specification<Order> specification = (root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+            if (filterJson.has("q")) {
+                String searchStr = filterJson.get("q").asText().toLowerCase();
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("orderCode")), "%" + searchStr + "%"));
+            }
+            if (filterJson.has("slug")) {
+                String slug = filterJson.get("slug").asText().toLowerCase();
+                Join<Order, OrderStatus> statusJoin = root.join("status", JoinType.INNER);
+                predicate = criteriaBuilder.and(predicate,
+                        criteriaBuilder.like(criteriaBuilder.lower(statusJoin.get("slug")), "%" + slug + "%"));
+            }
+            return predicate;
+        };
+        PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
+        return orderRepository.findAll(specification, pageRequest);
+    }
+
 }
