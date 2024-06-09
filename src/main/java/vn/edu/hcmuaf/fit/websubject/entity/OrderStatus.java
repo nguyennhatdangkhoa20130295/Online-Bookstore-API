@@ -16,7 +16,9 @@ public class OrderStatus {
     @Column(name = "id")
     private Integer id;
 
+    @Column(name = "slug")
+    private String slug;
+
     @Column(name = "name")
     private String name;
-
 }

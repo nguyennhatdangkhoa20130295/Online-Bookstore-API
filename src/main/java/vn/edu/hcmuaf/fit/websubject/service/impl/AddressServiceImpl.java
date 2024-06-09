@@ -45,6 +45,7 @@ public class AddressServiceImpl implements AddressService {
         User user = userOptional.get();
         address.setUser(user);
         address.setCreatedAt(getCurrentTimeInVietnam());
+        address.setActive(true);
         return addressRepository.save(address);
     }
 

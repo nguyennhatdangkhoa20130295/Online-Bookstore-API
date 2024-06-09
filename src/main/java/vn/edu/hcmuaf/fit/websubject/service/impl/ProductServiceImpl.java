@@ -85,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
             return predicate;
         };
         PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
-        return productRepository.findAllByActiveIsTrue(specification, pageRequest);
+        return productRepository.findAll(specification, pageRequest);
     }
 
     @Override

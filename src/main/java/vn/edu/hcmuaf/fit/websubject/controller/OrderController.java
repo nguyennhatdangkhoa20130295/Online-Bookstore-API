@@ -1,6 +1,8 @@
 package vn.edu.hcmuaf.fit.websubject.controller;
 
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -32,8 +34,16 @@ public class OrderController {
 
     @Autowired
     private PromotionService promotionService;
-
     @GetMapping
+    public ResponseEntity<?> getAllProducts(@RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "24") int perPage,
+                                                        @RequestParam(defaultValue = "id") String sort,
+                                                        @RequestParam(defaultValue = "{}") String filter,
+                                                        @RequestParam(defaultValue = "DESC") String order) {
+        Page<Order> orders = orderService.getAllOrders(page, perPage, sort, filter, order);
+        return ResponseEntity.ok(orders);
+    }
+    @GetMapping("/user")
     public ResponseEntity<?> getUserOrders() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
