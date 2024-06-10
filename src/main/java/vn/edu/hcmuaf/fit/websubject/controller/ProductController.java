@@ -99,4 +99,11 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
+    @Transactional
+    @PutMapping("/edit/{productId}")
+    public ResponseEntity<?> updateProduct(@PathVariable Integer productId, @RequestBody Product product) {
+        System.out.println(product);
+        Product updatedProduct = productService.updateProduct(productId, product);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
+    }
 }

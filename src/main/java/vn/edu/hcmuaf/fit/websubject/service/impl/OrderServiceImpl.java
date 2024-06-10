@@ -182,4 +182,25 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll(specification, pageRequest);
     }
 
+    @Override
+    public List<OrderStatus> getOrderStatus() {
+        return orderStatusRepository.findAll();
+    }
+
+    @Override
+    public void updateOrderStatus(Integer orderId, Order order) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        if(optionalOrder.isEmpty()){
+            throw new RuntimeException("Order not found");
+        }
+        Optional<OrderStatus> optionalOrderStatus = orderStatusRepository.findById(order.getStatus().getId());
+        if(optionalOrderStatus.isEmpty()){
+            throw new RuntimeException("Order status not found");
+        }
+        OrderStatus status = optionalOrderStatus.get();
+        Order existedOrder = optionalOrder.get();
+        existedOrder.setStatus(status);
+        orderRepository.save(existedOrder);
+    }
+
 }
