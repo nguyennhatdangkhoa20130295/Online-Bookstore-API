@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
+import vn.edu.hcmuaf.fit.websubject.repository.OrderStatusRepository;
 import vn.edu.hcmuaf.fit.websubject.service.CartItemsService;
 import vn.edu.hcmuaf.fit.websubject.service.InventoryService;
 import vn.edu.hcmuaf.fit.websubject.service.OrderService;
@@ -34,15 +35,17 @@ public class OrderController {
 
     @Autowired
     private PromotionService promotionService;
+
     @GetMapping
     public ResponseEntity<?> getAllProducts(@RequestParam(defaultValue = "0") int page,
-                                                        @RequestParam(defaultValue = "24") int perPage,
-                                                        @RequestParam(defaultValue = "id") String sort,
-                                                        @RequestParam(defaultValue = "{}") String filter,
-                                                        @RequestParam(defaultValue = "DESC") String order) {
+                                            @RequestParam(defaultValue = "24") int perPage,
+                                            @RequestParam(defaultValue = "id") String sort,
+                                            @RequestParam(defaultValue = "{}") String filter,
+                                            @RequestParam(defaultValue = "DESC") String order) {
         Page<Order> orders = orderService.getAllOrders(page, perPage, sort, filter, order);
         return ResponseEntity.ok(orders);
     }
+
     @GetMapping("/user")
     public ResponseEntity<?> getUserOrders() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -97,7 +100,7 @@ public class OrderController {
         Promotion promotion = promotionService.getPromotionByCode(promoCode);
         if (order != null) {
             return ResponseEntity.ok().body(order);
-        } else if(promotion != null) {
+        } else if (promotion != null) {
             return ResponseEntity.badRequest().body(promotion);
         } else {
             return ResponseEntity.notFound().build();
@@ -124,10 +127,26 @@ public class OrderController {
     @PutMapping("/cancel/{orderId}")
     public ResponseEntity<String> cancelOrder(@PathVariable Integer orderId) {
         try {
-        orderService.cancelOrder(orderId);
-        return ResponseEntity.ok().body("Đã hủy đơn hàng");
+            orderService.cancelOrder(orderId);
+            return ResponseEntity.ok().body("Đã hủy đơn hàng");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<?> getOrderStatus() {
+        List<OrderStatus> list = orderService.getOrderStatus();
+        return ResponseEntity.ok(list);
+    }
+
+    @PutMapping("/edit/{orderId}")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Integer orderId, @RequestBody Order order) {
+        try {
+            orderService.updateOrderStatus(orderId, order);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 }

@@ -4,6 +4,7 @@ import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import vn.edu.hcmuaf.fit.websubject.entity.Order;
 import vn.edu.hcmuaf.fit.websubject.entity.OrderDetail;
+import vn.edu.hcmuaf.fit.websubject.entity.OrderStatus;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 
 import java.util.List;
@@ -30,4 +31,7 @@ public interface OrderService {
 
     Page<Order> getAllOrders(int page, int perPage, String sort, String filter, String order);
 
+    List<OrderStatus> getOrderStatus();
+
+    void updateOrderStatus(Integer orderId, Order order);
 }
