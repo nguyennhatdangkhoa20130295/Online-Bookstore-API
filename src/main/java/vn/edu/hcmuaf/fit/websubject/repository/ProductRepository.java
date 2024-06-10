@@ -6,6 +6,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 
@@ -28,6 +29,4 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
     @Query("SELECT p FROM Product p LEFT JOIN p.comments c GROUP BY p.id ORDER BY COUNT(c) DESC LIMIT 2")
     List<Product> findTopReviewProducts();
 
-    @Query("SELECT p FROM Product p WHERE p.active = true")
-    Page<Product> findAllByActiveIsTrue(Specification<Product> specification, Pageable pageable);
 }

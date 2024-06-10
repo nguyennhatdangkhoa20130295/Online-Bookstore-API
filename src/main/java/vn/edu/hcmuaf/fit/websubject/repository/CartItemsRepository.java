@@ -6,7 +6,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.CartItem;
 import java.util.List;
 
 public interface CartItemsRepository extends JpaRepository<CartItem, Integer> {
-    CartItem findByProductId(Integer idProduct);
+    CartItem findByProductIdAndUserId(Integer idProduct, Integer userId);
 
     List<CartItem> findAllByUserId(Integer idUser);
 }

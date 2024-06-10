@@ -168,23 +168,24 @@ public class ProductServiceImpl implements ProductService {
                     criteriaBuilder.equal(root.get("category").get("parentCategory").get("id"), categoryId),
                     criteriaBuilder.equal(root.get("category").get("parentCategory").get("parentCategory").get("id"), categoryId)
             ));
+            Predicate activePredicate = criteriaBuilder.equal(root.get("active"), true);
 
-            return predicate;
+            return criteriaBuilder.and(predicate, activePredicate);
         };
         switch (sort) {
             case "atoz", "ztoa" -> {
-                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "title")));
+                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "title")));
             }
             case "price-asc", "price-desc" -> {
-                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "currentPrice")));
+                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "currentPrice")));
             }
             case "latest" -> {
-                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "id")));
+                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "id")));
             }
         }
 
         PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
-        return productRepository.findAllByActiveIsTrue(specification, pageRequest);
+        return productRepository.findAll(specification, pageRequest);
     }
 
     @Override
