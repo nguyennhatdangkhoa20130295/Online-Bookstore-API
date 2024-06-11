@@ -15,10 +15,9 @@ public class CartController {
     private CartItemsService cartItemsService;
 
     @PostMapping("/add")
-    public ResponseEntity<String> addToCart(@RequestBody CartItem cartItem) {
+    public ResponseEntity<?> addToCart(@RequestBody CartItem cartItem) {
         try {
-            cartItemsService.addToCart(cartItem);
-            return ResponseEntity.ok("Added to cart successfully");
+            return cartItemsService.addToCart(cartItem);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

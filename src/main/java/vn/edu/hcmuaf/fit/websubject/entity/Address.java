@@ -37,17 +37,17 @@ public class Address {
     @Column(name = "ward_commune")
     private String wardCommune;
 
-    @Column(name = "districtId")
-    private int districtId;
-
     @Column(name = "province_city")
     private String provinceCity;
+
+    @Column(name = "county_district")
+    private String countyDistrict;
 
     @Column(name = "wardCode")
     private String wardCode;
 
-    @Column(name = "county_district")
-    private String countyDistrict;
+    @Column(name = "districtId")
+    private int districtId;
 
     @Column(name = "created_at")
     @JsonFormat(pattern = "HH:mm:ss dd/MM/yyyy", timezone = "Asia/Ho_Chi_Minh")

@@ -10,11 +10,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
+import vn.edu.hcmuaf.fit.websubject.payload.request.UpdateUserRequest;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserInfoRepository;
@@ -27,12 +32,15 @@ import java.util.*;
 @Service
 public class UserServiceImpl implements UserService {
 
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
     private UserInfoRepository userInfoRepository;
+    @Autowired
     private RoleRepository roleRepository;
-
+    @Autowired
     private TokenRepository tokenRepository;
-
+    @Autowired
     private PasswordEncoder encoder;
 
     @Autowired
@@ -219,14 +227,52 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("User not found"));
         List<User> admins = userRepository.findAllByRoles(idUser, EnumRole.ADMIN.toString());
         List<User> mods = userRepository.findAllByRoles(idUser, EnumRole.MODERATOR.toString());
-        if(user.getRoles().contains(roleRepository.findByDescription(EnumRole.ADMIN).get()) && admins.size() == 1) {
+        if (user.getRoles().contains(roleRepository.findByDescription(EnumRole.ADMIN).get()) && admins.size() == 1) {
             throw new RuntimeException("Cannot delete admin");
-        } if(user.getRoles().contains(roleRepository.findByDescription(EnumRole.MODERATOR).get()) && mods.size() == 1) {
+        }
+        if (user.getRoles().contains(roleRepository.findByDescription(EnumRole.MODERATOR).get()) && mods.size() == 1) {
             throw new RuntimeException("Cannot delete moderator");
         } else {
             tokenRepository.deleteAll(tokenRepository.findAllTokenByUser(idUser));
             userRepository.deleteById(idUser);
         }
+    }
+
+    @Override
+    public ResponseEntity<?> updateUserInformation(UpdateUserRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+        Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+        User user = userOptional.get();
+        if (request.getCurrentPassword() != null && !request.getCurrentPassword().isEmpty()) {
+            if (!encoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mật khẩu hiện tại không đúng.");
+            }
+            if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mật khẩu không trùng khớp.");
+            }
+            user.setPassword(encoder.encode(request.getNewPassword()));
+        }
+        userRepository.save(user);
+
+        Optional<UserInfo> userInfoOptional = userInfoRepository.findByUserId(user.getId());
+        if(userInfoOptional.isEmpty()){
+            throw new RuntimeException("User information not found");
+        }
+        UserInfo userInfo = userInfoOptional.get();
+        userInfo.setFullName(request.getFullName());
+        userInfo.setPhoneNumber(request.getPhoneNumber());
+        userInfo.setGender(request.getGender());
+        userInfo.setDateOfBirth(request.getDateOfBirth());
+        userInfo.setAvatar(request.getAvatar());
+        userInfo.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+
+        userInfoRepository.save(userInfo);
+
+        return ResponseEntity.ok("Cập nhật thông tin thành công!");
     }
 
     @Override

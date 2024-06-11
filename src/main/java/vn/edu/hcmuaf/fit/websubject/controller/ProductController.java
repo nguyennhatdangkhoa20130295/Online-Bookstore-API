@@ -106,4 +106,5 @@ public class ProductController {
         Product updatedProduct = productService.updateProduct(productId, product);
         return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
     }
+
 }
