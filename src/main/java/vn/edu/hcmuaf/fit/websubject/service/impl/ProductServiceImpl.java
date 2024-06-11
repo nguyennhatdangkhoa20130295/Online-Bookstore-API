@@ -190,7 +190,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getThreeLatestProduct() {
-        return productRepository.findTop3ByOrderByIdDesc();
+        return productRepository.findTop3ByActiveTrueOrderByIdDesc();
     }
 
     @Override

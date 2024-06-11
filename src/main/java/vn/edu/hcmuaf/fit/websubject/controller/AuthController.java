@@ -164,15 +164,15 @@ public class AuthController {
         }
     }
 
-//    @PostMapping("/checkToken/{token}")
-//    public ResponseEntity<?> checkToken(@Valid @PathVariable String token) {
-//        try {
-//            jwtUtils.validateJwtToken(token);
-//            return ResponseEntity.ok("Token is valid");
-//        } catch (ExpiredJwtException e) {
-//            return ResponseEntity.badRequest().body("Token is expired");
-//        }
-//    }
+    @PostMapping("/checkToken/{token}")
+    public ResponseEntity<?> checkToken(@Valid @PathVariable String token) {
+        try {
+            jwtUtils.validateJwtToken(token);
+            return ResponseEntity.ok("Token is valid");
+        } catch (ExpiredJwtException e) {
+            return ResponseEntity.badRequest().body("Token is expired");
+        }
+    }
 
     @PostMapping("/send-email")
     public ResponseEntity<String> createAccount(@Valid @RequestBody SendEmailRequest sendMailRequest) throws

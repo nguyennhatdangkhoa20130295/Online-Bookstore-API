@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddUserRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.EditUserRequest;
+import vn.edu.hcmuaf.fit.websubject.payload.request.UpdateUserRequest;
 import vn.edu.hcmuaf.fit.websubject.service.FavoriteProductService;
 import vn.edu.hcmuaf.fit.websubject.service.UserInfoService;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
@@ -116,15 +117,15 @@ public class UserController {
         }
     }
 
-    @PutMapping("/info/{id}")
-    public ResponseEntity<?> changeInformation(@PathVariable Integer id, @RequestBody UserInfo userInfo) {
-        try {
-            userInfoService.changeInformation(id, userInfo);
-            return ResponseEntity.ok("Information changed successfully");
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to change information");
-        }
-    }
+//    @PutMapping("/info/{id}")
+//    public ResponseEntity<?> changeInformation(@PathVariable Integer id, @RequestBody UserInfo userInfo) {
+//        try {
+//            userInfoService.changeInformation(id, userInfo);
+//            return ResponseEntity.ok("Information changed successfully");
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body("Failed to change information");
+//        }
+//    }
 
     @GetMapping("/addresses")
     public ResponseEntity<?> getUserAddresses() {
@@ -200,5 +201,10 @@ public class UserController {
     public ResponseEntity<?> deleteFavoriteProduct(@PathVariable Integer id) {
         favoriteProductService.deleteFavorite(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/info")
+    public ResponseEntity<?> updateUserInfo( @RequestBody UpdateUserRequest request) {
+        return userService.updateUserInformation(request);
     }
 }

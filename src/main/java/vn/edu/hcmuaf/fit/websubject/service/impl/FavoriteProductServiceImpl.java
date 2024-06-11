@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.FavoriteProduct;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
-import vn.edu.hcmuaf.fit.websubject.repository.FavoriteRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.FavoriteProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.FavoriteProductService;
@@ -19,7 +19,7 @@ import java.util.Optional;
 public class FavoriteProductServiceImpl implements FavoriteProductService {
 
     @Autowired
-    private FavoriteRepository favoriteRepository;
+    private FavoriteProductRepository favoriteProductRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -32,7 +32,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
-        return favoriteRepository.findAllByUserId(user.get().getId());
+        return favoriteProductRepository.findAllByUserId(user.get().getId());
     }
 
     @Override
@@ -43,7 +43,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
         if (user.isEmpty()) {
             throw new RuntimeException("User not found");
         }
-        FavoriteProduct existFavorite = favoriteRepository.findByProductId(productId);
+        FavoriteProduct existFavorite = favoriteProductRepository.findByProductId(productId);
         if (existFavorite != null) {
             return null;
         } else {
@@ -55,12 +55,12 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
             FavoriteProduct favoriteProduct = new FavoriteProduct();
             favoriteProduct.setProduct(product);
             favoriteProduct.setUser(user.get());
-            return favoriteRepository.save(favoriteProduct);
+            return favoriteProductRepository.save(favoriteProduct);
         }
     }
 
     @Override
     public void deleteFavorite(Integer id) {
-        favoriteRepository.deleteById(id);
+        favoriteProductRepository.deleteById(id);
     }
 }
