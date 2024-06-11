@@ -34,11 +34,13 @@ import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 
 import javax.mail.MessagingException;
 import java.util.Random;
+import org.apache.log4j.Logger;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private static final Logger Log =  Logger.getLogger(AuthController.class);
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -63,36 +65,46 @@ public class AuthController {
     @Autowired
     EmailService emailService;
 
+
     private static final int OTP_LENGTH = 6;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
+            CustomUserDetailsImpl userDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
 
-        CustomUserDetailsImpl userDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+            var user = userRepository.findByUsername(userDetails.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            revokeAllUserToken(user);
+            saveUserToken(user, jwt);
 
-        var user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        revokeAllUserToken(user);
-        saveUserToken(user, jwt);
+            Log.info("Người dùng " + user.getUsername() + " đã đăng nhập");
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
+            return ResponseEntity.ok(new JwtResponse(jwt,
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    userDetails.getEmail(),
+                    roles));
+        } catch (Exception e) {
+            Log.error("Người dùng đăng nhâp thất bại với lỗi "+ e.getMessage());
+            return ResponseEntity
+                    .badRequest()
+                    .body("Sai tên đăng nhập hoặc mật khẩu.");
+        }
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        try{
         String savedOTP = otpService.getOTP(signUpRequest.getEmail());
         if (savedOTP != null && savedOTP.equals(signUpRequest.getOtp())) {
             if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -157,10 +169,15 @@ public class AuthController {
 //        var jwtToken = jwtUtils.generateJwtToken((Authentication) user);
 //        revokeAllUserToken(saveUser);
 //        saveUserToken(saveUser, jwtToken);
-
+            Log.info("Người dùng " + user.getUsername() + " đã đăng ký thành công");
             return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
         } else {
+            Log.error("Người dùng đăng ký thất bại với lỗi Invalid OTP.");
             return ResponseEntity.badRequest().body("Invalid OTP.");
+        }
+        } catch (Exception e) {
+            Log.error("Người dùng đăng ký thất bại với lỗi " + e.getMessage());
+            return ResponseEntity.badRequest().body("Failed to register user: " + e.getMessage());
         }
     }
 
@@ -177,22 +194,30 @@ public class AuthController {
     @PostMapping("/send-email")
     public ResponseEntity<String> createAccount(@Valid @RequestBody SendEmailRequest sendMailRequest) throws
             MessagingException {
-        if (sendMailRequest.getType() == 1) {
-            if (!userRepository.existsByEmail(sendMailRequest.getEmail())) {
-                return ResponseEntity.badRequest().body("Không tìm thấy email.");
+        try {
+            if (sendMailRequest.getType() == 1) {
+                if (!userRepository.existsByEmail(sendMailRequest.getEmail())) {
+                    Log.warn("Không tìm thấy email "+ sendMailRequest.getEmail());
+                    return ResponseEntity.badRequest().body("Không tìm thấy email.");
+                }
+            } else if (sendMailRequest.getType() == 0) {
+                if (userRepository.existsByEmail(sendMailRequest.getEmail())) {
+                    Log.warn("Email đã tồn tại "+ sendMailRequest.getEmail());
+                    return ResponseEntity.badRequest().body("Email đã tồn tại.");
+                }
             }
-        } else if (sendMailRequest.getType() == 0) {
-            if (userRepository.existsByEmail(sendMailRequest.getEmail())) {
-                return ResponseEntity.badRequest().body("Email đã tồn tại.");
-            }
+            System.out.println(sendMailRequest.getType());
+            // Logic để gửi mã OTP đến email
+            String otp = generateOTP();
+            emailService.sendEmailForgot(sendMailRequest.getEmail(), otp, sendMailRequest.getType());
+            otpService.saveOTP(sendMailRequest.getEmail(), otp);
+            // Gửi mã OTP đến email
+            Log.info("Gửi email thành công đến "+ sendMailRequest.getEmail() +" với mã OTP " + otp);
+            return ResponseEntity.ok("OTP " + otp + " sent successfully.");
+        } catch (Exception e) {
+            Log.error("Gửi email thất bại với lỗi " + e.getMessage());
+            return ResponseEntity.badRequest().body("Failed to send email: " + e.getMessage());
         }
-        System.out.println(sendMailRequest.getType());
-        // Logic để gửi mã OTP đến email
-        String otp = generateOTP();
-        emailService.sendEmailForgot(sendMailRequest.getEmail(), otp, sendMailRequest.getType());
-        otpService.saveOTP(sendMailRequest.getEmail(), otp);
-        // Gửi mã OTP đến email
-        return ResponseEntity.ok("OTP " + otp + " sent successfully.");
     }
 
     @PostMapping("/reset-password")
@@ -208,11 +233,14 @@ public class AuthController {
                 // Xóa mã OTP sau khi đã sử dụng
                 otpService.removeOTP(forgotPassRequest.getEmail());
                 // Trả về thông báo thành công và mật khẩu mới cho người dùng
+                Log.info("Mật khẩu đã được đặt lại cho người dùng "+ user.getUsername());
                 return ResponseEntity.ok("Password reset successfully.");
             } else {
+                Log.warn("Không tìm thấy người dùng với email"+ forgotPassRequest.getEmail());
                 return ResponseEntity.badRequest().body("User not found."); // Không tìm thấy người dùng
             }
         } else {
+            Log.error("Xác thực thất bại với lỗi Invalid OTP.");
             return ResponseEntity.badRequest().body("Invalid OTP.");
         }
     }

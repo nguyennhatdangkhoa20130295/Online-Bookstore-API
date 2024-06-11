@@ -18,6 +18,7 @@ import vn.edu.hcmuaf.fit.websubject.repository.BlogCateRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.BlogRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.BlogService;
+import org.apache.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -28,6 +29,8 @@ import java.util.Optional;
 
 @Service
 public class BlogServiceImpl implements BlogService {
+
+    private static final Logger Log =  Logger.getLogger(BlogServiceImpl.class);
 
     private BlogRepository blogRepository;
     private UserRepository userRepository;
@@ -117,69 +120,87 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public void addBlog(int blogCate, String title, String content, String image) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
-        if (user.isPresent()) {
-            User currentUser = user.get();
-            Optional<BlogCategory> blogCategory = blogCateRepository.findById(blogCate);
-            if (blogCategory.isPresent()) {
-                BlogCategory presentBlogCate = blogCategory.get();
-                Blog newBlog = new Blog();
-                newBlog.setBlogCate(presentBlogCate);
-                newBlog.setCreatedBy(currentUser);
-                newBlog.setTitle(title);
-                newBlog.setContent(content);
-                if(content.length() > 100){
-                    newBlog.setShortDesc(content.substring(0, 100));
-                } else {
-                    newBlog.setShortDesc(content);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
+            if (user.isPresent()) {
+                User currentUser = user.get();
+                Optional<BlogCategory> blogCategory = blogCateRepository.findById(blogCate);
+                if (blogCategory.isPresent()) {
+                    BlogCategory presentBlogCate = blogCategory.get();
+                    Blog newBlog = new Blog();
+                    newBlog.setBlogCate(presentBlogCate);
+                    newBlog.setCreatedBy(currentUser);
+                    newBlog.setTitle(title);
+                    newBlog.setContent(content);
+                    if (content.length() > 100) {
+                        newBlog.setShortDesc(content.substring(0, 100));
+                    } else {
+                        newBlog.setShortDesc(content);
+                    }
+                    newBlog.setImage(image);
+                    newBlog.setUpdateBy(currentUser);
+                    newBlog.setCreatedAt(getCurrentTimeInVietnam());
+                    newBlog.setUpdatedAt(getCurrentTimeInVietnam());
+                    blogRepository.save(newBlog);
                 }
-                newBlog.setImage(image);
-                newBlog.setUpdateBy(currentUser);
-                newBlog.setCreatedAt(getCurrentTimeInVietnam());
-                newBlog.setUpdatedAt(getCurrentTimeInVietnam());
-                blogRepository.save(newBlog);
+            } else {
+                Log.warn("Không tìm thấy user " + customUserDetails.getUsername());
+                System.out.println("Không tìm thấy user hiện tại");
             }
-        } else {
-            System.out.println("Không tìm thấy user hiện tại");
+        } catch (Exception e) {
+            Log.error("Lỗi khi thêm blog " + e.getMessage());
+            System.out.println(e);
         }
     }
 
     @Override
     public void editBlog(int id, int blogCate, String title, String content, String image) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
-        if (user.isPresent()) {
-            User currentUser = user.get();
-            Optional<BlogCategory> blogCategory = blogCateRepository.findById(blogCate);
-            if (blogCategory.isPresent()) {
-                BlogCategory presentBlogCate = blogCategory.get();
-                Optional<Blog> blog = blogRepository.findById(id);
-                if (blog.isPresent()) {
-                    Blog presentBlog = blog.get();
-                    presentBlog.setBlogCate(presentBlogCate);
-                    presentBlog.setUpdateBy(currentUser);
-                    presentBlog.setTitle(title);
-                    presentBlog.setContent(content);
-                    if(content.length() > 100){
-                        presentBlog.setShortDesc(content.substring(0, 100));
-                    } else {
-                        presentBlog.setShortDesc(content);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
+            if (user.isPresent()) {
+                User currentUser = user.get();
+                Optional<BlogCategory> blogCategory = blogCateRepository.findById(blogCate);
+                if (blogCategory.isPresent()) {
+                    BlogCategory presentBlogCate = blogCategory.get();
+                    Optional<Blog> blog = blogRepository.findById(id);
+                    if (blog.isPresent()) {
+                        Blog presentBlog = blog.get();
+                        presentBlog.setBlogCate(presentBlogCate);
+                        presentBlog.setUpdateBy(currentUser);
+                        presentBlog.setTitle(title);
+                        presentBlog.setContent(content);
+                        if (content.length() > 100) {
+                            presentBlog.setShortDesc(content.substring(0, 100));
+                        } else {
+                            presentBlog.setShortDesc(content);
+                        }
+                        presentBlog.setImage(image);
+                        presentBlog.setUpdatedAt(getCurrentTimeInVietnam());
+                        blogRepository.save(presentBlog);
                     }
-                    presentBlog.setImage(image);
-                    presentBlog.setUpdatedAt(getCurrentTimeInVietnam());
-                    blogRepository.save(presentBlog);
                 }
+            } else {
+                Log.warn("Không tìm thấy user " + customUserDetails.getUsername());
+                System.out.println("Không tìm thấy user hiện tại");
             }
-        } else {
-            System.out.println("Không tìm thấy user hiện tại");
+        } catch (Exception e) {
+            Log.error("Lỗi khi sửa blog " + e.getMessage());
+            System.out.println(e);
         }
     }
     @Override
     public void deleteBlog(int id) {
-        blogRepository.deleteById(id);
+        try {
+            blogRepository.deleteById(id);
+            Log.info("Xóa blog với id #"+id+" thành công");
+        } catch (Exception e) {
+            Log.error("Lỗi khi xóa blog " + e.getMessage());
+            System.out.println(e);
+        }
     }
     public static Date getCurrentTimeInVietnam() {
         ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");

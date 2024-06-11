@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
+import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.repository.CategoryRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
@@ -23,9 +24,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime.getCurrentTimeInVietnam;
+import org.apache.log4j.Logger;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
+
+    private static final Logger Log =  Logger.getLogger(CategoryServiceImpl.class);
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -106,58 +110,80 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category createCategory(Category category) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
-        if (user.isPresent()) {
-            User currentUser = user.get();
-            boolean existedCategory = categoryRepository.existsByNameAndParentCategory(category.getName(), category.getParentCategory());
-            if (!existedCategory) {
-                Category newCategory = new Category();
-                newCategory.setName(category.getName());
-                newCategory.setParentCategory(category.getParentCategory());
-                newCategory.setCreatedBy(currentUser);
-                newCategory.setCreatedAt(getCurrentTimeInVietnam());
-                newCategory.setActive(category.isActive());
-                return categoryRepository.save(newCategory);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
+            if (user.isPresent()) {
+                User currentUser = user.get();
+                boolean existedCategory = categoryRepository.existsByNameAndParentCategory(category.getName(), category.getParentCategory());
+                if (!existedCategory) {
+                    Category newCategory = new Category();
+                    newCategory.setName(category.getName());
+                    newCategory.setParentCategory(category.getParentCategory());
+                    newCategory.setCreatedBy(currentUser);
+                    newCategory.setCreatedAt(getCurrentTimeInVietnam());
+                    newCategory.setActive(category.isActive());
+                    Log.info(currentUser.getUserInfo().getFullName() + " đã tạo danh mục " + newCategory.getName());
+                    return categoryRepository.save(newCategory);
+                } else {
+                    Log.warn("Danh mục " + category.getName() + " đã tồn tại");
+                    System.out.println("Không thể tạo danh mục mới");
+                }
             } else {
-                System.out.println("Không thể tạo danh mục mới");
+                Log.warn("Người dùng "+ customUserDetails.getUsername() +" không tồn tại");
+                System.out.println("Người dùng không tồn tại");
             }
-        } else {
-            System.out.println("Người dùng không tồn tại");
+            return null;
+        } catch (Exception e) {
+            Log.error("Lỗi khi tạo danh mục mới với lỗi "+ e.getMessage());
+            System.out.println("Lỗi khi tạo danh mục mới");
+            return null;
         }
-        return null;
     }
 
     @Override
     public Category updateCategory(Integer id, Category category) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-        Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found");
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+            if (userOptional.isEmpty()) {
+                throw new RuntimeException("User not found");
+            }
+
+            User currentUser = userOptional.get();
+
+            Optional<Category> existingCategoryOptional = categoryRepository.findById(id);
+
+            if (existingCategoryOptional.isEmpty()) {
+                Log.warn("Danh mục với id #"+id+" không tồn tại");
+                throw new RuntimeException("Category not found");
+            }
+
+            Category updatingCategory = existingCategoryOptional.get();
+            updatingCategory.setName(category.getName());
+            updatingCategory.setParentCategory(category.getParentCategory());
+            updatingCategory.setUpdatedBy(currentUser);
+            updatingCategory.setUpdatedAt(getCurrentTimeInVietnam());
+            updatingCategory.setActive(category.isActive());
+            Log.info(currentUser.getUserInfo().getFullName() + " đã cập nhật danh mục " + updatingCategory.getName());
+            return categoryRepository.save(updatingCategory);
+        } catch (Exception e) {
+            Log.error("Lỗi khi cập nhật danh mục với lỗi "+ e.getMessage());
+            System.out.println("Lỗi khi cập nhật danh mục");
+            return null;
         }
-
-        User currentUser = userOptional.get();
-
-        Optional<Category> existingCategoryOptional = categoryRepository.findById(id);
-
-        if (existingCategoryOptional.isEmpty()) {
-            throw new RuntimeException("Category not found");
-        }
-
-        Category updatingCategory = existingCategoryOptional.get();
-        updatingCategory.setName(category.getName());
-        updatingCategory.setParentCategory(category.getParentCategory());
-        updatingCategory.setUpdatedBy(currentUser);
-        updatingCategory.setUpdatedAt(getCurrentTimeInVietnam());
-        updatingCategory.setActive(category.isActive());
-
-        return categoryRepository.save(updatingCategory);
     }
 
     @Override
     public void deleteCategory(Integer id) {
-        categoryRepository.deleteById(id);
+        try {
+            categoryRepository.deleteById(id);
+            Log.info("Đã xóa danh mục #"+id);
+        } catch (Exception e) {
+            Log.error("Lỗi khi xóa danh mục #"+id+" với lỗi "+ e.getMessage());
+            System.out.println("Lỗi khi xóa danh mục");
+        }
     }
 }
