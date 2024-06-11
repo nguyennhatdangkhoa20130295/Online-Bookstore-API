@@ -10,11 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddUserRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.EditUserRequest;
-import vn.edu.hcmuaf.fit.websubject.service.FavoriteProductService;
-import vn.edu.hcmuaf.fit.websubject.service.UserInfoService;
+import vn.edu.hcmuaf.fit.websubject.service.*;
 import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
-import vn.edu.hcmuaf.fit.websubject.service.AddressService;
-import vn.edu.hcmuaf.fit.websubject.service.UserService;
 
 import java.util.List;
 import java.util.Optional;

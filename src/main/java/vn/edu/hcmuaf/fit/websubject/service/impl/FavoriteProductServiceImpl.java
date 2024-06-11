@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.FavoriteProduct;
+import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.repository.FavoriteRepository;
@@ -14,10 +15,10 @@ import vn.edu.hcmuaf.fit.websubject.service.FavoriteProductService;
 
 import java.util.List;
 import java.util.Optional;
-
+import org.apache.log4j.Logger;
 @Service
 public class FavoriteProductServiceImpl implements FavoriteProductService {
-
+    private static final Logger Log =  Logger.getLogger(FavoriteProductServiceImpl.class);
     @Autowired
     private FavoriteRepository favoriteRepository;
 
@@ -37,30 +38,45 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
 
     @Override
     public FavoriteProduct addFavorite(Integer productId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
-        if (user.isEmpty()) {
-            throw new RuntimeException("User not found");
-        }
-        FavoriteProduct existFavorite = favoriteRepository.findByProductId(productId);
-        if (existFavorite != null) {
-            return null;
-        } else {
-            Optional<Product> productOptional = productRepository.findById(productId);
-            if (productOptional.isEmpty()) {
-                throw new RuntimeException("Product not found");
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
+            if (user.isEmpty()) {
+                Log.warn("Người dùng "+customUserDetails.getUsername()+" không tồn tại");
+                throw new RuntimeException("User not found");
             }
-            Product product = productOptional.get();
-            FavoriteProduct favoriteProduct = new FavoriteProduct();
-            favoriteProduct.setProduct(product);
-            favoriteProduct.setUser(user.get());
-            return favoriteRepository.save(favoriteProduct);
+            FavoriteProduct existFavorite = favoriteRepository.findByProductId(productId);
+            if (existFavorite != null) {
+                return null;
+            } else {
+                Optional<Product> productOptional = productRepository.findById(productId);
+                if (productOptional.isEmpty()) {
+                    Log.warn("Sản phẩm #"+productId+" không tồn tại");
+                    throw new RuntimeException("Product not found");
+                }
+                Product product = productOptional.get();
+                FavoriteProduct favoriteProduct = new FavoriteProduct();
+                favoriteProduct.setProduct(product);
+                favoriteProduct.setUser(user.get());
+                Log.info("Người dùng "+customUserDetails.getUsername()+" đã thêm sản phẩm "+product.getTitle()+" vào danh sách yêu thích");
+                return favoriteRepository.save(favoriteProduct);
+            }
+        } catch (Exception e) {
+            Log.error("Lỗi khi thêm sản phẩm vào danh sách yêu thích: "+e.getMessage());
+            e.printStackTrace();
+            return null;
         }
     }
 
     @Override
     public void deleteFavorite(Integer id) {
-        favoriteRepository.deleteById(id);
+        try{
+            Log.info("Người dùng đã xóa sản phẩm #"+id+" khỏi danh sách yêu thích");
+            favoriteRepository.deleteById(id);
+        } catch (Exception e) {
+            Log.error("Lỗi khi xóa sản phẩm khỏi danh sách yêu thích: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }

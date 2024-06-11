@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.BlogCategory;
+import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddBlogCateRequest;
 import vn.edu.hcmuaf.fit.websubject.service.BlogCateService;
 
@@ -27,10 +28,10 @@ public class BlogCateController {
 
     @GetMapping("")
     public ResponseEntity<Page<BlogCategory>> getAllBlogCate(@RequestParam(defaultValue = "0") int page,
-                                                  @RequestParam(defaultValue = "") String filter,
-                                                  @RequestParam(defaultValue = "5") int perPage,
-                                                  @RequestParam(defaultValue = "id") String sort,
-                                                  @RequestParam(defaultValue = "ASC") String order) {
+                                                             @RequestParam(defaultValue = "") String filter,
+                                                             @RequestParam(defaultValue = "5") int perPage,
+                                                             @RequestParam(defaultValue = "id") String sort,
+                                                             @RequestParam(defaultValue = "ASC") String order) {
         try {
             Page<BlogCategory> blogCate = blogCateService.findAll(page, perPage, sort, order, filter);
             return ResponseEntity.ok(blogCate);
@@ -48,38 +49,46 @@ public class BlogCateController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @PostMapping("/add")
     public ResponseEntity<?> addBlogCate(@RequestBody AddBlogCateRequest addBlogCateRequest) {
+
         try {
             blogCateService.addBlogCategory(addBlogCateRequest.getName(), addBlogCateRequest.getCreatedBy(), addBlogCateRequest.getUpdatedBy());
+            Log.info("");
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            if(e.getMessage().equals("User not found"))
+            if (e.getMessage().equals("User not found")) {
                 return ResponseEntity.badRequest().body("User not found");
+            }
             return ResponseEntity.notFound().build();
         }
     }
+
     @PutMapping("/edit/{id}")
     public ResponseEntity<?> editBlogCate(@PathVariable int id, @RequestBody AddBlogCateRequest addBlogCateRequest) {
         try {
             blogCateService.editBlogCategory(id, addBlogCateRequest.getName(), addBlogCateRequest.getUpdatedBy());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            if(e.getMessage().equals("Blog category not found"))
+            if (e.getMessage().equals("Blog category not found")) {
                 return ResponseEntity.badRequest().body("Blog category not found");
-            if(e.getMessage().equals("User not found"))
-                return ResponseEntity.badRequest().body("User not found");
-            return ResponseEntity.notFound().build();
-        }
+            }
+            if (e.getMessage().equals("User not found")) {
+            return ResponseEntity.badRequest().body("User not found");
+            }
+        return ResponseEntity.notFound().build();
     }
+}
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteBlogCate(@PathVariable int id) {
         try {
             blogCateService.deleteBlogCategory(id);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            if(e.getMessage().equals("This category is being used by some blogs"))
+            if (e.getMessage().equals("This category is being used by some blogs")) {
                 return ResponseEntity.badRequest().body("This category is being used by some blogs");
+            }
             return ResponseEntity.notFound().build();
         }
     }

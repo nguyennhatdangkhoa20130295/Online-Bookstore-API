@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-
+import org.apache.log4j.Logger;
 @Service
 public class ProductServiceImpl implements ProductService {
-
+    private static final Logger Log =  Logger.getLogger(ProductServiceImpl.class);
     @Autowired
     private ProductRepository productRepository;
 
@@ -215,68 +215,74 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product createProduct(Product product) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-        Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found");
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+            if (userOptional.isEmpty()) {
+                Log.warn("Người dùng " + customUserDetails.getUsername() + " không tồn tại");
+                throw new RuntimeException("User not found");
+            }
+            User user = userOptional.get();
+
+            product.setCategory(product.getCategory());
+            product.setTitle(product.getTitle());
+            product.setImage(product.getImage());
+            product.setOldPrice(product.getOldPrice());
+            product.setCurrentPrice(product.getCurrentPrice());
+            product.setActive(product.isActive());
+            product.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+            product.setCreatedBy(user);
+            product.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            product.setUpdatedBy(user);
+
+            ProductDetail detail = new ProductDetail();
+            detail.setProduct(product);
+            detail.setProductSku(generateRandomSKU());
+            detail.setSupplier(product.getDetail().getSupplier());
+            detail.setPublisher(product.getDetail().getPublisher());
+            detail.setPublishYear(product.getDetail().getPublishYear());
+            detail.setAuthor(product.getDetail().getAuthor());
+            detail.setBrand(product.getDetail().getBrand());
+            detail.setOrigin(product.getDetail().getOrigin());
+            detail.setColor(product.getDetail().getColor());
+            detail.setWeight(product.getDetail().getWeight());
+            detail.setSize(product.getDetail().getSize());
+            detail.setQuantityOfPage(product.getDetail().getQuantityOfPage());
+            detail.setDescription(product.getDetail().getDescription());
+            productDetailRepository.save(detail);
+
+            product.setDetail(detail);
+
+
+            if (product.getImages() == null) {
+                product.setImages(new ArrayList<>());
+            }
+
+            List<ProductImage> productImages = new ArrayList<>();
+
+            ProductImage mainImage = new ProductImage();
+            mainImage.setProduct(product);
+            mainImage.setImage(product.getImage());
+            mainImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+            mainImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            mainImage.setDeleted(false);
+            productImages.add(mainImage);
+
+            for (ProductImage productImage : product.getImages()) {
+                productImage.setProduct(product);
+                productImage.setImage(productImage.getImage());
+                productImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+                productImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                productImage.setDeleted(false);
+            }
+            product.setImages(productImages);
+
+            Log.info("Sản phẩm " + product.getTitle() + " được tạo bởi " + user.getUsername());
+            return product;
+        } catch (Exception e) {
+            Log.error("Lỗi khi tạo sản phẩm:" + e.getMessage());
+            throw new RuntimeException(e);
         }
-        User user = userOptional.get();
-
-        product.setCategory(product.getCategory());
-        product.setTitle(product.getTitle());
-        product.setImage(product.getImage());
-        product.setOldPrice(product.getOldPrice());
-        product.setCurrentPrice(product.getCurrentPrice());
-        product.setActive(product.isActive());
-        product.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-        product.setCreatedBy(user);
-        product.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-        product.setUpdatedBy(user);
-
-        ProductDetail detail = new ProductDetail();
-        detail.setProduct(product);
-        detail.setProductSku(generateRandomSKU());
-        detail.setSupplier(product.getDetail().getSupplier());
-        detail.setPublisher(product.getDetail().getPublisher());
-        detail.setPublishYear(product.getDetail().getPublishYear());
-        detail.setAuthor(product.getDetail().getAuthor());
-        detail.setBrand(product.getDetail().getBrand());
-        detail.setOrigin(product.getDetail().getOrigin());
-        detail.setColor(product.getDetail().getColor());
-        detail.setWeight(product.getDetail().getWeight());
-        detail.setSize(product.getDetail().getSize());
-        detail.setQuantityOfPage(product.getDetail().getQuantityOfPage());
-        detail.setDescription(product.getDetail().getDescription());
-        productDetailRepository.save(detail);
-
-        product.setDetail(detail);
-
-
-        if (product.getImages() == null) {
-            product.setImages(new ArrayList<>());
-        }
-
-        List<ProductImage> productImages = new ArrayList<>();
-
-        ProductImage mainImage = new ProductImage();
-        mainImage.setProduct(product);
-        mainImage.setImage(product.getImage());
-        mainImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-        mainImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-        mainImage.setDeleted(false);
-        productImages.add(mainImage);
-
-        for (ProductImage productImage : product.getImages()) {
-            productImage.setProduct(product);
-            productImage.setImage(productImage.getImage());
-            productImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-            productImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-            productImage.setDeleted(false);
-        }
-        product.setImages(productImages);
-
-        return product;
     }
-
 }

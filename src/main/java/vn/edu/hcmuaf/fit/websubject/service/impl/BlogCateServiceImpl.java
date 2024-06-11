@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.criteria.Predicate;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +27,8 @@ import java.util.Optional;
 
 @Service
 public class BlogCateServiceImpl implements BlogCateService {
+
+    private static final Logger Log =  Logger.getLogger(BlogCateServiceImpl.class);
     BlogCateRepository blogCateRepository;
 
     BlogRepository blogRepository;
@@ -50,32 +53,50 @@ public class BlogCateServiceImpl implements BlogCateService {
 
     @Override
     public void addBlogCategory(String name, int createBy, int updateBy) {
-        BlogCategory blogCategory = new BlogCategory();
-        User user = userRepository.findById(createBy).orElseThrow(() -> new RuntimeException("User not found"));
-        blogCategory.setName(name);
-        blogCategory.setCreatedBy(user);
-        blogCategory.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-        blogCategory.setUpdatedBy(user);
-        blogCategory.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-        blogCateRepository.save(blogCategory);
+        try {
+            BlogCategory blogCategory = new BlogCategory();
+            User user = userRepository.findById(createBy).orElseThrow(() -> new RuntimeException("User not found"));
+            blogCategory.setName(name);
+            blogCategory.setCreatedBy(user);
+            blogCategory.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+            blogCategory.setUpdatedBy(user);
+            blogCategory.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            blogCateRepository.save(blogCategory);
+            Log.info(user.getUserInfo().getFullName()+ " đã thêm danh mục blog với tên: " + name);
+        } catch (Exception e) {
+            Log.error("Lỗi khi thêm danh mục blog với lỗi "+ e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void editBlogCategory(int id, String name, int updateBy) {
-        BlogCategory blogCategory = blogCateRepository.findById(id).orElseThrow(() -> new RuntimeException("Blog category not found"));
-        User user = userRepository.findById(updateBy).orElseThrow(() -> new RuntimeException("User not found"));
-        blogCategory.setName(name);
-        blogCategory.setUpdatedBy(user);
-        blogCategory.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-        blogCateRepository.save(blogCategory);
+        try {
+            BlogCategory blogCategory = blogCateRepository.findById(id).orElseThrow(() -> new RuntimeException("Blog category not found"));
+            User user = userRepository.findById(updateBy).orElseThrow(() -> new RuntimeException("User not found"));
+            blogCategory.setName(name);
+            blogCategory.setUpdatedBy(user);
+            blogCategory.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            blogCateRepository.save(blogCategory);
+            Log.info(user.getUserInfo().getFullName()+" đã sửa danh mục blog với id: " + id);
+        } catch (Exception e) {
+            Log.error("Lỗi khi sửa danh mục blog với lỗi "+ e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void deleteBlogCategory(int id) {
-        if(blogRepository.findAllByBlogCateId(id).size() > 0) {
-            throw new RuntimeException("This category is being used by some blogs");
-        } else {
-            blogCateRepository.deleteById(id);
+        try {
+            if (blogRepository.findAllByBlogCateId(id).size() > 0) {
+                Log.error("Danh mục blog đang được sử dụng bởi một số blog");
+                throw new RuntimeException("This category is being used by some blogs");
+            } else {
+                blogCateRepository.deleteById(id);
+            }
+        } catch (Exception e) {
+            Log.error("Lỗi khi xóa danh mục blog với lỗi "+ e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 

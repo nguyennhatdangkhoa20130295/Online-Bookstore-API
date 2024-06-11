@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Inventory;
+import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.payload.request.InventoryRequest;
@@ -24,10 +25,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import org.apache.log4j.Logger;
 @Service
 public class InventoryServiceImpl implements InventoryService {
-
+    private static final Logger Log =  Logger.getLogger(InventoryServiceImpl.class);
     @Autowired
     private InventoryRepository inventoryRepository;
 
@@ -71,39 +72,50 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public Inventory createInventory(Inventory inventory) {
-        inventory.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-        return inventoryRepository.save(inventory);
+        try {
+            inventory.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+            Log.info("Tạo mới kho hàng cho sản phẩm #" + inventory.getProduct().getId());
+            return inventoryRepository.save(inventory);
+        } catch (Exception e) {
+            Log.error("Lỗi khi tạo mới kho hàng cho sản phẩm #" + inventory.getProduct().getId() + ": " + e.getMessage());
+            throw new RuntimeException(e);
+        }
 
     }
 
     @Override
     public List<Inventory> createInventories(List<InventoryRequest> inventoryRequests) {
-        List<Inventory> inventories = new ArrayList<>();
-        for (InventoryRequest inventoryRequest : inventoryRequests) {
-            Optional<Inventory> inventoryOptional = inventoryRepository.findByProductIdAndActiveTrue(inventoryRequest.getProductId());
-            Optional<Product> productOptional = productRepository.findById(inventoryRequest.getProductId());
-            if (productOptional.isEmpty()) {
-                throw new RuntimeException("Product not found");
+        try {
+            List<Inventory> inventories = new ArrayList<>();
+            for (InventoryRequest inventoryRequest : inventoryRequests) {
+                Optional<Inventory> inventoryOptional = inventoryRepository.findByProductIdAndActiveTrue(inventoryRequest.getProductId());
+                Optional<Product> productOptional = productRepository.findById(inventoryRequest.getProductId());
+                if (productOptional.isEmpty()) {
+                    Log.warn("Sản phẩm #" + inventoryRequest.getProductId() + " không tồn tại");
+                    throw new RuntimeException("Product not found");
+                }
+                Product product = productOptional.get();
+                Inventory inventory = new Inventory();
+                if (inventoryOptional.isEmpty()) {
+                    inventory.setProduct(product);
+                    inventory.setImportPrice(inventoryRequest.getImportPrice());
+                    inventory.setSalePrice(inventoryRequest.getSalePrice());
+                    inventory.setImportedQuantity(inventoryRequest.getQuantity());
+                    inventory.setRemainingQuantity(inventoryRequest.getQuantity());
+                    inventory.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+                    inventory.setActive(true);
+                    inventoryRepository.save(inventory);
+                    inventories.add(inventory);
+                    product.setOldPrice(inventoryRequest.getSalePrice());
+                    product.setActive(true);
+                    Log.info("Tạo mới kho hàng cho sản phẩm #" + product.getId());
+                    productRepository.save(product);
+                }
             }
-            Product product = productOptional.get();
-            Inventory inventory = new Inventory();
-            if (inventoryOptional.isEmpty()) {
-                inventory.setProduct(product);
-                inventory.setImportPrice(inventoryRequest.getImportPrice());
-                inventory.setSalePrice(inventoryRequest.getSalePrice());
-                inventory.setImportedQuantity(inventoryRequest.getQuantity());
-                inventory.setRemainingQuantity(inventoryRequest.getQuantity());
-                inventory.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-                inventory.setActive(true);
-                inventoryRepository.save(inventory);
-                inventories.add(inventory);
-                product.setOldPrice(inventoryRequest.getSalePrice());
-                product.setActive(true);
-                productRepository.save(product);
-            }
+            return inventories;
+        } catch (Exception e) {
+            Log.error("Lỗi khi tạo mới kho hàng cho sản phẩm: " + e.getMessage());
+            throw new RuntimeException(e);
         }
-        return inventories;
     }
-
-
 }
