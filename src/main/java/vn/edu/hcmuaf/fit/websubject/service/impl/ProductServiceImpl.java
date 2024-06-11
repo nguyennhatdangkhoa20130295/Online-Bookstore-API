@@ -24,6 +24,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import org.apache.log4j.Logger;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Service
 public class ProductServiceImpl implements ProductService {
     private static final Logger Log =  Logger.getLogger(ProductServiceImpl.class);
@@ -169,28 +173,29 @@ public class ProductServiceImpl implements ProductService {
                     criteriaBuilder.equal(root.get("category").get("parentCategory").get("id"), categoryId),
                     criteriaBuilder.equal(root.get("category").get("parentCategory").get("parentCategory").get("id"), categoryId)
             ));
+            Predicate activePredicate = criteriaBuilder.equal(root.get("active"), true);
 
-            return predicate;
+            return criteriaBuilder.and(predicate, activePredicate);
         };
         switch (sort) {
             case "atoz", "ztoa" -> {
-                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "title")));
+                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "title")));
             }
             case "price-asc", "price-desc" -> {
-                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "currentPrice")));
+                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "currentPrice")));
             }
             case "latest" -> {
-                return productRepository.findAllByActiveIsTrue(specification, PageRequest.of(page, perPage, Sort.by(direction, "id")));
+                return productRepository.findAll(specification, PageRequest.of(page, perPage, Sort.by(direction, "id")));
             }
         }
 
         PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
-        return productRepository.findAllByActiveIsTrue(specification, pageRequest);
+        return productRepository.findAll(specification, pageRequest);
     }
 
     @Override
     public List<Product> getThreeLatestProduct() {
-        return productRepository.findTop3ByOrderByIdDesc();
+        return productRepository.findTop3ByActiveTrueOrderByIdDesc();
     }
 
     @Override
@@ -225,19 +230,23 @@ public class ProductServiceImpl implements ProductService {
             }
             User user = userOptional.get();
 
-            product.setCategory(product.getCategory());
-            product.setTitle(product.getTitle());
-            product.setImage(product.getImage());
-            product.setOldPrice(product.getOldPrice());
-            product.setCurrentPrice(product.getCurrentPrice());
-            product.setActive(product.isActive());
-            product.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-            product.setCreatedBy(user);
-            product.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-            product.setUpdatedBy(user);
+            Product newProduct = new Product();
+            newProduct.setCategory(product.getCategory());
+            newProduct.setTitle(product.getTitle());
+            newProduct.setImage(product.getImage());
+            newProduct.setOldPrice(product.getOldPrice());
+            newProduct.setCurrentPrice(product.getCurrentPrice());
+            newProduct.setActive(product.isActive());
+            newProduct.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+            newProduct.setCreatedBy(user);
+            newProduct.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            newProduct.setUpdatedBy(user);
+
+            Product savedProduct = productRepository.save(newProduct);
+            System.out.println(savedProduct);
 
             ProductDetail detail = new ProductDetail();
-            detail.setProduct(product);
+            detail.setProduct(savedProduct);
             detail.setProductSku(generateRandomSKU());
             detail.setSupplier(product.getDetail().getSupplier());
             detail.setPublisher(product.getDetail().getPublisher());
@@ -250,10 +259,9 @@ public class ProductServiceImpl implements ProductService {
             detail.setSize(product.getDetail().getSize());
             detail.setQuantityOfPage(product.getDetail().getQuantityOfPage());
             detail.setDescription(product.getDetail().getDescription());
-            productDetailRepository.save(detail);
 
-            product.setDetail(detail);
-
+            ProductDetail savedDetail = productDetailRepository.save(detail);
+            savedProduct.setDetail(savedDetail);
 
             if (product.getImages() == null) {
                 product.setImages(new ArrayList<>());
@@ -262,7 +270,7 @@ public class ProductServiceImpl implements ProductService {
             List<ProductImage> productImages = new ArrayList<>();
 
             ProductImage mainImage = new ProductImage();
-            mainImage.setProduct(product);
+            mainImage.setProduct(savedProduct);
             mainImage.setImage(product.getImage());
             mainImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
             mainImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
@@ -270,19 +278,114 @@ public class ProductServiceImpl implements ProductService {
             productImages.add(mainImage);
 
             for (ProductImage productImage : product.getImages()) {
-                productImage.setProduct(product);
+                productImage.setProduct(savedProduct);
                 productImage.setImage(productImage.getImage());
                 productImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
                 productImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
                 productImage.setDeleted(false);
             }
-            product.setImages(productImages);
+            productImageRepository.saveAll(productImages);
 
-            Log.info("Sản phẩm " + product.getTitle() + " được tạo bởi " + user.getUsername());
-            return product;
+            savedProduct.setImages(productImages);
+            Log.info("Người dùng " + customUserDetails.getUsername() + " đã tạo sản phẩm mới " + savedProduct.getTitle());
+            return productRepository.save(savedProduct);
         } catch (Exception e) {
-            Log.error("Lỗi khi tạo sản phẩm:" + e.getMessage());
+            Log.error("Lỗi khi tạo mới sản phẩm: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
-}
+
+        @Override
+        public Product updateProduct(Integer productId, Product product) {
+            try {
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+                Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+                if (userOptional.isEmpty()) {
+                    throw new RuntimeException("User not found");
+                }
+                User user = userOptional.get();
+
+                Optional<Product> optionalProduct = productRepository.findById(productId);
+                if (optionalProduct.isEmpty()) {
+                    throw new RuntimeException("Product not found");
+                }
+                Product existingProduct = optionalProduct.get();
+
+                existingProduct.setCategory(product.getCategory());
+                existingProduct.setTitle(product.getTitle());
+                existingProduct.setOldPrice(product.getOldPrice());
+                existingProduct.setCurrentPrice(product.getCurrentPrice());
+                existingProduct.setActive(product.isActive());
+                existingProduct.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                existingProduct.setUpdatedBy(user);
+
+                ProductDetail existedDetail = existingProduct.getDetail();
+                if (existedDetail == null) {
+                    existedDetail = new ProductDetail();
+                    existedDetail.setProduct(existingProduct);
+                }
+                existedDetail.setSupplier(product.getDetail().getSupplier());
+                existedDetail.setPublisher(product.getDetail().getPublisher());
+                existedDetail.setPublishYear(product.getDetail().getPublishYear());
+                existedDetail.setAuthor(product.getDetail().getAuthor());
+                existedDetail.setBrand(product.getDetail().getBrand());
+                existedDetail.setOrigin(product.getDetail().getOrigin());
+                existedDetail.setColor(product.getDetail().getColor());
+                existedDetail.setWeight(product.getDetail().getWeight());
+                existedDetail.setSize(product.getDetail().getSize());
+                existedDetail.setQuantityOfPage(product.getDetail().getQuantityOfPage() != 0 ? product.getDetail().getQuantityOfPage() : -1);
+                existedDetail.setDescription(product.getDetail().getDescription());
+
+                ProductDetail savedDetail = productDetailRepository.save(existedDetail);
+                existingProduct.setDetail(savedDetail);
+
+                String oldMainUrl = existingProduct.getImage();
+                String newMainImageUrl = product.getImage();
+                if (newMainImageUrl != null && !newMainImageUrl.isEmpty() && !newMainImageUrl.equals(existingProduct.getImage())) {
+                    existingProduct.setImage(newMainImageUrl);
+                }
+
+                List<ProductImage> updatedImages = product.getImages();
+                List<ProductImage> existingImages = existingProduct.getImages();
+                Map<String, ProductImage> existingImageMap = existingImages.stream()
+                        .collect(Collectors.toMap(ProductImage::getImage, Function.identity()));
+
+                List<ProductImage> imagesToSave = new ArrayList<>();
+                ProductImage matchingImage = existingImageMap.get(oldMainUrl);
+                if (matchingImage != null) {
+                    matchingImage.setImage(newMainImageUrl);
+                    matchingImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                    imagesToSave.add(matchingImage);
+                }
+                for (ProductImage updatedImage : updatedImages) {
+                    String updatedImageUrl = updatedImage.getImage();
+                    if (updatedImageUrl != null && !updatedImageUrl.isEmpty()) {
+                        ProductImage existingImage = existingImageMap.get(updatedImageUrl);
+                        if (existingImage != null) {
+                            existingImage.setImage(updatedImageUrl);
+                            existingImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                            imagesToSave.add(existingImage);
+                        } else {
+                            ProductImage newImage = new ProductImage();
+                            newImage.setProduct(existingProduct);
+                            newImage.setImage(updatedImageUrl);
+                            newImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+                            newImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                            newImage.setDeleted(false);
+                            imagesToSave.add(newImage);
+                        }
+
+                    }
+                }
+                productImageRepository.saveAll(imagesToSave);
+                existingProduct.setImages(imagesToSave);
+                Log.info("Người dùng " + customUserDetails.getUsername() + " đã cập nhật sản phẩm " + existingProduct.getTitle());
+                return productRepository.save(existingProduct);
+            } catch (Exception e) {
+                Log.error("Lỗi khi cập nhật sản phẩm: " + e.getMessage());
+                throw new RuntimeException(e);
+            }
+        }
+
+    }

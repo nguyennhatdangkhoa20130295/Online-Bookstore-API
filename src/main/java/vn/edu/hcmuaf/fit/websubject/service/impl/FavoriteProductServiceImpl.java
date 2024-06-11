@@ -8,7 +8,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.FavoriteProduct;
 import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
-import vn.edu.hcmuaf.fit.websubject.repository.FavoriteRepository;
+import vn.edu.hcmuaf.fit.websubject.repository.FavoriteProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.FavoriteProductService;
@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 public class FavoriteProductServiceImpl implements FavoriteProductService {
     private static final Logger Log =  Logger.getLogger(FavoriteProductServiceImpl.class);
     @Autowired
-    private FavoriteRepository favoriteRepository;
+    private FavoriteProductRepository favoriteProductRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -33,7 +33,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
-        return favoriteRepository.findAllByUserId(user.get().getId());
+        return favoriteProductRepository.findAllByUserId(user.get().getId());
     }
 
     @Override
@@ -46,7 +46,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
                 Log.warn("Người dùng "+customUserDetails.getUsername()+" không tồn tại");
                 throw new RuntimeException("User not found");
             }
-            FavoriteProduct existFavorite = favoriteRepository.findByProductId(productId);
+            FavoriteProduct existFavorite = favoriteProductRepository.findByProductId(productId);
             if (existFavorite != null) {
                 return null;
             } else {
@@ -60,7 +60,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
                 favoriteProduct.setProduct(product);
                 favoriteProduct.setUser(user.get());
                 Log.info("Người dùng "+customUserDetails.getUsername()+" đã thêm sản phẩm "+product.getTitle()+" vào danh sách yêu thích");
-                return favoriteRepository.save(favoriteProduct);
+                return favoriteProductRepository.save(favoriteProduct);
             }
         } catch (Exception e) {
             Log.error("Lỗi khi thêm sản phẩm vào danh sách yêu thích: "+e.getMessage());
@@ -73,7 +73,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
     public void deleteFavorite(Integer id) {
         try{
             Log.info("Người dùng đã xóa sản phẩm #"+id+" khỏi danh sách yêu thích");
-            favoriteRepository.deleteById(id);
+            favoriteProductRepository.deleteById(id);
         } catch (Exception e) {
             Log.error("Lỗi khi xóa sản phẩm khỏi danh sách yêu thích: " + e.getMessage());
             e.printStackTrace();

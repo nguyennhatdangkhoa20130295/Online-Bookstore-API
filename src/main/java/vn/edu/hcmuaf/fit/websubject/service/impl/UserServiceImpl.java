@@ -10,11 +10,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
+import vn.edu.hcmuaf.fit.websubject.payload.request.UpdateUserRequest;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserInfoRepository;
@@ -23,17 +28,22 @@ import vn.edu.hcmuaf.fit.websubject.service.UserService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
 import org.apache.log4j.Logger;
+
 @Service
 public class UserServiceImpl implements UserService {
-    private static final Logger Log =  Logger.getLogger(UserServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(UserServiceImpl.class);
 
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
     private UserInfoRepository userInfoRepository;
+    @Autowired
     private RoleRepository roleRepository;
-
+    @Autowired
     private TokenRepository tokenRepository;
-
+    @Autowired
     private PasswordEncoder encoder;
 
     @Autowired
@@ -107,10 +117,10 @@ public class UserServiceImpl implements UserService {
                         String phone, String locked, String isSocial) {
         try {
             if (userRepository.existsByUsername(username)) {
-                Log.warn("Tên tài khoản "+username+" đã tồn tại!");
+                Log.warn("Tên tài khoản " + username + " đã tồn tại!");
                 System.out.println("Username is already taken!");
             } else if (userRepository.existsByEmail(email)) {
-                Log.warn("Email "+email+" đã được sử dụng!");
+                Log.warn("Email " + email + " đã được sử dụng!");
                 System.out.println("Email is already in use!");
             } else {
                 User user = new User();
@@ -160,11 +170,11 @@ public class UserServiceImpl implements UserService {
                     user.setIsSocial(false);
                 else
                     user.setIsSocial(true);
-                Log.info("Tạo tài khoản "+username+" thành công");
+                Log.info("Tạo tài khoản " + username + " thành công");
                 userRepository.save(user);
             }
         } catch (Exception e) {
-            Log.error("Lỗi khi tạo tài khoản: "+ e.getMessage());
+            Log.error("Lỗi khi tạo tài khoản: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -220,12 +230,12 @@ public class UserServiceImpl implements UserService {
                 else
                     newInforUser.setIsSocial(true);
 
-                Log.info("Cập nhật tài khoản "+newInforUser.getUsername()+" thành công");
+                Log.info("Cập nhật tài khoản " + newInforUser.getUsername() + " thành công");
                 userRepository.save(newInforUser);
             }
             return newInforUser;
         } catch (Exception e) {
-            Log.error("Lỗi khi cập nhật tài khoản: "+ e.getMessage());
+            Log.error("Lỗi khi cập nhật tài khoản: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -246,11 +256,53 @@ public class UserServiceImpl implements UserService {
             } else {
                 tokenRepository.deleteAll(tokenRepository.findAllTokenByUser(idUser));
                 userRepository.deleteById(idUser);
-                Log.info("Xóa tài khoản "+user.getUsername()+" thành công");
+                Log.info("Xóa tài khoản " + user.getUsername() + " thành công");
             }
         } catch (Exception e) {
-            Log.error("Lỗi khi xóa tài khoản: "+ e.getMessage());
+            Log.error("Lỗi khi xóa tài khoản: " + e.getMessage());
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<?> updateUserInformation(UpdateUserRequest request) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+            if (userOptional.isEmpty()) {
+                throw new RuntimeException("User not found");
+            }
+            User user = userOptional.get();
+            if (request.getCurrentPassword() != null && !request.getCurrentPassword().isEmpty()) {
+                if (!encoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mật khẩu hiện tại không đúng.");
+                }
+                if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mật khẩu không trùng khớp.");
+                }
+                user.setPassword(encoder.encode(request.getNewPassword()));
+            }
+            userRepository.save(user);
+
+            Optional<UserInfo> userInfoOptional = userInfoRepository.findByUserId(user.getId());
+            if (userInfoOptional.isEmpty()) {
+                throw new RuntimeException("User information not found");
+            }
+            UserInfo userInfo = userInfoOptional.get();
+            userInfo.setFullName(request.getFullName());
+            userInfo.setPhoneNumber(request.getPhoneNumber());
+            userInfo.setGender(request.getGender());
+            userInfo.setDateOfBirth(request.getDateOfBirth());
+            userInfo.setAvatar(request.getAvatar());
+            userInfo.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+
+            userInfoRepository.save(userInfo);
+            Log.info("Cập nhật thông tin người dùng " + user.getUsername() + " thành công");
+            return ResponseEntity.ok("Cập nhật thông tin thành công!");
+        } catch (Exception e) {
+            Log.error("Lỗi khi cập nhật thông tin: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi cập nhật thông tin");
         }
     }
 

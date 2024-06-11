@@ -30,4 +30,6 @@ public interface ProductService {
     List<Product> getTopSellingProducts();
 
     Product createProduct(Product product);
+
+    Product updateProduct(Integer productId, Product product);
 }

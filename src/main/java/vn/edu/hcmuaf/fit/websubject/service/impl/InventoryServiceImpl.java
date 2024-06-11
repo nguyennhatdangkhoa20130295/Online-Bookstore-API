@@ -107,6 +107,7 @@ public class InventoryServiceImpl implements InventoryService {
                     inventoryRepository.save(inventory);
                     inventories.add(inventory);
                     product.setOldPrice(inventoryRequest.getSalePrice());
+                    product.setCurrentPrice(inventoryRequest.getSalePrice());
                     product.setActive(true);
                     Log.info("Tạo mới kho hàng cho sản phẩm #" + product.getId());
                     productRepository.save(product);
