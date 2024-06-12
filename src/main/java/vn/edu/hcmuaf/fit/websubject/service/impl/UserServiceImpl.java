@@ -29,8 +29,11 @@ import vn.edu.hcmuaf.fit.websubject.service.UserService;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 @Service
 public class UserServiceImpl implements UserService {
+    private static final Logger Log = Logger.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -112,59 +115,67 @@ public class UserServiceImpl implements UserService {
     public void addUser(String username, String password, String email,
                         int role, String avatar, String fullName,
                         String phone, String locked, String isSocial) {
-        if (userRepository.existsByUsername(username)) {
-            System.out.println("Username is already taken!");
-        } else if (userRepository.existsByEmail(email)) {
-            System.out.println("Email is already in use!");
-        } else {
-            User user = new User();
-            UserInfo userInfo = new UserInfo();
-            userInfo.setUser(user);
-            userInfo.setAvatar(avatar);
-            userInfo.setFullName(fullName);
-            userInfo.setPhoneNumber(phone);
-            user.setUserInfo(userInfo);
-            user.setUsername(username);
-            user.setPassword(encoder.encode(password));
-            user.setEmail(email);
-            Set<Role> roles = new HashSet<>();
-            switch (role) {
-                case 1:
-                    Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(adminRole);
+        try {
+            if (userRepository.existsByUsername(username)) {
+                Log.warn("Tên tài khoản " + username + " đã tồn tại!");
+                System.out.println("Username is already taken!");
+            } else if (userRepository.existsByEmail(email)) {
+                Log.warn("Email " + email + " đã được sử dụng!");
+                System.out.println("Email is already in use!");
+            } else {
+                User user = new User();
+                UserInfo userInfo = new UserInfo();
+                userInfo.setUser(user);
+                userInfo.setAvatar(avatar);
+                userInfo.setFullName(fullName);
+                userInfo.setPhoneNumber(phone);
+                user.setUserInfo(userInfo);
+                user.setUsername(username);
+                user.setPassword(encoder.encode(password));
+                user.setEmail(email);
+                Set<Role> roles = new HashSet<>();
+                switch (role) {
+                    case 1:
+                        Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(adminRole);
 
-                    break;
-                case 2:
-                    Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(modRole);
+                        break;
+                    case 2:
+                        Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(modRole);
 
-                    break;
-                case 3:
-                    Role userRole = roleRepository.findByDescription(EnumRole.USER)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(userRole);
+                        break;
+                    case 3:
+                        Role userRole = roleRepository.findByDescription(EnumRole.USER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(userRole);
 
-                    break;
-                default:
-                    Role userR = roleRepository.findByDescription(EnumRole.USER)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(userR);
+                        break;
+                    default:
+                        Role userR = roleRepository.findByDescription(EnumRole.USER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(userR);
+                }
+
+                user.setRoles(roles);
+                user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+                user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                if (locked.equals("false"))
+                    user.setLocked(false);
+                else
+                    user.setLocked(true);
+                if (isSocial.equals("false"))
+                    user.setIsSocial(false);
+                else
+                    user.setIsSocial(true);
+                Log.info("Tạo tài khoản " + username + " thành công");
+                userRepository.save(user);
             }
-
-            user.setRoles(roles);
-            user.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-            user.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-            if (locked.equals("false"))
-                user.setLocked(false);
-            else
-                user.setLocked(true);
-            if (isSocial.equals("false"))
-                user.setIsSocial(false);
-            else
-                user.setIsSocial(true);
-            userRepository.save(user);
+        } catch (Exception e) {
+            Log.error("Lỗi khi tạo tài khoản: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -172,107 +183,127 @@ public class UserServiceImpl implements UserService {
     public User editUser(int id, String email,
                          int role, String avatar, String fullName, String phone,
                          String locked, String isSocial) {
-        User newInforUser = null;
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isPresent()) {
-            newInforUser = userOptional.get();
-            newInforUser.setEmail(email);
-            newInforUser.getUserInfo().setFullName(fullName);
-            newInforUser.getUserInfo().setPhoneNumber(phone);
-            newInforUser.getUserInfo().setAvatar(avatar);
-            newInforUser.getRoles().clear();
-            Set<Role> roles = new HashSet<>();
-            switch (role) {
-                case 1:
-                    Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(adminRole);
+        try {
+            User newInforUser = null;
+            Optional<User> userOptional = userRepository.findById(id);
+            if (userOptional.isPresent()) {
+                newInforUser = userOptional.get();
+                newInforUser.setEmail(email);
+                newInforUser.getUserInfo().setFullName(fullName);
+                newInforUser.getUserInfo().setPhoneNumber(phone);
+                newInforUser.getUserInfo().setAvatar(avatar);
+                newInforUser.getRoles().clear();
+                Set<Role> roles = new HashSet<>();
+                switch (role) {
+                    case 1:
+                        Role adminRole = roleRepository.findByDescription(EnumRole.ADMIN)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(adminRole);
 
-                    break;
-                case 2:
-                    Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(modRole);
+                        break;
+                    case 2:
+                        Role modRole = roleRepository.findByDescription(EnumRole.MODERATOR)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(modRole);
 
-                    break;
-                case 3:
-                    Role userRole = roleRepository.findByDescription(EnumRole.USER)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(userRole);
+                        break;
+                    case 3:
+                        Role userRole = roleRepository.findByDescription(EnumRole.USER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(userRole);
 
-                    break;
-                default:
-                    Role userR = roleRepository.findByDescription(EnumRole.USER)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(userR);
+                        break;
+                    default:
+                        Role userR = roleRepository.findByDescription(EnumRole.USER)
+                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                        roles.add(userR);
+                }
+
+                newInforUser.setRoles(roles);
+                newInforUser.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                if (locked.equals("false"))
+                    newInforUser.setLocked(false);
+                else
+                    newInforUser.setLocked(true);
+                if (isSocial.equals("false"))
+                    newInforUser.setIsSocial(false);
+                else
+                    newInforUser.setIsSocial(true);
+
+                Log.info("Cập nhật tài khoản " + newInforUser.getUsername() + " thành công");
+                userRepository.save(newInforUser);
             }
-
-            newInforUser.setRoles(roles);
-            newInforUser.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-            if (locked.equals("false"))
-                newInforUser.setLocked(false);
-            else
-                newInforUser.setLocked(true);
-            if (isSocial.equals("false"))
-                newInforUser.setIsSocial(false);
-            else
-                newInforUser.setIsSocial(true);
-            userRepository.save(newInforUser);
+            return newInforUser;
+        } catch (Exception e) {
+            Log.error("Lỗi khi cập nhật tài khoản: " + e.getMessage());
+            throw new RuntimeException(e);
         }
-        return newInforUser;
     }
 
     @Override
     public void deleteUser(int idUser) {
-        User user = userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("User not found"));
-        List<User> admins = userRepository.findAllByRoles(idUser, EnumRole.ADMIN.toString());
-        List<User> mods = userRepository.findAllByRoles(idUser, EnumRole.MODERATOR.toString());
-        if (user.getRoles().contains(roleRepository.findByDescription(EnumRole.ADMIN).get()) && admins.size() == 1) {
-            throw new RuntimeException("Cannot delete admin");
-        }
-        if (user.getRoles().contains(roleRepository.findByDescription(EnumRole.MODERATOR).get()) && mods.size() == 1) {
-            throw new RuntimeException("Cannot delete moderator");
-        } else {
-            tokenRepository.deleteAll(tokenRepository.findAllTokenByUser(idUser));
-            userRepository.deleteById(idUser);
+        try {
+            User user = userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("User not found"));
+            List<User> admins = userRepository.findAllByRoles(idUser, EnumRole.ADMIN.toString());
+            List<User> mods = userRepository.findAllByRoles(idUser, EnumRole.MODERATOR.toString());
+            if (user.getRoles().contains(roleRepository.findByDescription(EnumRole.ADMIN).get()) && admins.size() == 1) {
+                Log.warn("Không thể xóa tài khoản admin");
+                throw new RuntimeException("Cannot delete admin");
+            }
+            if (user.getRoles().contains(roleRepository.findByDescription(EnumRole.MODERATOR).get()) && mods.size() == 1) {
+                Log.warn("Không thể xóa tài khoản moderator");
+                throw new RuntimeException("Cannot delete moderator");
+            } else {
+                tokenRepository.deleteAll(tokenRepository.findAllTokenByUser(idUser));
+                userRepository.deleteById(idUser);
+                Log.info("Xóa tài khoản " + user.getUsername() + " thành công");
+            }
+        } catch (Exception e) {
+            Log.error("Lỗi khi xóa tài khoản: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public ResponseEntity<?> updateUserInformation(UpdateUserRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-        Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
-        if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found");
-        }
-        User user = userOptional.get();
-        if (request.getCurrentPassword() != null && !request.getCurrentPassword().isEmpty()) {
-            if (!encoder.matches(request.getCurrentPassword(), user.getPassword())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mật khẩu hiện tại không đúng.");
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+            if (userOptional.isEmpty()) {
+                throw new RuntimeException("User not found");
             }
-            if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mật khẩu không trùng khớp.");
+            User user = userOptional.get();
+            if (request.getCurrentPassword() != null && !request.getCurrentPassword().isEmpty()) {
+                if (!encoder.matches(request.getCurrentPassword(), user.getPassword())) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mật khẩu hiện tại không đúng.");
+                }
+                if (!request.getNewPassword().equals(request.getNewPasswordConfirm())) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Mật khẩu không trùng khớp.");
+                }
+                user.setPassword(encoder.encode(request.getNewPassword()));
             }
-            user.setPassword(encoder.encode(request.getNewPassword()));
+            userRepository.save(user);
+
+            Optional<UserInfo> userInfoOptional = userInfoRepository.findByUserId(user.getId());
+            if (userInfoOptional.isEmpty()) {
+                throw new RuntimeException("User information not found");
+            }
+            UserInfo userInfo = userInfoOptional.get();
+            userInfo.setFullName(request.getFullName());
+            userInfo.setPhoneNumber(request.getPhoneNumber());
+            userInfo.setGender(request.getGender());
+            userInfo.setDateOfBirth(request.getDateOfBirth());
+            userInfo.setAvatar(request.getAvatar());
+            userInfo.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+
+            userInfoRepository.save(userInfo);
+            Log.info("Cập nhật thông tin người dùng " + user.getUsername() + " thành công");
+            return ResponseEntity.ok("Cập nhật thông tin thành công!");
+        } catch (Exception e) {
+            Log.error("Lỗi khi cập nhật thông tin: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi cập nhật thông tin");
         }
-        userRepository.save(user);
-
-        Optional<UserInfo> userInfoOptional = userInfoRepository.findByUserId(user.getId());
-        if(userInfoOptional.isEmpty()){
-            throw new RuntimeException("User information not found");
-        }
-        UserInfo userInfo = userInfoOptional.get();
-        userInfo.setFullName(request.getFullName());
-        userInfo.setPhoneNumber(request.getPhoneNumber());
-        userInfo.setGender(request.getGender());
-        userInfo.setDateOfBirth(request.getDateOfBirth());
-        userInfo.setAvatar(request.getAvatar());
-        userInfo.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-
-        userInfoRepository.save(userInfo);
-
-        return ResponseEntity.ok("Cập nhật thông tin thành công!");
     }
 
     @Override

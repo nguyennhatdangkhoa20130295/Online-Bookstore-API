@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 import vn.edu.hcmuaf.fit.websubject.entity.Comment;
 import vn.edu.hcmuaf.fit.websubject.payload.request.CommentRequest;
 import vn.edu.hcmuaf.fit.websubject.service.CommentService;
@@ -46,6 +45,16 @@ public class CommentController {
         try {
             List<Comment> comments = commentService.getListCommentByUserIdAndProductId(idAuth, productId);
             return ResponseEntity.ok(comments);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/{commentId}")
+    public ResponseEntity<Comment> getCommentById(@PathVariable int commentId) {
+        try {
+            Comment comment = commentService.getCommentById(commentId);
+            return ResponseEntity.ok(comment);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

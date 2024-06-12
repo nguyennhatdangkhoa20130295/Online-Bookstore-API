@@ -21,7 +21,7 @@ public class Comment {
     @Column(name = "id")
     private Integer id;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("comments")
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;

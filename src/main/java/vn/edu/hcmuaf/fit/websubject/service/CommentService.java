@@ -12,6 +12,8 @@ public interface CommentService {
 
     List<Comment> getListCommentByUserIdAndProductId(int idUser, int idProduct);
 
+    Comment getCommentById(int idComment);
+
     void addComment(int idProduct, int rate, String description);
 
     Page<Comment> getAllComments(int page, int perPage);

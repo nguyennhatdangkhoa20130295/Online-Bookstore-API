@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Contact;
+import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.ContactRepository;
@@ -24,8 +25,11 @@ import vn.edu.hcmuaf.fit.websubject.service.EmailService;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import org.apache.log4j.Logger;
+
 @Service
 public class ContactServiceImpl implements ContactService {
+    private static final Logger Log = Logger.getLogger(ContactServiceImpl.class);
     @Autowired
     UserRepository userRepository;
 
@@ -37,22 +41,29 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     public void sendContact(String fullName, String email, String title, String content) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-        Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
-        if (user.isPresent()) {
-            User currentUser = user.get();
-            Contact contact = new Contact();
-            contact.setFullName(fullName);
-            contact.setEmail(email);
-            contact.setTitle(title);
-            contact.setContent(content);
-            contact.setUser(currentUser);
-            contact.setReply(false);
-            contact.setCreatedDate(CurrentTime.getCurrentTimeInVietnam());
-            contactRepository.save(contact);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
+            if (user.isPresent()) {
+                User currentUser = user.get();
+                Contact contact = new Contact();
+                contact.setFullName(fullName);
+                contact.setEmail(email);
+                contact.setTitle(title);
+                contact.setContent(content);
+                contact.setUser(currentUser);
+                contact.setReply(false);
+                contact.setCreatedDate(CurrentTime.getCurrentTimeInVietnam());
+                Log.info(user.get().getUserInfo().getFullName() + " đã gửi liên hệ");
+                contactRepository.save(contact);
+            }
+        } catch (Exception e) {
+            Log.error("Lỗi khi gửi liên hệ: " + e.getMessage());
+            throw new RuntimeException(e);
         }
     }
+
     @Override
     public Page<Contact> findAll(int page, int size, String sort, String order, String filter) {
         Sort.Direction direction = Sort.Direction.ASC;
@@ -81,15 +92,22 @@ public class ContactServiceImpl implements ContactService {
 
         return contactRepository.findAll(specification, pageable);
     }
+
     @Override
     public void replyContact(int id, String email, String title, String content) {
-        emailService.sendEmailContact(email, title, content);
-        contactRepository.findById(id).ifPresent(contact -> {
-            contact.setReply(true);
-            contact.setReplyContent(content);
-            contact.setReplyDate(CurrentTime.getCurrentTimeInVietnam());
-            contactRepository.save(contact);
-        });
+        try {
+            emailService.sendEmailContact(email, title, content);
+            contactRepository.findById(id).ifPresent(contact -> {
+                contact.setReply(true);
+                contact.setReplyContent(content);
+                contact.setReplyDate(CurrentTime.getCurrentTimeInVietnam());
+                contactRepository.save(contact);
+                Log.info("Đã trả lời liên hệ của " + contact.getFullName());
+            });
+        } catch (Exception e) {
+            Log.error("Lỗi khi trả lời liên hệ: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

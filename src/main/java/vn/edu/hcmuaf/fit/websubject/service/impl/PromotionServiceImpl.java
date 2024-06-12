@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Contact;
+import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.entity.Promotion;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
@@ -24,8 +25,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.log4j.Logger;
+
 @Service
 public class PromotionServiceImpl implements PromotionService {
+
+    private static final Logger Log = Logger.getLogger(PromotionServiceImpl.class);
     final
     PromotionRepository promotionRepository;
 
@@ -98,37 +103,49 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public void addPromotion(Integer idProduct, String code, int discount, Date startDate, Date endDate) {
-        Promotion promotion = new Promotion();
-        if(idProduct != null){
-            Product product = productRepository.findById(idProduct).orElse(null);
-            promotion.setProduct(product);
-        } else {
-            promotion.setProduct(null);
+        try {
+            Promotion promotion = new Promotion();
+            if (idProduct != null) {
+                Product product = productRepository.findById(idProduct).orElse(null);
+                promotion.setProduct(product);
+            } else {
+                promotion.setProduct(null);
+            }
+            promotion.setCode(code);
+            promotion.setDiscount(discount);
+            promotion.setStartDate(startDate);
+            promotion.setEndDate(endDate);
+            promotion.setIsCode(code != null);
+            promotionRepository.save(promotion);
+            Log.info("Thêm khuyến mãi với mức discount " + discount + " thành công");
+        } catch (Exception e) {
+            Log.error("Lỗi khi thêm khuyến mãi: " + e.getMessage());
+            throw new RuntimeException(e);
         }
-        promotion.setCode(code);
-        promotion.setDiscount(discount);
-        promotion.setStartDate(startDate);
-        promotion.setEndDate(endDate);
-        promotion.setIsCode(code != null);
-        promotionRepository.save(promotion);
     }
 
     @Override
     public void updatePromotion(int id, Integer idProduct, String code, int discount, Date startDate, Date endDate) {
-        Promotion promotion = promotionRepository.findById(id).orElse(null);
-        assert promotion != null;
-        if(idProduct != null){
-            Product product = productRepository.findById(idProduct).orElse(null);
-            promotion.setProduct(product);
-        } else {
-            promotion.setProduct(null);
+        try {
+            Promotion promotion = promotionRepository.findById(id).orElse(null);
+            assert promotion != null;
+            if (idProduct != null) {
+                Product product = productRepository.findById(idProduct).orElse(null);
+                promotion.setProduct(product);
+            } else {
+                promotion.setProduct(null);
+            }
+            promotion.setCode(code);
+            promotion.setDiscount(discount);
+            promotion.setStartDate(startDate);
+            promotion.setEndDate(endDate);
+            promotion.setIsCode(code != null);
+            promotionRepository.save(promotion);
+            Log.info("Cập nhật khuyến mãi với id#" + id + " thành công");
+        } catch (Exception e) {
+            Log.error("Lỗi khi cập nhật khuyến mãi: " + e.getMessage());
+            throw new RuntimeException(e);
         }
-        promotion.setCode(code);
-        promotion.setDiscount(discount);
-        promotion.setStartDate(startDate);
-        promotion.setEndDate(endDate);
-        promotion.setIsCode(code != null);
-        promotionRepository.save(promotion);
     }
 
     @Override
