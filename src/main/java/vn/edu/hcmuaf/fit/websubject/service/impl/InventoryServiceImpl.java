@@ -25,10 +25,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.apache.log4j.Logger;
+
 @Service
 public class InventoryServiceImpl implements InventoryService {
-    private static final Logger Log =  Logger.getLogger(InventoryServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(InventoryServiceImpl.class);
     @Autowired
     private InventoryRepository inventoryRepository;
 
@@ -37,7 +39,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public Optional<Inventory> getByProductId(int productId) {
-        return inventoryRepository.findByProductIdAndActiveTrue(productId);
+        return inventoryRepository.findByProductId(productId);
     }
 
     @Override
@@ -88,7 +90,7 @@ public class InventoryServiceImpl implements InventoryService {
         try {
             List<Inventory> inventories = new ArrayList<>();
             for (InventoryRequest inventoryRequest : inventoryRequests) {
-                Optional<Inventory> inventoryOptional = inventoryRepository.findByProductIdAndActiveTrue(inventoryRequest.getProductId());
+                Optional<Inventory> inventoryOptional = inventoryRepository.findByProductId(inventoryRequest.getProductId());
                 Optional<Product> productOptional = productRepository.findById(inventoryRequest.getProductId());
                 if (productOptional.isEmpty()) {
                     Log.warn("Sản phẩm #" + inventoryRequest.getProductId() + " không tồn tại");
@@ -119,4 +121,6 @@ public class InventoryServiceImpl implements InventoryService {
             throw new RuntimeException(e);
         }
     }
+
+
 }

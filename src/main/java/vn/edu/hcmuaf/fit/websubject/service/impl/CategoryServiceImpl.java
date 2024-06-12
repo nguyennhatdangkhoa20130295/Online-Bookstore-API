@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.CategoryRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.CategoryService;
@@ -24,12 +25,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime.getCurrentTimeInVietnam;
-import org.apache.log4j.Logger;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
-
-    private static final Logger Log =  Logger.getLogger(CategoryServiceImpl.class);
     @Autowired
     private CategoryRepository categoryRepository;
 
@@ -131,12 +129,12 @@ public class CategoryServiceImpl implements CategoryService {
                     System.out.println("Không thể tạo danh mục mới");
                 }
             } else {
-                Log.warn("Người dùng "+ customUserDetails.getUsername() +" không tồn tại");
+                Log.warn("Người dùng " + customUserDetails.getUsername() + " không tồn tại");
                 System.out.println("Người dùng không tồn tại");
             }
             return null;
         } catch (Exception e) {
-            Log.error("Lỗi khi tạo danh mục mới với lỗi "+ e.getMessage());
+            Log.error("Lỗi khi tạo danh mục mới với lỗi " + e.getMessage());
             System.out.println("Lỗi khi tạo danh mục mới");
             return null;
         }
@@ -157,7 +155,7 @@ public class CategoryServiceImpl implements CategoryService {
             Optional<Category> existingCategoryOptional = categoryRepository.findById(id);
 
             if (existingCategoryOptional.isEmpty()) {
-                Log.warn("Danh mục với id #"+id+" không tồn tại");
+                Log.warn("Danh mục với id #" + id + " không tồn tại");
                 throw new RuntimeException("Category not found");
             }
 
@@ -170,7 +168,7 @@ public class CategoryServiceImpl implements CategoryService {
             Log.info(currentUser.getUserInfo().getFullName() + " đã cập nhật danh mục " + updatingCategory.getName());
             return categoryRepository.save(updatingCategory);
         } catch (Exception e) {
-            Log.error("Lỗi khi cập nhật danh mục với lỗi "+ e.getMessage());
+            Log.error("Lỗi khi cập nhật danh mục với lỗi " + e.getMessage());
             System.out.println("Lỗi khi cập nhật danh mục");
             return null;
         }
@@ -179,10 +177,23 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(Integer id) {
         try {
-            categoryRepository.deleteById(id);
-            Log.info("Đã xóa danh mục #"+id);
+            if (categoryRepository.existsProductWithCategory(id)) {
+                Optional<Category> categoryOptional = categoryRepository.findById(id);
+                if (categoryOptional.isPresent()) {
+                    Category category = categoryOptional.get();
+                    category.setActive(false);
+                    category.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                    categoryRepository.save(category);
+                    Log.info("Đã xóa danh mục #" + id);
+                } else {
+                    throw new RuntimeException("Category not found with id " + id);
+                }
+            } else {
+                categoryRepository.deleteById(id);
+                Log.info("Đã xóa danh mục #" + id);
+            }
         } catch (Exception e) {
-            Log.error("Lỗi khi xóa danh mục #"+id+" với lỗi "+ e.getMessage());
+            Log.error("Lỗi khi xóa danh mục #" + id + " với lỗi " + e.getMessage());
             System.out.println("Lỗi khi xóa danh mục");
         }
     }

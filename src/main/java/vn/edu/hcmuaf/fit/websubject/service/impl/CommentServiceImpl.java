@@ -23,11 +23,13 @@ import vn.edu.hcmuaf.fit.websubject.service.CommentService;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
+
 import org.apache.log4j.Logger;
+
 @Service
 public class CommentServiceImpl implements CommentService {
 
-    private static final Logger Log =  Logger.getLogger(CommentServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(CommentServiceImpl.class);
     @Autowired
     private CommentRepository commentRepository;
     @Autowired

@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @Service
 public class CartItemsServiceImpl implements CartItemsService {
-    private static final Logger Log =  Logger.getLogger(CartItemsServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(CartItemsServiceImpl.class);
     @Autowired
     CartItemsRepository cartItemsRepository;
 
@@ -41,7 +41,7 @@ public class CartItemsServiceImpl implements CartItemsService {
             if (productOptional.isPresent()) {
                 Product product = productOptional.get();
 
-                Optional<Inventory> inventoryOptional = inventoryRepository.findByProductIdAndActiveTrue(product.getId());
+                Optional<Inventory> inventoryOptional = inventoryRepository.findByProductId(product.getId());
 
                 if (inventoryOptional.isEmpty()) {
                     throw new RuntimeException("Inventory not found");
@@ -82,18 +82,18 @@ public class CartItemsServiceImpl implements CartItemsService {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy sản phẩm");
             }
         } catch (Exception e) {
-            Log.error("Lỗi khi thêm sản phẩm vào giỏ hàng: "+e.getMessage());
+            Log.error("Lỗi khi thêm sản phẩm vào giỏ hàng: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi thêm sản phẩm vào giỏ hàng");
         }
     }
 
-        @Override
+    @Override
     public void removeFromCart(int cartItemId) {
         try {
             cartItemsRepository.deleteById(cartItemId);
-            Log.info("Đã xóa sản phẩm với id #"+cartItemId+" khỏi giỏ hàng");
+            Log.info("Đã xóa sản phẩm với id #" + cartItemId + " khỏi giỏ hàng");
         } catch (Exception e) {
-            Log.error("Lỗi khi xóa sản phẩm với id #"+cartItemId+" khỏi giỏ hàng");
+            Log.error("Lỗi khi xóa sản phẩm với id #" + cartItemId + " khỏi giỏ hàng");
             System.out.println("Lỗi khi xóa sản phẩm khỏi giỏ hàng");
         }
     }

@@ -24,11 +24,13 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+
 import org.apache.log4j.Logger;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    private static final Logger Log =  Logger.getLogger(OrderServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(OrderServiceImpl.class);
 
     @Autowired
     OrderRepository orderRepository;
@@ -75,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
             CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
             Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
             if (userOptional.isEmpty()) {
-                Log.info("Người dùng "+customUserDetails.getUsername()+" không tồn tại");
+                Log.info("Người dùng " + customUserDetails.getUsername() + " không tồn tại");
                 throw new RuntimeException("User not found");
             }
             User user = userOptional.get();
@@ -92,10 +94,10 @@ public class OrderServiceImpl implements OrderService {
             if (order.getPaymentMethod().equals("cashondelivery")) {
                 order.setPaymentMethod("Thanh toán khi nhận hàng");
             }
-            Log.info("Đơn hàng "+order.getOrderCode()+" được tạo bởi "+user.getUsername());
+            Log.info("Đơn hàng " + order.getOrderCode() + " được tạo bởi " + user.getUsername());
             return orderRepository.save(order);
         } catch (Exception e) {
-            Log.error("Lỗi khi tạo đơn hàng:"+ e.getMessage());
+            Log.error("Lỗi khi tạo đơn hàng:" + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -124,10 +126,10 @@ public class OrderServiceImpl implements OrderService {
     private void updateInventory(int productId, int quantity) {
         try {
             Product existingProduct = productRepository.findById(productId).get();
-            Inventory inventory = inventoryRepository.findByProductIdAndActiveTrue(productId)
+            Inventory inventory = inventoryRepository.findByProductId(productId)
                     .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + productId));
             if (inventory.getRemainingQuantity() < quantity) {
-                Log.warn("Không đủ hàng cho sản phẩm: "+existingProduct.getTitle());
+                Log.warn("Không đủ hàng cho sản phẩm: " + existingProduct.getTitle());
                 throw new RuntimeException("Không đủ hàng cho sản phẩm: " + existingProduct.getTitle());
             }
             inventory.setRemainingQuantity(inventory.getRemainingQuantity() - quantity);
@@ -135,10 +137,10 @@ public class OrderServiceImpl implements OrderService {
             if (inventory.getRemainingQuantity() == 0) {
                 inventory.setActive(false);
             }
-            Log.info("Cập nhật kho hàng cho sản phẩm: "+existingProduct.getTitle());
+            Log.info("Cập nhật kho hàng cho sản phẩm: " + existingProduct.getTitle());
             inventoryRepository.save(inventory);
         } catch (Exception e) {
-            Log.error("Lỗi khi cập nhật kho hàng: "+e.getMessage());
+            Log.error("Lỗi khi cập nhật kho hàng: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -158,7 +160,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
             if (order.getStatus().getId() == 6) {
-                Log.warn("Đơn hàng với id "+ orderId +" đã bị hủy");
+                Log.warn("Đơn hàng với id " + orderId + " đã bị hủy");
                 throw new RuntimeException("Đơn hàng đã bị hủy");
             } else if (order.getStatus().getId() >= 4) {
                 Log.warn("Đơn hàng đã được vận chuyển, không thể hủy");
@@ -166,11 +168,11 @@ public class OrderServiceImpl implements OrderService {
             } else {
                 OrderStatus orderStatus = orderStatusRepository.findById(6).orElseThrow(() -> new RuntimeException("Order status not found"));
                 order.setStatus(orderStatus);
-                Log.info("Hủy đơn hàng "+order.getOrderCode()+ " thành công");
+                Log.info("Hủy đơn hàng " + order.getOrderCode() + " thành công");
                 orderRepository.save(order);
             }
         } catch (Exception e) {
-            Log.error("Lỗi khi hủy đơn hàng: "+e.getMessage());
+            Log.error("Lỗi khi hủy đơn hàng: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -214,11 +216,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void updateOrderStatus(Integer orderId, Order order) {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
-        if(optionalOrder.isEmpty()){
+        if (optionalOrder.isEmpty()) {
             throw new RuntimeException("Order not found");
         }
         Optional<OrderStatus> optionalOrderStatus = orderStatusRepository.findById(order.getStatus().getId());
-        if(optionalOrderStatus.isEmpty()){
+        if (optionalOrderStatus.isEmpty()) {
             throw new RuntimeException("Order status not found");
         }
         OrderStatus status = optionalOrderStatus.get();
