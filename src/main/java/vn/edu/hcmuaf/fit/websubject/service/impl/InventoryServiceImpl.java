@@ -36,7 +36,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public Optional<Inventory> getByProductId(int productId) {
-        return inventoryRepository.findByProductIdAndActiveTrue(productId);
+        return inventoryRepository.findByProductId(productId);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class InventoryServiceImpl implements InventoryService {
     public List<Inventory> createInventories(List<InventoryRequest> inventoryRequests) {
         List<Inventory> inventories = new ArrayList<>();
         for (InventoryRequest inventoryRequest : inventoryRequests) {
-            Optional<Inventory> inventoryOptional = inventoryRepository.findByProductIdAndActiveTrue(inventoryRequest.getProductId());
+            Optional<Inventory> inventoryOptional = inventoryRepository.findByProductId(inventoryRequest.getProductId());
             Optional<Product> productOptional = productRepository.findById(inventoryRequest.getProductId());
             if (productOptional.isEmpty()) {
                 throw new RuntimeException("Product not found");

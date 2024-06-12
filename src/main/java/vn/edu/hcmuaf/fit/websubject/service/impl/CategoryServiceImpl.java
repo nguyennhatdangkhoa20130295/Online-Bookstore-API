@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.CategoryRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.CategoryService;
@@ -158,6 +159,18 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Integer id) {
-        categoryRepository.deleteById(id);
+        if (categoryRepository.existsProductWithCategory(id)) {
+            Optional<Category> categoryOptional = categoryRepository.findById(id);
+            if (categoryOptional.isPresent()) {
+                Category category = categoryOptional.get();
+                category.setActive(false);
+                category.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                categoryRepository.save(category);
+            } else {
+                throw new RuntimeException("Category not found with id " + id);
+            }
+        } else {
+            categoryRepository.deleteById(id);
+        }
     }
 }

@@ -38,7 +38,7 @@ public class CartItemsServiceImpl implements CartItemsService {
         if (productOptional.isPresent()) {
             Product product = productOptional.get();
 
-            Optional<Inventory> inventoryOptional = inventoryRepository.findByProductIdAndActiveTrue(product.getId());
+            Optional<Inventory> inventoryOptional = inventoryRepository.findByProductId(product.getId());
 
             if (inventoryOptional.isEmpty()) {
                 throw new RuntimeException("Inventory not found");

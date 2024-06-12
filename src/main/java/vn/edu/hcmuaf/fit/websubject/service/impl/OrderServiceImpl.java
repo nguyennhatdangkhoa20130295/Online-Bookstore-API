@@ -114,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void updateInventory(int productId, int quantity) {
         Product existingProduct = productRepository.findById(productId).get();
-        Inventory inventory = inventoryRepository.findByProductIdAndActiveTrue(productId)
+        Inventory inventory = inventoryRepository.findByProductId(productId)
                 .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + productId));
         if (inventory.getRemainingQuantity() < quantity) {
             throw new RuntimeException("Không đủ hàng cho sản phẩm: " + existingProduct.getTitle());

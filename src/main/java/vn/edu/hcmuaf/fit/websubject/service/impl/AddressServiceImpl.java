@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Address;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.AddressRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.AddressService;
@@ -26,7 +27,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<Address> getUserAddresses(Integer userId) {
-        return addressRepository.findByUserIdOrderByIsDefaultDesc(userId);
+        return addressRepository.findByUserIdAndActiveTrueOrderByIsDefaultDesc(userId);
     }
 
     @Override
@@ -75,7 +76,19 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public void deleteAddress(Integer id) {
-        addressRepository.deleteById(id);
+        if (addressRepository.existsOrderWithAddress(id)) {
+            Optional<Address> addressOptional = addressRepository.findById(id);
+            if (addressOptional.isPresent()) {
+                Address address = addressOptional.get();
+                address.setActive(false);
+                address.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                addressRepository.save(address);
+            } else {
+                throw new RuntimeException("Address not found with id " + id);
+            }
+        } else {
+            addressRepository.deleteById(id);
+        }
     }
 
     @Override
@@ -96,5 +109,10 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void resetDefaultOtherAddress(int user_id, int selected_address_id) {
         addressRepository.resetDefaultOtherAddress(user_id, selected_address_id);
+    }
+
+    @Override
+    public boolean existsOrderWithAddress(Integer addressId) {
+        return addressRepository.existsOrderWithAddress(addressId);
     }
 }
