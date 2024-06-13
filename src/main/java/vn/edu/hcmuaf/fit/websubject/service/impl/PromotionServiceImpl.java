@@ -98,6 +98,25 @@ public class PromotionServiceImpl implements PromotionService {
         return promoCode.isPresent();
     }
 
+    @Override
+    public boolean checkPromoCodeDate(String code) {
+        try {
+            Optional<Promotion> promoCode = promotionRepository.findByCode(code);
+            if (promoCode.isPresent()) {
+                Promotion promotion = promoCode.get();
+                Date currentDate = CurrentTime.getCurrentTimeInVietnam();
+                System.out.println("Current date: " + currentDate);
+                System.out.println("Start date: " + promotion.getStartDate());
+                System.out.println("End date: " + promotion.getEndDate());
+                return promotion.getStartDate().before(currentDate) && promotion.getEndDate().after(currentDate);
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            Log.error("Lỗi khi kiểm tra mã khuyến mãi: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void addPromotion(Integer idProduct, String code, int discount, Date startDate, Date endDate) {

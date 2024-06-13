@@ -1,1 +1,2 @@
-2024-06-11 17:15:20 ERROR AuthController:98 - Người dùng đăng nhâp thất bại với lỗi Bad credentials
+
+2024-06-12 21:01:53 INFO  AuthController:90 - Người dùng testuser đã đăng nhập
