@@ -162,9 +162,9 @@ public class OrderServiceImpl implements OrderService {
             if (order.getStatus().getId() == 6) {
                 Log.warn("Đơn hàng với id " + orderId + " đã bị hủy");
                 throw new RuntimeException("Đơn hàng đã bị hủy");
-            } else if (order.getStatus().getId() >= 4) {
-                Log.warn("Đơn hàng đã được vận chuyển, không thể hủy");
-                throw new RuntimeException("Đơn hàng đã được vận chuyển, không thể hủy");
+            } else if (order.getStatus().getId() >= 2) {
+                Log.warn("Đơn hàng đã được xác nhận, không thể hủy");
+                throw new RuntimeException("Đơn hàng đã được xác nhận, không thể hủy");
             } else {
                 OrderStatus orderStatus = orderStatusRepository.findById(6).orElseThrow(() -> new RuntimeException("Order status not found"));
                 order.setStatus(orderStatus);
