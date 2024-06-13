@@ -91,6 +91,11 @@ public class ProductController {
         return productService.getTopReviewProducts();
     }
 
+    @GetMapping("/top_selling")
+    public List<Product> getTopSellingProducts(@RequestParam int limit) {
+        return productService.getTopSellingProducts(limit);
+    }
+
     @PostMapping("/add")
     @Transactional
     public ResponseEntity<?> saveProduct(@RequestBody Product product) {

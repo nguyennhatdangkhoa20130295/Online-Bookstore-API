@@ -84,6 +84,30 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
     }
 
+    @PostMapping("/buy-now")
+    @Transactional
+    public ResponseEntity<?> createOrderBuyNow(@RequestBody Order order) {
+        List<OrderDetail> orderDetails = order.getOrderDetails();
+        OrderDetail orderDetail = orderDetails.get(0);
+        Optional<Inventory> inventoryOptional = inventoryService.getByProductId(orderDetail.getProduct().getId());
+        if (inventoryOptional.isEmpty()) {
+            throw new RuntimeException("Inventory not found");
+        }
+        Inventory inventory = inventoryOptional.get();
+        if (inventory.getRemainingQuantity() < orderDetail.getQuantity()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Không đủ hàng cho sản phẩm: " + orderDetail.getProduct().getTitle());
+        }
+        order.setOrderDetails(null);
+        Order newOrder = orderService.createOrder(order);
+        Order latestOrder = orderService.getLatestOrder(newOrder.getUser().getId());
+        OrderDetail orderDetailSave = new OrderDetail(latestOrder, orderDetail.getProduct(), orderDetail.getQuantity());
+        orderService.createOrderDetail(orderDetailSave);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(newOrder);
+    }
+
+
     @GetMapping("/product/{idProduct}/user/{userId}")
     public ResponseEntity<List<Order>> getOrderByProductId(@PathVariable Integer idProduct, @PathVariable Integer userId) {
         List<Order> orders = orderService.getOrderByProductIdAndUserId(idProduct, userId);

@@ -35,6 +35,10 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
+        if (user.isEmpty()) {
+            Log.warn("Người dùng " + customUserDetails.getUsername() + " không tồn tại");
+            throw new RuntimeException("User not found");
+        }
         return favoriteProductRepository.findAllByUserId(user.get().getId());
     }
 
