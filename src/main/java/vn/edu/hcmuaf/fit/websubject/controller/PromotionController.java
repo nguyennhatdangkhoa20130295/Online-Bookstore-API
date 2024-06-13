@@ -53,9 +53,26 @@ public class PromotionController {
         try {
             boolean check = promotionService.checkPromoCode(code);
             if (check) {
-                return ResponseEntity.ok("Voucher code đã tồn tại");
+                return ResponseEntity.ok("Voucher code hợp lệ");
             } else {
-                return ResponseEntity.ok("Voucher code chưa tồn tại");
+                return ResponseEntity.ok("Voucher code không tồn tại");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/checkDate/{code}")
+    public ResponseEntity<String> checkPromoCodeDate(@PathVariable String code) {
+        try {
+            boolean check = promotionService.checkPromoCodeDate(code);
+            if (check) {
+                System.out.println("valid");
+                return ResponseEntity.ok().body("valid");
+            } else {
+                System.out.println("expired");
+                return ResponseEntity.ok().body("expired");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -13,6 +13,7 @@ public interface PromotionService {
     Promotion getPromotionById(int id);
     Promotion getPromotionByCode(String code);
     boolean checkPromoCode(String code);
+    boolean checkPromoCodeDate(String code);
     void addPromotion(Integer idProduct, String code, int discount, Date startDate, Date endDate);
     void updatePromotion(int id, Integer idProduct, String code, int discount, Date startDate, Date endDate);
     void deletePromotion(int id);
