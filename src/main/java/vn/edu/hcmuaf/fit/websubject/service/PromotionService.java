@@ -10,6 +10,7 @@ import java.util.List;
 public interface PromotionService {
     List<Promotion> getAllPromotions();
     Page<Promotion> findAllByIsCode(int page, int size, String sort, String order, String filter);
+    List<Promotion> findAllByIsCode();
     Promotion getPromotionById(int id);
     Promotion getPromotionByCode(String code);
     boolean checkPromoCode(String code);
