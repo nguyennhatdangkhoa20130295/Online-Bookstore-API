@@ -154,7 +154,7 @@ public class OrderController {
             orderService.cancelOrder(orderId);
             return ResponseEntity.ok().body("Đã hủy đơn hàng");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Đơn hàng đã được xác nhận, không thể hủy");
         }
     }
 

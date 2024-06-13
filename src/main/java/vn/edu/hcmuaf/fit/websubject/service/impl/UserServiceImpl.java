@@ -3,6 +3,7 @@ package vn.edu.hcmuaf.fit.websubject.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -104,6 +105,12 @@ public class UserServiceImpl implements UserService {
             if (jsonFilter.has("q")) {
                 String searchStr = jsonFilter.get("q").asText();
                 predicate = criteriaBuilder.like(criteriaBuilder.lower(root.get("userInfo").get("fullName")), "%" + searchStr.toLowerCase() + "%");
+            }
+            if(jsonFilter.has("role")) {
+                String type = jsonFilter.get("role").asText();
+                Join<User, Role> roleJoin = root.join("roles");
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.isTrue(roleJoin.get("description").in(type)));
+
             }
             return predicate;
         };

@@ -99,9 +99,13 @@ public class ProductController {
     @PostMapping("/add")
     @Transactional
     public ResponseEntity<?> saveProduct(@RequestBody Product product) {
-        System.out.println(product);
-        Product savedProduct = productService.createProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+        try {
+            System.out.println(product);
+            Product savedProduct = productService.createProduct(product);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @Transactional
