@@ -82,6 +82,12 @@ public class PromotionServiceImpl implements PromotionService {
         return promotionRepository.findAll(specification, pageable);
     }
 
+    @Override
+    public List<Promotion> findAllByIsCode() {
+        List<Promotion> promotions = promotionRepository.findByIsCode();
+        return promotions;
+    }
+
 
     @Override
     public Promotion getPromotionById(int id) {

@@ -8,6 +8,8 @@ import vn.edu.hcmuaf.fit.websubject.entity.Promotion;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddPromoRequest;
 import vn.edu.hcmuaf.fit.websubject.service.PromotionService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/promotion")
 public class PromotionController {
@@ -22,6 +24,16 @@ public class PromotionController {
                                                             @RequestParam(defaultValue = "DESC") String order) {
         try {
             Page<Promotion> promotions = promotionService.findAllByIsCode(page, perPage, sort, order, filter);
+            return ResponseEntity.ok(promotions);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/all-by-code")
+    public ResponseEntity<List<Promotion>> getAllPromotionsByCode() {
+        try {
+            List<Promotion> promotions = promotionService.findAllByIsCode();
             return ResponseEntity.ok(promotions);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
