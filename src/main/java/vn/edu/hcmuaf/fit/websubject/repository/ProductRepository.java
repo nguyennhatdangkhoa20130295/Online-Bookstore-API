@@ -12,6 +12,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.Product;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer>, JpaSpecificationExecutor<Product> {
@@ -29,4 +30,6 @@ public interface ProductRepository extends JpaRepository<Product, Integer>, JpaS
     @Query("SELECT p FROM Product p LEFT JOIN p.comments c WHERE p.active = true GROUP BY p.id ORDER BY COUNT(c) DESC LIMIT 2")
     List<Product> findTopReviewProducts();
 
+    @Query("SELECT p FROM Product p WHERE p.active = true AND p.id NOT IN :ids ORDER BY p.id ASC LiMIT :limit")
+    List<Product> findTopNProductsNotInSet(@Param("limit") int limit, @Param("ids") Set<Integer> ids);
 }

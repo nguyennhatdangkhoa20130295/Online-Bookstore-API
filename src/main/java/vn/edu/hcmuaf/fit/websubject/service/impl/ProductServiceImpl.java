@@ -48,6 +48,9 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductDetailRepository productDetailRepository;
 
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+
     private static final String PREFIX = "978"; // Prefix cố định của SKU
     private static final int TOTAL_LENGTH = 13; // Độ dài tổng cộng của SKU
     private static final Random RANDOM = new SecureRandom();
@@ -216,8 +219,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getTopSellingProducts() {
-        return List.of();
+    public List<Product> getTopSellingProducts(int limit) {
+        List<Product> bestSellingProductsFromOrderDetail = orderDetailRepository.findBestSellingProducts(limit);
+
+        if (bestSellingProductsFromOrderDetail.size() < limit) {
+            int additionalProductsNeeded = limit - bestSellingProductsFromOrderDetail.size();
+            Set<Integer> ids = toIdSet(bestSellingProductsFromOrderDetail);
+            List<Product> additionalProducts = productRepository.findTopNProductsNotInSet(additionalProductsNeeded, ids);
+            bestSellingProductsFromOrderDetail.addAll(additionalProducts);
+        }
+
+        return bestSellingProductsFromOrderDetail;
+    }
+
+    private Set<Integer> toIdSet(List<Product> products) {
+        Set<Integer> idSet = new HashSet<>();
+        for (Product product : products) {
+            idSet.add(product.getId());
+        }
+        return idSet;
     }
 
     @Override
