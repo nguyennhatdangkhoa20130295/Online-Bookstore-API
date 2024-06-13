@@ -24,11 +24,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
 import org.apache.log4j.Logger;
+
 @Service
 public class PromotionServiceImpl implements PromotionService {
 
-    private static final Logger Log =  Logger.getLogger(PromotionServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(PromotionServiceImpl.class);
     final
     PromotionRepository promotionRepository;
 
@@ -143,24 +145,24 @@ public class PromotionServiceImpl implements PromotionService {
 
     @Override
     public void updatePromotion(int id, Integer idProduct, String code, int discount, Date startDate, Date endDate) {
-        try{
-        Promotion promotion = promotionRepository.findById(id).orElse(null);
-        assert promotion != null;
-        if(idProduct != null){
-            Product product = productRepository.findById(idProduct).orElse(null);
-            promotion.setProduct(product);
-        } else {
-            promotion.setProduct(null);
-        }
-        promotion.setCode(code);
-        promotion.setDiscount(discount);
-        promotion.setStartDate(startDate);
-        promotion.setEndDate(endDate);
-        promotion.setIsCode(code != null);
-        promotionRepository.save(promotion);
-        Log.info("Cập nhật khuyến mãi với id#"+id +" thành công");
+        try {
+            Promotion promotion = promotionRepository.findById(id).orElse(null);
+            assert promotion != null;
+            if (idProduct != null) {
+                Product product = productRepository.findById(idProduct).orElse(null);
+                promotion.setProduct(product);
+            } else {
+                promotion.setProduct(null);
+            }
+            promotion.setCode(code);
+            promotion.setDiscount(discount);
+            promotion.setStartDate(startDate);
+            promotion.setEndDate(endDate);
+            promotion.setIsCode(code != null);
+            promotionRepository.save(promotion);
+            Log.info("Cập nhật khuyến mãi với id#" + id + " thành công");
         } catch (Exception e) {
-            Log.error("Lỗi khi cập nhật khuyến mãi: "+e.getMessage());
+            Log.error("Lỗi khi cập nhật khuyến mãi: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

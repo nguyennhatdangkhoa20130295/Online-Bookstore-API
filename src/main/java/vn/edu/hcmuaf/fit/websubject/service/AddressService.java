@@ -21,4 +21,6 @@ public interface AddressService {
     void setDefaultAddress(Integer id);
 
     void resetDefaultOtherAddress(int user_id, int selected_address_id);
+
+   boolean existsOrderWithAddress(Integer addressId);
 }

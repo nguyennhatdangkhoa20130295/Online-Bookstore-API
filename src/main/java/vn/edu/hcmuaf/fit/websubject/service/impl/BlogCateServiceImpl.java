@@ -28,7 +28,7 @@ import java.util.Optional;
 @Service
 public class BlogCateServiceImpl implements BlogCateService {
 
-    private static final Logger Log =  Logger.getLogger(BlogCateServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(BlogCateServiceImpl.class);
     BlogCateRepository blogCateRepository;
 
     BlogRepository blogRepository;
@@ -62,9 +62,9 @@ public class BlogCateServiceImpl implements BlogCateService {
             blogCategory.setUpdatedBy(user);
             blogCategory.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
             blogCateRepository.save(blogCategory);
-            Log.info(user.getUserInfo().getFullName()+ " đã thêm danh mục blog với tên: " + name);
+            Log.info(user.getUserInfo().getFullName() + " đã thêm danh mục blog với tên: " + name);
         } catch (Exception e) {
-            Log.error("Lỗi khi thêm danh mục blog với lỗi "+ e.getMessage());
+            Log.error("Lỗi khi thêm danh mục blog với lỗi " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -78,9 +78,9 @@ public class BlogCateServiceImpl implements BlogCateService {
             blogCategory.setUpdatedBy(user);
             blogCategory.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
             blogCateRepository.save(blogCategory);
-            Log.info(user.getUserInfo().getFullName()+" đã sửa danh mục blog với id: " + id);
+            Log.info(user.getUserInfo().getFullName() + " đã sửa danh mục blog với id: " + id);
         } catch (Exception e) {
-            Log.error("Lỗi khi sửa danh mục blog với lỗi "+ e.getMessage());
+            Log.error("Lỗi khi sửa danh mục blog với lỗi " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -95,7 +95,7 @@ public class BlogCateServiceImpl implements BlogCateService {
                 blogCateRepository.deleteById(id);
             }
         } catch (Exception e) {
-            Log.error("Lỗi khi xóa danh mục blog với lỗi "+ e.getMessage());
+            Log.error("Lỗi khi xóa danh mục blog với lỗi " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

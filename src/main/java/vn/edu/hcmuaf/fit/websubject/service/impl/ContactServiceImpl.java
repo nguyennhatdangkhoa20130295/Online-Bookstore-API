@@ -24,10 +24,12 @@ import vn.edu.hcmuaf.fit.websubject.service.EmailService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
+
 import org.apache.log4j.Logger;
+
 @Service
 public class ContactServiceImpl implements ContactService {
-    private static final Logger Log =  Logger.getLogger(ContactServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(ContactServiceImpl.class);
     @Autowired
     UserRepository userRepository;
 
@@ -53,14 +55,15 @@ public class ContactServiceImpl implements ContactService {
                 contact.setUser(currentUser);
                 contact.setReply(false);
                 contact.setCreatedDate(CurrentTime.getCurrentTimeInVietnam());
-                Log.info(user.get().getUserInfo().getFullName() +" đã gửi liên hệ");
+                Log.info(user.get().getUserInfo().getFullName() + " đã gửi liên hệ");
                 contactRepository.save(contact);
             }
         } catch (Exception e) {
-            Log.error("Lỗi khi gửi liên hệ: "+e.getMessage());
+            Log.error("Lỗi khi gửi liên hệ: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public Page<Contact> findAll(int page, int size, String sort, String order, String filter) {
         Sort.Direction direction = Sort.Direction.ASC;
@@ -89,6 +92,7 @@ public class ContactServiceImpl implements ContactService {
 
         return contactRepository.findAll(specification, pageable);
     }
+
     @Override
     public void replyContact(int id, String email, String title, String content) {
         try {
@@ -98,10 +102,10 @@ public class ContactServiceImpl implements ContactService {
                 contact.setReplyContent(content);
                 contact.setReplyDate(CurrentTime.getCurrentTimeInVietnam());
                 contactRepository.save(contact);
-                Log.info("Đã trả lời liên hệ của "+contact.getFullName());
+                Log.info("Đã trả lời liên hệ của " + contact.getFullName());
             });
         } catch (Exception e) {
-            Log.error("Lỗi khi trả lời liên hệ: "+e.getMessage());
+            Log.error("Lỗi khi trả lời liên hệ: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

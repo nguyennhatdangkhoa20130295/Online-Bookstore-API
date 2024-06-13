@@ -183,6 +183,7 @@ public class AuthController {
 
     @PostMapping("/checkToken/{token}")
     public ResponseEntity<?> checkToken(@Valid @PathVariable String token) {
+        System.out.println(token);
         try {
             jwtUtils.validateJwtToken(token);
             return ResponseEntity.ok("Token is valid");

@@ -26,6 +26,7 @@ public class Order {
     @Column(name = "order_code", unique = true)
     private String orderCode;
 
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

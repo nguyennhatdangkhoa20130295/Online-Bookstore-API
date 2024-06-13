@@ -23,14 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+
 import org.apache.log4j.Logger;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
-    private static final Logger Log =  Logger.getLogger(ProductServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(ProductServiceImpl.class);
     @Autowired
     private ProductRepository productRepository;
 
@@ -45,6 +47,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private ProductDetailRepository productDetailRepository;
+
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
 
     private static final String PREFIX = "978"; // Prefix cố định của SKU
     private static final int TOTAL_LENGTH = 13; // Độ dài tổng cộng của SKU
@@ -214,8 +219,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> getTopSellingProducts() {
-        return List.of();
+    public List<Product> getTopSellingProducts(int limit) {
+        List<Product> bestSellingProductsFromOrderDetail = orderDetailRepository.findBestSellingProducts(limit);
+
+        if (bestSellingProductsFromOrderDetail.size() < limit) {
+            int additionalProductsNeeded = limit - bestSellingProductsFromOrderDetail.size();
+            Set<Integer> ids = toIdSet(bestSellingProductsFromOrderDetail);
+            List<Product> additionalProducts = productRepository.findTopNProductsNotInSet(additionalProductsNeeded, ids);
+            bestSellingProductsFromOrderDetail.addAll(additionalProducts);
+        }
+
+        return bestSellingProductsFromOrderDetail;
+    }
+
+    private Set<Integer> toIdSet(List<Product> products) {
+        Set<Integer> idSet = new HashSet<>();
+        for (Product product : products) {
+            idSet.add(product.getId());
+        }
+        return idSet;
     }
 
     @Override
@@ -295,97 +317,97 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-        @Override
-        public Product updateProduct(Integer productId, Product product) {
-            try {
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
-                Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
-                if (userOptional.isEmpty()) {
-                    throw new RuntimeException("User not found");
-                }
-                User user = userOptional.get();
-
-                Optional<Product> optionalProduct = productRepository.findById(productId);
-                if (optionalProduct.isEmpty()) {
-                    throw new RuntimeException("Product not found");
-                }
-                Product existingProduct = optionalProduct.get();
-
-                existingProduct.setCategory(product.getCategory());
-                existingProduct.setTitle(product.getTitle());
-                existingProduct.setOldPrice(product.getOldPrice());
-                existingProduct.setCurrentPrice(product.getCurrentPrice());
-                existingProduct.setActive(product.isActive());
-                existingProduct.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-                existingProduct.setUpdatedBy(user);
-
-                ProductDetail existedDetail = existingProduct.getDetail();
-                if (existedDetail == null) {
-                    existedDetail = new ProductDetail();
-                    existedDetail.setProduct(existingProduct);
-                }
-                existedDetail.setSupplier(product.getDetail().getSupplier());
-                existedDetail.setPublisher(product.getDetail().getPublisher());
-                existedDetail.setPublishYear(product.getDetail().getPublishYear());
-                existedDetail.setAuthor(product.getDetail().getAuthor());
-                existedDetail.setBrand(product.getDetail().getBrand());
-                existedDetail.setOrigin(product.getDetail().getOrigin());
-                existedDetail.setColor(product.getDetail().getColor());
-                existedDetail.setWeight(product.getDetail().getWeight());
-                existedDetail.setSize(product.getDetail().getSize());
-                existedDetail.setQuantityOfPage(product.getDetail().getQuantityOfPage() != 0 ? product.getDetail().getQuantityOfPage() : -1);
-                existedDetail.setDescription(product.getDetail().getDescription());
-
-                ProductDetail savedDetail = productDetailRepository.save(existedDetail);
-                existingProduct.setDetail(savedDetail);
-
-                String oldMainUrl = existingProduct.getImage();
-                String newMainImageUrl = product.getImage();
-                if (newMainImageUrl != null && !newMainImageUrl.isEmpty() && !newMainImageUrl.equals(existingProduct.getImage())) {
-                    existingProduct.setImage(newMainImageUrl);
-                }
-
-                List<ProductImage> updatedImages = product.getImages();
-                List<ProductImage> existingImages = existingProduct.getImages();
-                Map<String, ProductImage> existingImageMap = existingImages.stream()
-                        .collect(Collectors.toMap(ProductImage::getImage, Function.identity()));
-
-                List<ProductImage> imagesToSave = new ArrayList<>();
-                ProductImage matchingImage = existingImageMap.get(oldMainUrl);
-                if (matchingImage != null) {
-                    matchingImage.setImage(newMainImageUrl);
-                    matchingImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-                    imagesToSave.add(matchingImage);
-                }
-                for (ProductImage updatedImage : updatedImages) {
-                    String updatedImageUrl = updatedImage.getImage();
-                    if (updatedImageUrl != null && !updatedImageUrl.isEmpty()) {
-                        ProductImage existingImage = existingImageMap.get(updatedImageUrl);
-                        if (existingImage != null) {
-                            existingImage.setImage(updatedImageUrl);
-                            existingImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-                            imagesToSave.add(existingImage);
-                        } else {
-                            ProductImage newImage = new ProductImage();
-                            newImage.setProduct(existingProduct);
-                            newImage.setImage(updatedImageUrl);
-                            newImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-                            newImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-                            newImage.setDeleted(false);
-                            imagesToSave.add(newImage);
-                        }
-
-                    }
-                }
-                productImageRepository.saveAll(imagesToSave);
-                existingProduct.setImages(imagesToSave);
-                Log.info("Người dùng " + customUserDetails.getUsername() + " đã cập nhật sản phẩm " + existingProduct.getTitle());
-                return productRepository.save(existingProduct);
-            } catch (Exception e) {
-                Log.error("Lỗi khi cập nhật sản phẩm: " + e.getMessage());
-                throw new RuntimeException(e);
+    @Override
+    public Product updateProduct(Integer productId, Product product) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
+            Optional<User> userOptional = userRepository.findByUsername(customUserDetails.getUsername());
+            if (userOptional.isEmpty()) {
+                throw new RuntimeException("User not found");
             }
-        }
+            User user = userOptional.get();
 
+            Optional<Product> optionalProduct = productRepository.findById(productId);
+            if (optionalProduct.isEmpty()) {
+                throw new RuntimeException("Product not found");
+            }
+            Product existingProduct = optionalProduct.get();
+
+            existingProduct.setCategory(product.getCategory());
+            existingProduct.setTitle(product.getTitle());
+            existingProduct.setOldPrice(product.getOldPrice());
+            existingProduct.setCurrentPrice(product.getCurrentPrice());
+            existingProduct.setActive(product.isActive());
+            existingProduct.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+            existingProduct.setUpdatedBy(user);
+
+            ProductDetail existedDetail = existingProduct.getDetail();
+            if (existedDetail == null) {
+                existedDetail = new ProductDetail();
+                existedDetail.setProduct(existingProduct);
+            }
+            existedDetail.setSupplier(product.getDetail().getSupplier());
+            existedDetail.setPublisher(product.getDetail().getPublisher());
+            existedDetail.setPublishYear(product.getDetail().getPublishYear());
+            existedDetail.setAuthor(product.getDetail().getAuthor());
+            existedDetail.setBrand(product.getDetail().getBrand());
+            existedDetail.setOrigin(product.getDetail().getOrigin());
+            existedDetail.setColor(product.getDetail().getColor());
+            existedDetail.setWeight(product.getDetail().getWeight());
+            existedDetail.setSize(product.getDetail().getSize());
+            existedDetail.setQuantityOfPage(product.getDetail().getQuantityOfPage() != 0 ? product.getDetail().getQuantityOfPage() : -1);
+            existedDetail.setDescription(product.getDetail().getDescription());
+
+            ProductDetail savedDetail = productDetailRepository.save(existedDetail);
+            existingProduct.setDetail(savedDetail);
+
+            String oldMainUrl = existingProduct.getImage();
+            String newMainImageUrl = product.getImage();
+            if (newMainImageUrl != null && !newMainImageUrl.isEmpty() && !newMainImageUrl.equals(existingProduct.getImage())) {
+                existingProduct.setImage(newMainImageUrl);
+            }
+
+            List<ProductImage> updatedImages = product.getImages();
+            List<ProductImage> existingImages = existingProduct.getImages();
+            Map<String, ProductImage> existingImageMap = existingImages.stream()
+                    .collect(Collectors.toMap(ProductImage::getImage, Function.identity()));
+
+            List<ProductImage> imagesToSave = new ArrayList<>();
+            ProductImage matchingImage = existingImageMap.get(oldMainUrl);
+            if (matchingImage != null) {
+                matchingImage.setImage(newMainImageUrl);
+                matchingImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                imagesToSave.add(matchingImage);
+            }
+            for (ProductImage updatedImage : updatedImages) {
+                String updatedImageUrl = updatedImage.getImage();
+                if (updatedImageUrl != null && !updatedImageUrl.isEmpty()) {
+                    ProductImage existingImage = existingImageMap.get(updatedImageUrl);
+                    if (existingImage != null) {
+                        existingImage.setImage(updatedImageUrl);
+                        existingImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                        imagesToSave.add(existingImage);
+                    } else {
+                        ProductImage newImage = new ProductImage();
+                        newImage.setProduct(existingProduct);
+                        newImage.setImage(updatedImageUrl);
+                        newImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+                        newImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                        newImage.setDeleted(false);
+                        imagesToSave.add(newImage);
+                    }
+
+                }
+            }
+            productImageRepository.saveAll(imagesToSave);
+            existingProduct.setImages(imagesToSave);
+            Log.info("Người dùng " + customUserDetails.getUsername() + " đã cập nhật sản phẩm " + existingProduct.getTitle());
+            return productRepository.save(existingProduct);
+        } catch (Exception e) {
+            Log.error("Lỗi khi cập nhật sản phẩm: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
+
+}

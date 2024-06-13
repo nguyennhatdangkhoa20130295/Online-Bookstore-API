@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Address;
 import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
+import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.AddressRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 import vn.edu.hcmuaf.fit.websubject.service.AddressService;
@@ -20,8 +21,6 @@ import static vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime.getCurrent
 @Service
 public class AddressServiceImpl implements AddressService {
 
-    private static final Logger Log =  Logger.getLogger(AddressServiceImpl.class);
-
     @Autowired
     AddressRepository addressRepository;
 
@@ -30,7 +29,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<Address> getUserAddresses(Integer userId) {
-        return addressRepository.findByUserIdOrderByIsDefaultDesc(userId);
+        return addressRepository.findByUserIdAndActiveTrueOrderByIsDefaultDesc(userId);
     }
 
     @Override
@@ -53,7 +52,7 @@ public class AddressServiceImpl implements AddressService {
             address.setUser(user);
             address.setCreatedAt(getCurrentTimeInVietnam());
             address.setActive(true);
-            Log.info("Người dùng "+ user.getUsername() + " tạo địa chỉ mới");
+            Log.info("Người dùng " + user.getUsername() + " tạo địa chỉ mới");
             return addressRepository.save(address);
         } catch (Exception e) {
             Log.error("Lỗi khi tạo địa chỉ với lỗi " + e.getMessage());
@@ -95,8 +94,21 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void deleteAddress(Integer id) {
         try {
-            addressRepository.deleteById(id);
-            Log.info("Xóa địa chỉ với id #" + id);
+            if (addressRepository.existsOrderWithAddress(id)) {
+                Optional<Address> addressOptional = addressRepository.findById(id);
+                if (addressOptional.isPresent()) {
+                    Address address = addressOptional.get();
+                    address.setActive(false);
+                    address.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                    addressRepository.save(address);
+                    Log.info("Xóa địa chỉ với id #" + id);
+                } else {
+                    throw new RuntimeException("Address not found with id " + id);
+                }
+            } else {
+                addressRepository.deleteById(id);
+                Log.info("Xóa địa chỉ với id #" + id);
+            }
         } catch (Exception e) {
             Log.error("Lỗi khi xóa địa chỉ với lỗi " + e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -121,5 +133,10 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void resetDefaultOtherAddress(int user_id, int selected_address_id) {
         addressRepository.resetDefaultOtherAddress(user_id, selected_address_id);
+    }
+
+    @Override
+    public boolean existsOrderWithAddress(Integer addressId) {
+        return addressRepository.existsOrderWithAddress(addressId);
     }
 }

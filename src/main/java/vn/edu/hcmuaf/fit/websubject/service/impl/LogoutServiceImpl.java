@@ -11,10 +11,11 @@ import org.springframework.util.StringUtils;
 import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import org.apache.log4j.Logger;
+
 @Service
 @RequiredArgsConstructor
 public class LogoutServiceImpl implements LogoutHandler {
-    private static final Logger Log =  Logger.getLogger(LogoutServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(LogoutServiceImpl.class);
     @Autowired
     private TokenRepository tokenRepository;
 
@@ -36,7 +37,7 @@ public class LogoutServiceImpl implements LogoutHandler {
             }
             Log.info("Người dùng" + authentication.getName() + " đã đăng xuất");
         } catch (Exception e) {
-            Log.error("Lỗi khi đăng xuất tài khoản "+ authentication.getName());
+            Log.error("Lỗi khi đăng xuất tài khoản " + authentication.getName());
             e.printStackTrace();
         }
     }

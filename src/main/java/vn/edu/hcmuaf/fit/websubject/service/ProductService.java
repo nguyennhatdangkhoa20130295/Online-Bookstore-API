@@ -27,7 +27,7 @@ public interface ProductService {
 
     List<Product> getTopReviewProducts();
 
-    List<Product> getTopSellingProducts();
+    List<Product> getTopSellingProducts(int limit);
 
     Product createProduct(Product product);
 

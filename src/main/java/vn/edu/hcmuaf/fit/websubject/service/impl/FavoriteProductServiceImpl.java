@@ -15,10 +15,12 @@ import vn.edu.hcmuaf.fit.websubject.service.FavoriteProductService;
 
 import java.util.List;
 import java.util.Optional;
+
 import org.apache.log4j.Logger;
+
 @Service
 public class FavoriteProductServiceImpl implements FavoriteProductService {
-    private static final Logger Log =  Logger.getLogger(FavoriteProductServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(FavoriteProductServiceImpl.class);
     @Autowired
     private FavoriteProductRepository favoriteProductRepository;
 
@@ -33,6 +35,10 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
         Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
+        if (user.isEmpty()) {
+            Log.warn("Người dùng " + customUserDetails.getUsername() + " không tồn tại");
+            throw new RuntimeException("User not found");
+        }
         return favoriteProductRepository.findAllByUserId(user.get().getId());
     }
 
@@ -43,7 +49,7 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
             CustomUserDetailsImpl customUserDetails = (CustomUserDetailsImpl) authentication.getPrincipal();
             Optional<User> user = userRepository.findByUsername(customUserDetails.getUsername());
             if (user.isEmpty()) {
-                Log.warn("Người dùng "+customUserDetails.getUsername()+" không tồn tại");
+                Log.warn("Người dùng " + customUserDetails.getUsername() + " không tồn tại");
                 throw new RuntimeException("User not found");
             }
             FavoriteProduct existFavorite = favoriteProductRepository.findByProductId(productId);
@@ -52,18 +58,18 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
             } else {
                 Optional<Product> productOptional = productRepository.findById(productId);
                 if (productOptional.isEmpty()) {
-                    Log.warn("Sản phẩm #"+productId+" không tồn tại");
+                    Log.warn("Sản phẩm #" + productId + " không tồn tại");
                     throw new RuntimeException("Product not found");
                 }
                 Product product = productOptional.get();
                 FavoriteProduct favoriteProduct = new FavoriteProduct();
                 favoriteProduct.setProduct(product);
                 favoriteProduct.setUser(user.get());
-                Log.info("Người dùng "+customUserDetails.getUsername()+" đã thêm sản phẩm "+product.getTitle()+" vào danh sách yêu thích");
+                Log.info("Người dùng " + customUserDetails.getUsername() + " đã thêm sản phẩm " + product.getTitle() + " vào danh sách yêu thích");
                 return favoriteProductRepository.save(favoriteProduct);
             }
         } catch (Exception e) {
-            Log.error("Lỗi khi thêm sản phẩm vào danh sách yêu thích: "+e.getMessage());
+            Log.error("Lỗi khi thêm sản phẩm vào danh sách yêu thích: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
@@ -71,8 +77,8 @@ public class FavoriteProductServiceImpl implements FavoriteProductService {
 
     @Override
     public void deleteFavorite(Integer id) {
-        try{
-            Log.info("Người dùng đã xóa sản phẩm #"+id+" khỏi danh sách yêu thích");
+        try {
+            Log.info("Người dùng đã xóa sản phẩm #" + id + " khỏi danh sách yêu thích");
             favoriteProductRepository.deleteById(id);
         } catch (Exception e) {
             Log.error("Lỗi khi xóa sản phẩm khỏi danh sách yêu thích: " + e.getMessage());

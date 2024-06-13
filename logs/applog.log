@@ -1,2 +1,36 @@
-
-2024-06-12 21:01:53 INFO  AuthController:90 - Người dùng testuser đã đăng nhập
+2024-06-11 17:15:20 ERROR AuthController:98 - Người dùng đăng nhâp thất bại với lỗi Bad credentials
+2024-06-12 20:07:34 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #218 khỏi giỏ hàng
+2024-06-12 20:25:27 INFO  OrderServiceImpl:97 - Đơn hàng YCRJLSJB9N được tạo bởi dangkhoa123
+2024-06-12 20:29:54 INFO  OrderServiceImpl:97 - Đơn hàng 8NLV18C9AG được tạo bởi dangkhoa123
+2024-06-12 22:01:17 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
+2024-06-12 22:31:26 INFO  OrderServiceImpl:97 - Đơn hàng LO7PJGEE7X được tạo bởi dangkhoa123
+2024-06-12 22:31:27 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Tranh Truyện Ehon Cho Bé - Này, Cậu Ơi! (Tái Bản 2023)
+2024-06-12 22:31:27 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #219 khỏi giỏ hàng
+2024-06-12 22:31:27 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Truyện Tranh Ehon - Mọi Người Đã Dạy Tớ (Tái Bản 2024)
+2024-06-12 22:31:27 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #220 khỏi giỏ hàng
+2024-06-12 23:01:13 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
+2024-06-12 23:08:16 INFO  OrderServiceImpl:97 - Đơn hàng DFUDN6QQD6 được tạo bởi dangkhoa123
+2024-06-12 23:08:16 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Đám Trẻ Ở Đại Dương Đen
+2024-06-12 23:09:53 INFO  OrderServiceImpl:97 - Đơn hàng 9RFUC2T4MQ được tạo bởi dangkhoa123
+2024-06-12 23:09:53 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Tranh Truyện Ehon Cho Bé - Này, Cậu Ơi! (Tái Bản 2023)
+2024-06-12 23:09:53 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #221 khỏi giỏ hàng
+2024-06-12 23:09:53 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Đám Trẻ Ở Đại Dương Đen
+2024-06-12 23:09:53 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #222 khỏi giỏ hàng
+2024-06-12 23:10:48 INFO  OrderServiceImpl:97 - Đơn hàng UDBMFP8GQE được tạo bởi dangkhoa123
+2024-06-12 23:10:48 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Đồ Chơi Cờ Trí Tuệ UNO W2085
+2024-06-12 23:13:57 INFO  OrderServiceImpl:97 - Đơn hàng Z1YPZHPL5X được tạo bởi dangkhoa123
+2024-06-12 23:13:57 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Tranh Truyện Ehon Cho Bé - Này, Cậu Ơi! (Tái Bản 2023)
+2024-06-12 23:13:57 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #223 khỏi giỏ hàng
+2024-06-12 23:13:57 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Truyện Tranh Ehon - Mọi Người Đã Dạy Tớ (Tái Bản 2024)
+2024-06-12 23:13:57 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #224 khỏi giỏ hàng
+2024-06-12 23:14:47 INFO  OrderServiceImpl:97 - Đơn hàng WNY6AZZVXE được tạo bởi dangkhoa123
+2024-06-12 23:14:47 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Tranh Truyện Ehon Cho Bé - Này, Cậu Ơi! (Tái Bản 2023)
+2024-06-12 23:21:57 INFO  OrderServiceImpl:97 - Đơn hàng OBXAICHSK3 được tạo bởi dangkhoa123
+2024-06-12 23:21:57 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Tranh Truyện Ehon Cho Bé - Này, Cậu Ơi! (Tái Bản 2023)
+2024-06-12 23:28:26 INFO  OrderServiceImpl:97 - Đơn hàng 2XG9JK5NFJ được tạo bởi dangkhoa123
+2024-06-12 23:28:26 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Truyện Tranh Ehon - Mọi Người Đã Dạy Tớ (Tái Bản 2024)
+2024-06-12 23:34:10 INFO  OrderServiceImpl:97 - Đơn hàng GGC52YNTAF được tạo bởi dangkhoa123
+2024-06-12 23:34:10 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Tranh Truyện Ehon Cho Bé - Này, Cậu Ơi! (Tái Bản 2023)
+2024-06-13 01:05:43 INFO  AuthController:90 - Người dùng dangkhoa đã đăng nhập
+2024-06-13 02:25:07 INFO  OrderServiceImpl:97 - Đơn hàng W0Q5KXARQY được tạo bởi dangkhoa
+2024-06-13 02:25:07 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Đắc Nhân Tâm (Tái Bản 2021)

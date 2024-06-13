@@ -30,7 +30,7 @@ import java.util.Optional;
 @Service
 public class BlogServiceImpl implements BlogService {
 
-    private static final Logger Log =  Logger.getLogger(BlogServiceImpl.class);
+    private static final Logger Log = Logger.getLogger(BlogServiceImpl.class);
 
     private BlogRepository blogRepository;
     private UserRepository userRepository;
@@ -40,7 +40,7 @@ public class BlogServiceImpl implements BlogService {
     public BlogServiceImpl(BlogRepository blogRepository, UserRepository userRepository, BlogCateRepository blogCateRepository) {
         this.blogRepository = blogRepository;
         this.userRepository = userRepository;
-        this.blogCateRepository=blogCateRepository;
+        this.blogCateRepository = blogCateRepository;
     }
 
 
@@ -48,6 +48,7 @@ public class BlogServiceImpl implements BlogService {
         Pageable pageable = PageRequest.of(page, perPage);
         return blogRepository.findAll(pageable);
     }
+
     public List<Blog> getAllBlogsUser() {
         return blogRepository.findAll();
     }
@@ -192,21 +193,24 @@ public class BlogServiceImpl implements BlogService {
             System.out.println(e);
         }
     }
+
     @Override
     public void deleteBlog(int id) {
         try {
             blogRepository.deleteById(id);
-            Log.info("Xóa blog với id #"+id+" thành công");
+            Log.info("Xóa blog với id #" + id + " thành công");
         } catch (Exception e) {
             Log.error("Lỗi khi xóa blog " + e.getMessage());
             System.out.println(e);
         }
     }
+
     public static Date getCurrentTimeInVietnam() {
         ZoneId zoneId = ZoneId.of("Asia/Ho_Chi_Minh");
         LocalDateTime localDateTime = LocalDateTime.now(zoneId);
         return Date.from(localDateTime.atZone(zoneId).toInstant());
     }
+
     public Optional<Blog> getBlogById(int id) {
         return blogRepository.findById(id);
     }
