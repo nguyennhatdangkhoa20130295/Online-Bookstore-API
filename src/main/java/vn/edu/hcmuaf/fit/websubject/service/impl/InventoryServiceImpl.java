@@ -90,7 +90,7 @@ public class InventoryServiceImpl implements InventoryService {
         try {
             List<Inventory> inventories = new ArrayList<>();
             for (InventoryRequest inventoryRequest : inventoryRequests) {
-                Optional<Inventory> inventoryOptional = inventoryRepository.findByProductId(inventoryRequest.getProductId());
+                Optional<Inventory> inventoryOptional = inventoryRepository.findByProductIdAndActiveTrue(inventoryRequest.getProductId());
                 Optional<Product> productOptional = productRepository.findById(inventoryRequest.getProductId());
                 if (productOptional.isEmpty()) {
                     Log.warn("Sản phẩm #" + inventoryRequest.getProductId() + " không tồn tại");

@@ -31,6 +31,7 @@ public class InventoryController {
 
     @PostMapping("/add")
     public ResponseEntity<?> createInventories(@RequestBody List<InventoryRequest> inventoryRequests) {
+        System.out.println(inventoryRequests);
         List<Inventory> createdInventories = inventoryService.createInventories(inventoryRequests);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdInventories);
     }
