@@ -90,6 +90,10 @@ public class ProductServiceImpl implements ProductService {
             if (filterJson.has("title")) {
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.like(root.get("title"), "%" + filterJson.get("title").asText() + "%"));
             }
+            if (filterJson.has("active")) {
+                Boolean active = Boolean.valueOf(filterJson.get("active").asText());
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("active"), active));
+            }
 
             return predicate;
         };
@@ -291,20 +295,14 @@ public class ProductServiceImpl implements ProductService {
 
             List<ProductImage> productImages = new ArrayList<>();
 
-            ProductImage mainImage = new ProductImage();
-            mainImage.setProduct(savedProduct);
-            mainImage.setImage(product.getImage());
-            mainImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-            mainImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-            mainImage.setDeleted(false);
-            productImages.add(mainImage);
-
             for (ProductImage productImage : product.getImages()) {
-                productImage.setProduct(savedProduct);
-                productImage.setImage(productImage.getImage());
-                productImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-                productImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-                productImage.setDeleted(false);
+                ProductImage newProductImage = new ProductImage();
+                newProductImage.setProduct(savedProduct);
+                newProductImage.setImage(productImage.getImage());
+                newProductImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+                newProductImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                newProductImage.setDeleted(false);
+                productImages.add(newProductImage);
             }
             productImageRepository.saveAll(productImages);
 
@@ -362,46 +360,53 @@ public class ProductServiceImpl implements ProductService {
             ProductDetail savedDetail = productDetailRepository.save(existedDetail);
             existingProduct.setDetail(savedDetail);
 
-            String oldMainUrl = existingProduct.getImage();
             String newMainImageUrl = product.getImage();
             if (newMainImageUrl != null && !newMainImageUrl.isEmpty() && !newMainImageUrl.equals(existingProduct.getImage())) {
                 existingProduct.setImage(newMainImageUrl);
             }
 
-            List<ProductImage> updatedImages = product.getImages();
-            List<ProductImage> existingImages = existingProduct.getImages();
-            Map<String, ProductImage> existingImageMap = existingImages.stream()
-                    .collect(Collectors.toMap(ProductImage::getImage, Function.identity()));
+            List<ProductImage> newProductImages = new ArrayList<>();
 
-            List<ProductImage> imagesToSave = new ArrayList<>();
-            ProductImage matchingImage = existingImageMap.get(oldMainUrl);
-            if (matchingImage != null) {
-                matchingImage.setImage(newMainImageUrl);
-                matchingImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-                imagesToSave.add(matchingImage);
-            }
-            for (ProductImage updatedImage : updatedImages) {
-                String updatedImageUrl = updatedImage.getImage();
-                if (updatedImageUrl != null && !updatedImageUrl.isEmpty()) {
-                    ProductImage existingImage = existingImageMap.get(updatedImageUrl);
-                    if (existingImage != null) {
-                        existingImage.setImage(updatedImageUrl);
-                        existingImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-                        imagesToSave.add(existingImage);
-                    } else {
-                        ProductImage newImage = new ProductImage();
-                        newImage.setProduct(existingProduct);
-                        newImage.setImage(updatedImageUrl);
-                        newImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-                        newImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-                        newImage.setDeleted(false);
-                        imagesToSave.add(newImage);
+            for (ProductImage updateImage : product.getImages()) {
+                ProductImage existingProductImage = null;
+                for (ProductImage productImage : existingProduct.getImages()) {
+                    if (updateImage.getImage() != null && updateImage.getImage().equals(productImage.getImage())) {
+                        existingProductImage = productImage;
+                        break;
                     }
+                }
 
+                if (existingProductImage == null) {
+                    ProductImage newImage = new ProductImage();
+                    newImage.setImage(updateImage.getImage());
+                    newImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+                    newImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                    newImage.setDeleted(false);
+                    newImage.setProduct(existingProduct);
+                    newProductImages.add(newImage);
+                } else {
+                    newProductImages.add(existingProductImage);
                 }
             }
-            productImageRepository.saveAll(imagesToSave);
-            existingProduct.setImages(imagesToSave);
+
+            List<ProductImage> imagesToDelete = new ArrayList<>();
+            for (ProductImage existingProductImage : existingProduct.getImages()) {
+                boolean found = false;
+                for (ProductImage newProductImage : newProductImages) {
+                    if (existingProductImage.getImage() != null && existingProductImage.getImage().equals(newProductImage.getImage())) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    imagesToDelete.add(existingProductImage);
+                }
+            }
+            for (ProductImage imageToDelete : imagesToDelete) {
+                productImageRepository.delete(imageToDelete);
+            }
+
+            existingProduct.setImages(newProductImages);
             Log.info("Người dùng " + customUserDetails.getUsername() + " đã cập nhật sản phẩm " + existingProduct.getTitle());
             return productRepository.save(existingProduct);
         } catch (Exception e) {
