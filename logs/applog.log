@@ -152,3 +152,17 @@
 2024-06-13 22:53:44 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
 2024-06-13 22:54:04 ERROR ProductServiceImpl:315 - Lỗi khi tạo mới sản phẩm: class java.lang.String cannot be cast to class vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl (java.lang.String is in module java.base of loader 'bootstrap'; vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl is in unnamed module of loader org.springframework.boot.devtools.restart.classloader.RestartClassLoader @4b6fe2ea)
 2024-06-13 22:56:35 ERROR ProductServiceImpl:408 - Lỗi khi cập nhật sản phẩm: class java.lang.String cannot be cast to class vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl (java.lang.String is in module java.base of loader 'bootstrap'; vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl is in unnamed module of loader org.springframework.boot.devtools.restart.classloader.RestartClassLoader @4b6fe2ea)
+2024-06-14 08:52:09 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 08:52:09 ICT 2024
+2024-06-14 09:00:39 INFO  OrderServiceImpl:97 - Đơn hàng KG0W3RX47K được tạo bởi randomuser
+2024-06-14 09:00:39 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh
+2024-06-14 09:00:39 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #93 khỏi giỏ hàng
+2024-06-14 09:01:48 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:01:48 ICT 2024
+2024-06-14 09:03:44 INFO  CommentServiceImpl:151 - Đã xóa bình luận #16
+2024-06-14 09:04:00 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:04:00 ICT 2024
+2024-06-14 09:04:41 INFO  CommentServiceImpl:151 - Đã xóa bình luận #17
+2024-06-14 09:09:28 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:09:28 ICT 2024
+2024-06-14 09:10:42 INFO  CommentServiceImpl:151 - Đã xóa bình luận #18
+2024-06-14 09:10:55 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:10:55 ICT 2024
+2024-06-14 09:11:46 INFO  CommentServiceImpl:151 - Đã xóa bình luận #19
+2024-06-14 09:15:21 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:15:21 ICT 2024
+2024-06-14 10:04:37 INFO  AuthController:90 - Người dùng randomuser đã đăng nhập
