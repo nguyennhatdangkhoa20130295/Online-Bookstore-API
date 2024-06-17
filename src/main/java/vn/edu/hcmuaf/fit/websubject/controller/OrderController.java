@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -165,6 +166,7 @@ public class OrderController {
     }
 
     @PutMapping("/edit/{orderId}")
+    @PreAuthorize("@authController.hasRole('MODERATOR') || @authController.hasRole('ADMIN')")
     public ResponseEntity<?> updateOrderStatus(@PathVariable Integer orderId, @RequestBody Order order) {
         try {
             orderService.updateOrderStatus(orderId, order);

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -57,8 +58,8 @@ public class UserController {
     }
 
     @GetMapping("/{idUser}")
-    public ResponseEntity<UserShow> getUserInformation(@PathVariable int idUser) {
-        UserShow user = userService.getUserById(idUser);
+    public ResponseEntity<User> getUserInformation(@PathVariable int idUser) {
+        User user = userService.getUserById(idUser);
         if (user != null) {
             return ResponseEntity.ok().body(user);
         } else {
@@ -67,6 +68,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<String> addUser(@RequestBody AddUserRequest addReq) {
         try {
             userService.addUser(addReq.getUsername(), addReq.getPassword(), addReq.getEmail(), addReq.getRole(),
@@ -79,6 +81,7 @@ public class UserController {
     }
 
     @PutMapping("/edit/{idUser}")
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<User> editUser(@RequestBody EditUserRequest editReq, @PathVariable Integer idUser) {
         User editedUser = userService.editUser(idUser, editReq.getEmail(), editReq.getRole(),
                 editReq.getAvatar(), editReq.getFullName(), editReq.getPhone(),
@@ -91,6 +94,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{idUser}")
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable int idUser) {
         try {
             userService.deleteUser(idUser);

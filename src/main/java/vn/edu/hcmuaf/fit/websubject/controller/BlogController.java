@@ -75,7 +75,7 @@ public class BlogController {
     }
 
     @PostMapping("/add")
-//    @PreAuthorize("@authController.hasRole('ADMIN')")
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<String> addBlog(@RequestBody AddBlogRequest addBlogRequest) {
         try {
             blogService.addBlog(addBlogRequest.getBlogCate(), addBlogRequest.getTitle(), addBlogRequest.getContent(), addBlogRequest.getImage());
@@ -85,6 +85,7 @@ public class BlogController {
         }
     }
     @PutMapping("/edit/{id}")
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<String> editBlog(@PathVariable int id, @RequestBody AddBlogRequest addBlogRequest) {
         try {
             blogService.editBlog(id, addBlogRequest.getBlogCate(), addBlogRequest.getTitle(), addBlogRequest.getContent(), addBlogRequest.getImage());
@@ -94,6 +95,7 @@ public class BlogController {
         }
     }
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<String> deleteBlog(@PathVariable int id) {
         try {
             blogService.deleteBlog(id);

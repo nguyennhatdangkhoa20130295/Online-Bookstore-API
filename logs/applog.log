@@ -166,3 +166,12 @@
 2024-06-14 09:11:46 INFO  CommentServiceImpl:151 - Đã xóa bình luận #19
 2024-06-14 09:15:21 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:15:21 ICT 2024
 2024-06-14 10:04:37 INFO  AuthController:90 - Người dùng randomuser đã đăng nhập
+2024-06-14 16:24:09 INFO  ProductServiceImpl:312 - Người dùng hoangnguyen đã tạo sản phẩm mới Sách Đắc Nhân Tâm
+2024-06-14 17:01:29 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
+2024-06-14 17:53:30 INFO  UserServiceImpl:222 - Cập nhật tài khoản chuotcon thành công
+2024-06-14 17:54:34 INFO  UserServiceImpl:222 - Cập nhật tài khoản chuotcon thành công
+2024-06-14 17:54:58 ERROR UserServiceImpl:251 - Lỗi khi xóa tài khoản: Argument [ADMIN] of type [java.lang.String] did not match parameter type [vn.edu.hcmuaf.fit.websubject.entity.EnumRole (n/a)]
+2024-06-14 20:26:35 INFO  InventoryServiceImpl:114 - Tạo mới kho hàng cho sản phẩm #1
+2024-06-17 12:48:44 INFO  AuthController:90 - Người dùng dangkhoa đã đăng nhập
+2024-06-17 13:05:26 INFO  AuthController:90 - Người dùng anotheruser đã đăng nhập
+2024-06-17 13:11:32 INFO  AuthController:90 - Người dùng dangkhoa đã đăng nhập
