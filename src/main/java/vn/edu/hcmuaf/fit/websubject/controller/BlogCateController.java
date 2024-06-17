@@ -3,6 +3,7 @@ package vn.edu.hcmuaf.fit.websubject.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.BlogCategory;
 import vn.edu.hcmuaf.fit.websubject.entity.Log;
@@ -51,6 +52,7 @@ public class BlogCateController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<?> addBlogCate(@RequestBody AddBlogCateRequest addBlogCateRequest) {
 
         try {
@@ -66,6 +68,7 @@ public class BlogCateController {
     }
 
     @PutMapping("/edit/{id}")
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<?> editBlogCate(@PathVariable int id, @RequestBody AddBlogCateRequest addBlogCateRequest) {
         try {
             blogCateService.editBlogCategory(id, addBlogCateRequest.getName(), addBlogCateRequest.getUpdatedBy());

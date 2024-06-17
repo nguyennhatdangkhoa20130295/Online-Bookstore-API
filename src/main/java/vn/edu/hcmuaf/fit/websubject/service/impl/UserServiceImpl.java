@@ -62,26 +62,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserShow getUserById(int idUser) {
-        UserShow userShow = new UserShow();
-        Optional<User> userOptional = userRepository.findById(idUser);
-        if (userOptional.isPresent()) {
-            userShow.setId(userOptional.get().getId());
-            userShow.setUsername(userOptional.get().getUsername());
-            userShow.setPassword(userOptional.get().getPassword());
-            userShow.setEmail(userOptional.get().getEmail());
-            userShow.setRole(userOptional.get().getRoles().iterator().next().getId());
-            userShow.setAvatar(userOptional.get().getUserInfo().getAvatar());
-            userShow.setFullName(userOptional.get().getUserInfo().getFullName());
-            userShow.setGender(userOptional.get().getUserInfo().getGender());
-            userShow.setDateOfBirth(userOptional.get().getUserInfo().getDateOfBirth());
-            userShow.setPhone(userOptional.get().getUserInfo().getPhoneNumber());
-            userShow.setLocked(userOptional.get().getLocked());
-            userShow.setIsSocial(userOptional.get().getIsSocial());
-            userShow.setCreatedAt(userOptional.get().getCreatedAt());
-            userShow.setUpdatedAt(userOptional.get().getUpdatedAt());
-        }
-        return userShow;
+    public User getUserById(int idUser) {
+        return userRepository.findById(idUser).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public Page<User> findAllUsers(int page, int size, String sort, String order, String filter) {

@@ -94,7 +94,6 @@ public class ProductServiceImpl implements ProductService {
                 Boolean active = Boolean.valueOf(filterJson.get("active").asText());
                 predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("active"), active));
             }
-
             return predicate;
         };
         PageRequest pageRequest = PageRequest.of(page, perPage, Sort.by(direction, sort));
@@ -405,7 +404,6 @@ public class ProductServiceImpl implements ProductService {
             for (ProductImage imageToDelete : imagesToDelete) {
                 productImageRepository.delete(imageToDelete);
             }
-
             existingProduct.setImages(newProductImages);
             Log.info("Người dùng " + customUserDetails.getUsername() + " đã cập nhật sản phẩm " + existingProduct.getTitle());
             return productRepository.save(existingProduct);

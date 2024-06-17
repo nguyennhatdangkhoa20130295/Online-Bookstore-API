@@ -34,68 +34,6 @@
 2024-06-13 01:05:43 INFO  AuthController:90 - Người dùng dangkhoa đã đăng nhập
 2024-06-13 02:25:07 INFO  OrderServiceImpl:97 - Đơn hàng W0Q5KXARQY được tạo bởi dangkhoa
 2024-06-13 02:25:07 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Đắc Nhân Tâm (Tái Bản 2021)
-2024-06-13 07:30:18 INFO  FavoriteProductServiceImpl:68 - Người dùng dangkhoa đã thêm sản phẩm Truyện Tranh Ehon - Mọi Người Đã Dạy Tớ (Tái Bản 2024) vào danh sách yêu thích
-2024-06-13 07:30:54 INFO  FavoriteProductServiceImpl:68 - Người dùng dangkhoa đã thêm sản phẩm How To Avoid A Climate Disaster: The Solutions We Have And The Breakthroughs We Need vào danh sách yêu thích
-2024-06-13 08:15:36 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #217 khỏi giỏ hàng
-2024-06-13 08:15:51 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #226 khỏi giỏ hàng
-2024-06-13 08:16:50 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #227 khỏi giỏ hàng
-2024-06-13 08:19:55 INFO  OrderServiceImpl:97 - Đơn hàng ANUN0LZCAT được tạo bởi dangkhoa
-2024-06-13 08:19:55 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: 48 Nguyên Tắc Chủ Chốt Của Quyền Lực (Tái Bản 2020)
-2024-06-13 08:19:55 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #228 khỏi giỏ hàng
-2024-06-13 08:19:55 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Mô Hình Standee Genshin Impact LD86 - Yae Miko
-2024-06-13 08:19:55 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #229 khỏi giỏ hàng
-2024-06-13 08:19:55 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Bìa Lá A4 - Màu Vàng
-2024-06-13 08:19:55 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #230 khỏi giỏ hàng
-2024-06-13 08:19:56 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Bao Thư Hồ Sơ A4 - Màu Cam
-2024-06-13 08:19:56 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #231 khỏi giỏ hàng
-2024-06-13 08:35:48 INFO  OrderServiceImpl:97 - Đơn hàng V8ZSZAXGZR được tạo bởi dangkhoa
-2024-06-13 08:35:48 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Khám Phá Thế Giới Động Vật Kì Thú: Thế Giới Của Những Loài Động Vật Sát Thủ (Tái Bản 2021)
-2024-06-13 08:35:48 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #232 khỏi giỏ hàng
-2024-06-13 08:39:46 INFO  OrderServiceImpl:97 - Đơn hàng 5EDNRV4EIY được tạo bởi dangkhoa
-2024-06-13 08:39:46 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Thay Đổi Cuộc Sống Với Nhân Số Học
-2024-06-13 08:40:16 INFO  OrderServiceImpl:97 - Đơn hàng F018EUIYIM được tạo bởi dangkhoa
-2024-06-13 08:40:16 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Đám Trẻ Ở Đại Dương Đen
-2024-06-13 08:40:16 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #233 khỏi giỏ hàng
-2024-06-13 08:40:16 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Cây Cam Ngọt Của Tôi
-2024-06-13 08:40:16 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #234 khỏi giỏ hàng
-2024-06-13 08:41:16 INFO  OrderServiceImpl:97 - Đơn hàng LVW6VAOKEL được tạo bởi dangkhoa
-2024-06-13 08:41:16 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Đứa Trẻ Hiểu Chuyện Thường Không Có Kẹo Ăn
-2024-06-13 08:41:16 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #235 khỏi giỏ hàng
-2024-06-13 08:41:16 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Đắc Nhân Tâm (Tái Bản 2021)
-2024-06-13 08:41:16 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #236 khỏi giỏ hàng
-2024-06-13 08:56:08 INFO  FavoriteProductServiceImpl:68 - Người dùng dangkhoa đã thêm sản phẩm Sun And Her Flowers vào danh sách yêu thích
-2024-06-13 22:11:12 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
-2024-06-13 23:21:26 INFO  ProductServiceImpl:312 - Người dùng hoangnguyen đã tạo sản phẩm mới Gấu bông
-2024-06-13 23:36:45 INFO  ProductServiceImpl:405 - Người dùng hoangnguyen đã cập nhật sản phẩm Gấu bông
-2024-06-14 00:25:47 INFO  InventoryServiceImpl:114 - Tạo mới kho hàng cho sản phẩm #106
-2024-06-14 00:25:47 INFO  InventoryServiceImpl:114 - Tạo mới kho hàng cho sản phẩm #105
-2024-06-14 04:08:25 INFO  InventoryServiceImpl:114 - Tạo mới kho hàng cho sản phẩm #3
-2024-06-14 09:40:51 INFO  InventoryServiceImpl:114 - Tạo mới kho hàng cho sản phẩm #106
-2024-06-14 09:45:36 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
-2024-06-14 09:45:42 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
-2024-06-14 09:46:31 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
-2024-06-14 09:49:21 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
-2024-06-14 09:49:47 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
-2024-06-14 09:49:58 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
-2024-06-14 09:50:13 ERROR AuthController:98 - Người dùng đăng nhâp thất bại với lỗi Bad credentials
-2024-06-14 09:50:16 ERROR AuthController:98 - Người dùng đăng nhâp thất bại với lỗi Bad credentials
-2024-06-14 09:50:17 ERROR AuthController:98 - Người dùng đăng nhâp thất bại với lỗi Bad credentials
-2024-06-14 09:50:20 ERROR AuthController:98 - Người dùng đăng nhâp thất bại với lỗi Bad credentials
-2024-06-14 09:50:34 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
-2024-06-14 10:08:38 INFO  ProductServiceImpl:316 - Người dùng hoangnguyen đã tạo sản phẩm mới Gấu bông
-2024-06-14 10:29:30 INFO  ProductServiceImpl:316 - Người dùng hoangnguyen đã tạo sản phẩm mới Hojp dung
-2024-06-14 11:38:17 INFO  ProductServiceImpl:318 - Người dùng hoangnguyen đã tạo sản phẩm mới Cá sấu
-2024-06-14 11:40:55 INFO  ProductServiceImpl:411 - Người dùng hoangnguyen đã cập nhật sản phẩm Cá sấu
-2024-06-14 11:51:01 INFO  ProductServiceImpl:318 - Người dùng hoangnguyen đã tạo sản phẩm mới Cờ tỷ phú
-2024-06-14 12:29:07 INFO  ProductServiceImpl:318 - Người dùng hoangnguyen đã tạo sản phẩm mới Con sâu 2
-2024-06-14 13:04:32 INFO  ProductServiceImpl:422 - Người dùng hoangnguyen đã cập nhật sản phẩm Con sâu 2
-2024-06-14 13:10:27 INFO  ProductServiceImpl:422 - Người dùng hoangnguyen đã cập nhật sản phẩm Con sâu 2
-2024-06-14 13:16:02 INFO  ProductServiceImpl:412 - Người dùng hoangnguyen đã cập nhật sản phẩm Con sâu 2
-2024-06-14 13:18:47 INFO  ProductServiceImpl:412 - Người dùng hoangnguyen đã cập nhật sản phẩm Con sâu 2
-2024-06-14 13:26:06 INFO  ProductServiceImpl:412 - Người dùng hoangnguyen đã cập nhật sản phẩm Con sâu 2
-2024-06-14 13:27:58 INFO  ProductServiceImpl:411 - Người dùng hoangnguyen đã cập nhật sản phẩm Con sâu 2
-2024-06-14 13:46:35 ERROR ProductServiceImpl:413 - Lỗi khi cập nhật sản phẩm: Cannot invoke "String.equals(Object)" because the return value of "vn.edu.hcmuaf.fit.websubject.entity.ProductImage.getImage()" is null
-2024-06-14 13:48:15 INFO  ProductServiceImpl:410 - Người dùng hoangnguyen đã cập nhật sản phẩm Cá sấu
 2024-06-13 09:55:10 INFO  AuthController:90 - Người dùng randomuser đã đăng nhập
 2024-06-13 10:55:12 INFO  OrderServiceImpl:97 - Đơn hàng N0VO6AXWIK được tạo bởi randomuser
 2024-06-13 10:55:12 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Khám Phá Thế Giới Động Vật Kì Thú: Thế Giới Của Những Loài Động Vật Sát Thủ (Tái Bản 2021)
@@ -214,3 +152,26 @@
 2024-06-13 22:53:44 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
 2024-06-13 22:54:04 ERROR ProductServiceImpl:315 - Lỗi khi tạo mới sản phẩm: class java.lang.String cannot be cast to class vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl (java.lang.String is in module java.base of loader 'bootstrap'; vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl is in unnamed module of loader org.springframework.boot.devtools.restart.classloader.RestartClassLoader @4b6fe2ea)
 2024-06-13 22:56:35 ERROR ProductServiceImpl:408 - Lỗi khi cập nhật sản phẩm: class java.lang.String cannot be cast to class vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl (java.lang.String is in module java.base of loader 'bootstrap'; vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl is in unnamed module of loader org.springframework.boot.devtools.restart.classloader.RestartClassLoader @4b6fe2ea)
+2024-06-14 08:52:09 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 08:52:09 ICT 2024
+2024-06-14 09:00:39 INFO  OrderServiceImpl:97 - Đơn hàng KG0W3RX47K được tạo bởi randomuser
+2024-06-14 09:00:39 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh
+2024-06-14 09:00:39 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #93 khỏi giỏ hàng
+2024-06-14 09:01:48 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:01:48 ICT 2024
+2024-06-14 09:03:44 INFO  CommentServiceImpl:151 - Đã xóa bình luận #16
+2024-06-14 09:04:00 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:04:00 ICT 2024
+2024-06-14 09:04:41 INFO  CommentServiceImpl:151 - Đã xóa bình luận #17
+2024-06-14 09:09:28 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:09:28 ICT 2024
+2024-06-14 09:10:42 INFO  CommentServiceImpl:151 - Đã xóa bình luận #18
+2024-06-14 09:10:55 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:10:55 ICT 2024
+2024-06-14 09:11:46 INFO  CommentServiceImpl:151 - Đã xóa bình luận #19
+2024-06-14 09:15:21 INFO  CommentServiceImpl:106 - randomuser đã bình luận sản phẩm Bút Bi 0.5 mm Thiên Long TL-027 - Mực Xanh vào lúc Fri Jun 14 09:15:21 ICT 2024
+2024-06-14 10:04:37 INFO  AuthController:90 - Người dùng randomuser đã đăng nhập
+2024-06-14 16:24:09 INFO  ProductServiceImpl:312 - Người dùng hoangnguyen đã tạo sản phẩm mới Sách Đắc Nhân Tâm
+2024-06-14 17:01:29 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
+2024-06-14 17:53:30 INFO  UserServiceImpl:222 - Cập nhật tài khoản chuotcon thành công
+2024-06-14 17:54:34 INFO  UserServiceImpl:222 - Cập nhật tài khoản chuotcon thành công
+2024-06-14 17:54:58 ERROR UserServiceImpl:251 - Lỗi khi xóa tài khoản: Argument [ADMIN] of type [java.lang.String] did not match parameter type [vn.edu.hcmuaf.fit.websubject.entity.EnumRole (n/a)]
+2024-06-14 20:26:35 INFO  InventoryServiceImpl:114 - Tạo mới kho hàng cho sản phẩm #1
+2024-06-17 12:48:44 INFO  AuthController:90 - Người dùng dangkhoa đã đăng nhập
+2024-06-17 13:05:26 INFO  AuthController:90 - Người dùng anotheruser đã đăng nhập
+2024-06-17 13:11:32 INFO  AuthController:90 - Người dùng dangkhoa đã đăng nhập

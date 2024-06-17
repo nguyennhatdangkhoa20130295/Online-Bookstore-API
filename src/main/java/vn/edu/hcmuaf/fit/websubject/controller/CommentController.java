@@ -3,6 +3,7 @@ package vn.edu.hcmuaf.fit.websubject.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Comment;
 import vn.edu.hcmuaf.fit.websubject.payload.request.CommentRequest;
@@ -89,6 +90,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/delete/{commentId}")
+    @PreAuthorize("@authController.hasRole('MODERATOR') || @authController.hasRole('ADMIN')")
     public ResponseEntity<String> deleteComment(@PathVariable int commentId) {
         commentService.deleteComment(commentId);
         return ResponseEntity.ok("Delete comment successfully");
