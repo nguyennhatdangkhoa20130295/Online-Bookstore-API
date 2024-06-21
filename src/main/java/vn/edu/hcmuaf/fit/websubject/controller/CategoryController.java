@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Category;
-import vn.edu.hcmuaf.fit.websubject.service.CategoryService;
+import vn.edu.hcmuaf.fit.websubject.payload.service.CategoryService;
 
 import java.util.List;
 import java.util.Optional;
