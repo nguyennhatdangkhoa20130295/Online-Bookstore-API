@@ -96,3 +96,13 @@
 2024-06-14 13:27:58 INFO  ProductServiceImpl:411 - Người dùng hoangnguyen đã cập nhật sản phẩm Con sâu 2
 2024-06-14 13:46:35 ERROR ProductServiceImpl:413 - Lỗi khi cập nhật sản phẩm: Cannot invoke "String.equals(Object)" because the return value of "vn.edu.hcmuaf.fit.websubject.entity.ProductImage.getImage()" is null
 2024-06-14 13:48:15 INFO  ProductServiceImpl:410 - Người dùng hoangnguyen đã cập nhật sản phẩm Cá sấu
+2024-06-14 13:51:43 INFO  ProductServiceImpl:410 - Người dùng hoangnguyen đã cập nhật sản phẩm Cá sấu
+2024-06-14 13:58:14 INFO  ProductServiceImpl:410 - Người dùng hoangnguyen đã cập nhật sản phẩm Gấu bông 1
+2024-06-14 14:28:53 ERROR AuthController:98 - Người dùng đăng nhâp thất bại với lỗi Bad credentials
+2024-06-14 14:28:53 ERROR AuthController:98 - Người dùng đăng nhâp thất bại với lỗi Bad credentials
+2024-06-14 14:28:59 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
+2024-06-14 14:39:52 ERROR AuthController:98 - Người dùng đăng nhâp thất bại với lỗi Bad credentials
+2024-06-14 14:39:55 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
+2024-06-14 16:59:32 INFO  InventoryServiceImpl:114 - Tạo mới kho hàng cho sản phẩm #4
+2024-06-14 17:07:56 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
+2024-06-15 08:11:31 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
