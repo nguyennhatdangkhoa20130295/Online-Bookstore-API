@@ -35,9 +35,7 @@ public class LogoutServiceImpl implements LogoutHandler {
                 storedToken.setRevoked(true);
                 tokenRepository.save(storedToken);
             }
-            Log.info("Người dùng" + authentication.getName() + " đã đăng xuất");
         } catch (Exception e) {
-            Log.error("Lỗi khi đăng xuất tài khoản " + authentication.getName());
             e.printStackTrace();
         }
     }

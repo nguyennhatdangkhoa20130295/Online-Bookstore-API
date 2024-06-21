@@ -365,27 +365,30 @@ public class ProductServiceImpl implements ProductService {
             }
 
             List<ProductImage> newProductImages = new ArrayList<>();
+            if (product.getImages() != null && !product.getImages().isEmpty()) {
+                for (ProductImage updateImage : product.getImages()) {
+                    ProductImage existingProductImage = null;
+                    for (ProductImage productImage : existingProduct.getImages()) {
+                        if (updateImage.getImage() != null && updateImage.getImage().equals(productImage.getImage())) {
+                            existingProductImage = productImage;
+                            break;
+                        }
+                    }
 
-            for (ProductImage updateImage : product.getImages()) {
-                ProductImage existingProductImage = null;
-                for (ProductImage productImage : existingProduct.getImages()) {
-                    if (updateImage.getImage() != null && updateImage.getImage().equals(productImage.getImage())) {
-                        existingProductImage = productImage;
-                        break;
+                    if (existingProductImage == null) {
+                        ProductImage newImage = new ProductImage();
+                        newImage.setImage(updateImage.getImage());
+                        newImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
+                        newImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+                        newImage.setDeleted(false);
+                        newImage.setProduct(existingProduct);
+                        newProductImages.add(newImage);
+                    } else {
+                        newProductImages.add(existingProductImage);
                     }
                 }
-
-                if (existingProductImage == null) {
-                    ProductImage newImage = new ProductImage();
-                    newImage.setImage(updateImage.getImage());
-                    newImage.setCreatedAt(CurrentTime.getCurrentTimeInVietnam());
-                    newImage.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
-                    newImage.setDeleted(false);
-                    newImage.setProduct(existingProduct);
-                    newProductImages.add(newImage);
-                } else {
-                    newProductImages.add(existingProductImage);
-                }
+            } else {
+                newProductImages = existingProduct.getImages();
             }
 
             List<ProductImage> imagesToDelete = new ArrayList<>();
@@ -405,6 +408,7 @@ public class ProductServiceImpl implements ProductService {
                 productImageRepository.delete(imageToDelete);
             }
             existingProduct.setImages(newProductImages);
+
             Log.info("Người dùng " + customUserDetails.getUsername() + " đã cập nhật sản phẩm " + existingProduct.getTitle());
             return productRepository.save(existingProduct);
         } catch (Exception e) {
