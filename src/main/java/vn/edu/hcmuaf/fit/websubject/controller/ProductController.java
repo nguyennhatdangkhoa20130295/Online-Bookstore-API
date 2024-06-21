@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
@@ -98,14 +99,20 @@ public class ProductController {
 
     @PostMapping("/add")
     @Transactional
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<?> saveProduct(@RequestBody Product product) {
-        System.out.println(product);
-        Product savedProduct = productService.createProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+        try {
+            System.out.println(product);
+            Product savedProduct = productService.createProduct(product);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @Transactional
     @PutMapping("/edit/{productId}")
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<?> updateProduct(@PathVariable Integer productId, @RequestBody Product product) {
         System.out.println(product);
         Product updatedProduct = productService.updateProduct(productId, product);

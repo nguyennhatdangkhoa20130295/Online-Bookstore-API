@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Inventory;
 import vn.edu.hcmuaf.fit.websubject.payload.request.InventoryRequest;
@@ -30,8 +31,8 @@ public class InventoryController {
     }
 
     @PostMapping("/add")
+    @PreAuthorize("@authController.hasRole('ADMIN')")
     public ResponseEntity<?> createInventories(@RequestBody List<InventoryRequest> inventoryRequests) {
-        System.out.println(inventoryRequests);
         List<Inventory> createdInventories = inventoryService.createInventories(inventoryRequests);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdInventories);
     }
