@@ -28,9 +28,9 @@ import vn.edu.hcmuaf.fit.websubject.payload.response.MessageResponse;
 import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
-import vn.edu.hcmuaf.fit.websubject.service.EmailService;
-import vn.edu.hcmuaf.fit.websubject.service.OTPService;
-import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
+import vn.edu.hcmuaf.fit.websubject.payload.service.EmailService;
+import vn.edu.hcmuaf.fit.websubject.payload.service.OTPService;
+import vn.edu.hcmuaf.fit.websubject.payload.service.impl.CustomUserDetailsImpl;
 
 import javax.mail.MessagingException;
 import java.util.Random;

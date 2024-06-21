@@ -5,11 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 import vn.edu.hcmuaf.fit.websubject.entity.Contact;
-import vn.edu.hcmuaf.fit.websubject.payload.request.AddBlogRequest;
 import vn.edu.hcmuaf.fit.websubject.payload.request.ContactRequest;
-import vn.edu.hcmuaf.fit.websubject.service.ContactService;
+import vn.edu.hcmuaf.fit.websubject.payload.service.ContactService;
 
 @RestController
 @RequestMapping("/api/contact")

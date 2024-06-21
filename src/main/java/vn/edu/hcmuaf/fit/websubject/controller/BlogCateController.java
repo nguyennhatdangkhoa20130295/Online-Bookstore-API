@@ -6,9 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.BlogCategory;
-import vn.edu.hcmuaf.fit.websubject.entity.Log;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddBlogCateRequest;
-import vn.edu.hcmuaf.fit.websubject.service.BlogCateService;
+import vn.edu.hcmuaf.fit.websubject.payload.service.BlogCateService;
 
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +56,6 @@ public class BlogCateController {
 
         try {
             blogCateService.addBlogCategory(addBlogCateRequest.getName(), addBlogCateRequest.getCreatedBy(), addBlogCateRequest.getUpdatedBy());
-            Log.info("");
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             if (e.getMessage().equals("User not found")) {
