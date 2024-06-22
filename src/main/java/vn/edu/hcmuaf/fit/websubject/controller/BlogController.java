@@ -7,8 +7,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Blog;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddBlogRequest;
-import vn.edu.hcmuaf.fit.websubject.payload.service.BlogCateService;
-import vn.edu.hcmuaf.fit.websubject.payload.service.BlogService;
+import vn.edu.hcmuaf.fit.websubject.service.BlogCateService;
+import vn.edu.hcmuaf.fit.websubject.service.BlogService;
 
 import java.util.List;
 import java.util.Optional;

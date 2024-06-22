@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
-import vn.edu.hcmuaf.fit.websubject.payload.service.impl.CustomUserDetailsServiceImpl;
+import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsServiceImpl;
 
 import java.io.IOException;
 

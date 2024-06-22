@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Comment;
 import vn.edu.hcmuaf.fit.websubject.payload.request.CommentRequest;
-import vn.edu.hcmuaf.fit.websubject.payload.service.CommentService;
+import vn.edu.hcmuaf.fit.websubject.service.CommentService;
 
 import java.util.List;
 

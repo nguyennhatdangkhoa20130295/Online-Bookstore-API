@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Promotion;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddPromoRequest;
-import vn.edu.hcmuaf.fit.websubject.payload.service.PromotionService;
+import vn.edu.hcmuaf.fit.websubject.service.PromotionService;
 
 import java.util.List;
 

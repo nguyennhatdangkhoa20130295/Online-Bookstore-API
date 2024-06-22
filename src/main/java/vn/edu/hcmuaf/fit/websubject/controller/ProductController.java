@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
-import vn.edu.hcmuaf.fit.websubject.payload.service.ProductService;
+import vn.edu.hcmuaf.fit.websubject.service.ProductService;
 
 import java.util.List;
 import java.util.Optional;

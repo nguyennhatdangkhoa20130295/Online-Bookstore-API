@@ -266,3 +266,5 @@
 2024-06-21 17:34:27 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
 2024-06-21 17:35:35 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
 2024-06-21 17:49:09 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
+2024-06-22 10:16:35 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
+2024-06-22 10:41:01 INFO  UserServiceImpl:222 - Cập nhật tài khoản chuotcon thành công
