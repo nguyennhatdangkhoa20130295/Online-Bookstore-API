@@ -266,3 +266,9 @@
 2024-06-21 17:34:27 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
 2024-06-21 17:35:35 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
 2024-06-21 17:49:09 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
+2024-06-22 14:13:58 ERROR AuthController:98 - Người dùng đăng nhâp thất bại với lỗi Bad credentials
+2024-06-22 14:43:39 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
+2024-06-22 18:33:55 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
+2024-06-22 19:15:41 INFO  UserServiceImpl:290 - Cập nhật thông tin người dùng dangkhoa123 thành công
+2024-06-22 19:19:37 INFO  UserServiceImpl:290 - Cập nhật thông tin người dùng dangkhoa123 thành công
+2024-06-22 19:19:44 INFO  UserServiceImpl:290 - Cập nhật thông tin người dùng dangkhoa123 thành công
