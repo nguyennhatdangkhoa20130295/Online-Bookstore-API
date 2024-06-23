@@ -90,9 +90,12 @@ public class CommentController {
     }
 
     @DeleteMapping("/delete/{commentId}")
-    @PreAuthorize("@authController.hasRole('MODERATOR') || @authController.hasRole('ADMIN')")
     public ResponseEntity<String> deleteComment(@PathVariable int commentId) {
-        commentService.deleteComment(commentId);
-        return ResponseEntity.ok("Delete comment successfully");
+        try{
+            commentService.deleteComment(commentId);
+            return ResponseEntity.ok("Delete comment successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error when deleting comment" + e.getMessage());
+        }
     }
 }

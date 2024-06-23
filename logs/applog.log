@@ -272,3 +272,9 @@
 2024-06-23 13:33:35 INFO  ContactServiceImpl:104 - Đã trả lời liên hệ của Nguyễn Văn A
 2024-06-23 13:36:28 INFO  ContactServiceImpl:105 - Đã trả lời liên hệ của Nguyễn Văn A
 2024-06-23 13:39:45 INFO  ContactServiceImpl:105 - Đã trả lời liên hệ của Nguyễn Văn A
+2024-06-23 14:33:09 INFO  UserServiceImpl:226 - Cập nhật tài khoản chuotcon thành công
+2024-06-23 15:14:58 INFO  CommentServiceImpl:151 - Đã xóa bình luận #20
+2024-06-23 17:31:18 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
+2024-06-23 17:32:30 INFO  ContactServiceImpl:105 - Đã trả lời liên hệ của Nguyễn Văn A
+2024-06-23 17:34:37 INFO  AuthController:90 - Người dùng dangkhoa đã đăng nhập
+2024-06-23 17:39:27 INFO  AuthController:90 - Người dùng dangkhoa đã đăng nhập

@@ -116,9 +116,13 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public boolean checkReply(int id) {
+    public int checkReply(int id) {
         Optional<Contact> contact = contactRepository.findByAlreadyReply(id);
-        return contact.isPresent();
+        if(contact.isPresent()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override

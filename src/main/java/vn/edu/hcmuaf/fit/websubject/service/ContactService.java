@@ -12,7 +12,7 @@ public interface ContactService {
 
     Contact findById(int id);
 
-    boolean checkReply(int id);
+    int checkReply(int id);
 
     void deleteContact(int id);
 }

@@ -42,8 +42,8 @@ public class ContactController {
     @GetMapping("/check-reply/{id}")
     public ResponseEntity<?> checkReply(@PathVariable int id) {
         try {
-            boolean isReply = contactService.checkReply(id);
-            if (isReply) {
+            int isReply = contactService.checkReply(id);
+            if (isReply == 1) {
                 return ResponseEntity.ok("Replied");
             } else {
                 return ResponseEntity.ok("Not reply yet");
@@ -63,18 +63,16 @@ public class ContactController {
         }
     }
     @PutMapping("/edit/{id}")
-    @PreAuthorize("@authController.hasRole('MODERATOR') || @authController.hasRole('ADMIN')")
     public ResponseEntity<String> replyContact(@PathVariable int id, @RequestBody ContactRequest contactRequest) {
         try {
             contactService.replyContact(id, contactRequest.getEmail(), contactRequest.getTitle(), contactRequest.getContentReply());
             return ResponseEntity.ok("Reply contact successfully");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to reply contact" + contactRequest);
+            return ResponseEntity.badRequest().body("Failed to reply contact" + contactRequest + e.getMessage());
         }
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("@authController.hasRole('MODERATOR') || @authController.hasRole('ADMIN')")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteContact(@PathVariable int id) {
         try {
             contactService.deleteContact(id);
