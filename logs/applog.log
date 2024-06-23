@@ -270,3 +270,5 @@
 2024-06-22 10:41:01 INFO  UserServiceImpl:222 - Cập nhật tài khoản chuotcon thành công
 2024-06-22 21:32:41 INFO  AuthController:90 - Người dùng hoangnguyen đã đăng nhập
 2024-06-23 13:33:35 INFO  ContactServiceImpl:104 - Đã trả lời liên hệ của Nguyễn Văn A
+2024-06-23 13:36:28 INFO  ContactServiceImpl:105 - Đã trả lời liên hệ của Nguyễn Văn A
+2024-06-23 13:39:45 INFO  ContactServiceImpl:105 - Đã trả lời liên hệ của Nguyễn Văn A
