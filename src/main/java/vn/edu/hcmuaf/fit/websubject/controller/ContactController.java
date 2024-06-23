@@ -42,8 +42,8 @@ public class ContactController {
     @GetMapping("/check-reply/{id}")
     public ResponseEntity<?> checkReply(@PathVariable int id) {
         try {
-            boolean isReply = contactService.checkReply(id);
-            if (isReply) {
+            int isReply = contactService.checkReply(id);
+            if (isReply == 1) {
                 return ResponseEntity.ok("Replied");
             } else {
                 return ResponseEntity.ok("Not reply yet");

@@ -96,7 +96,7 @@ public class ContactServiceImpl implements ContactService {
     public void replyContact(int id, String email, String title, String content) {
         try {
             emailService.sendEmailContact(email, title, content);
-            System.out.println(email + " " + title +" "+ content);
+            System.out.println(email + " " + title + " " + content);
             contactRepository.findById(id).ifPresent(contact -> {
                 contact.setReply(true);
                 contact.setReplyContent(content);
@@ -116,9 +116,13 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    public boolean checkReply(int id) {
+    public int checkReply(int id) {
         Optional<Contact> contact = contactRepository.findByAlreadyReply(id);
-        return contact.isPresent();
+        if (contact.isPresent()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override
