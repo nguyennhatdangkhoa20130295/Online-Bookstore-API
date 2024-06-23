@@ -184,4 +184,14 @@
 2024-06-22 18:33:55 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
 2024-06-22 19:15:41 INFO  UserServiceImpl:290 - Cập nhật thông tin người dùng dangkhoa123 thành công
 2024-06-22 19:19:37 INFO  UserServiceImpl:290 - Cập nhật thông tin người dùng dangkhoa123 thành công
-2024-06-22 19:19:44 INFO  UserServiceImpl:290 - Cập nhật thông tin người dùng dangkhoa123 thành công
+2024-06-22 19:19:44 INFO  UserServiceImpl:290 - Cập nhật thông tin người dùng dangkhoa123 thành công2024-06-23 21:48:16 INFO  AuthController:90 - Người dùng dangkhoa123 đã đăng nhập
+2024-06-23 21:49:09 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #1 khỏi giỏ hàng
+2024-06-23 21:49:10 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #2 khỏi giỏ hàng
+2024-06-23 21:52:15 INFO  AddressServiceImpl:56 - Người dùng dangkhoa123 tạo địa chỉ mới
+2024-06-23 21:52:23 INFO  OrderServiceImpl:97 - Đơn hàng IVCBESH2SO được tạo bởi dangkhoa123
+2024-06-23 21:52:23 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Tranh Truyện Ehon Cho Bé - Này, Cậu Ơi! (Tái Bản 2023)
+2024-06-23 21:52:23 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #3 khỏi giỏ hàng
+2024-06-23 21:52:23 INFO  OrderServiceImpl:140 - Cập nhật kho hàng cho sản phẩm: Truyện Tranh Ehon - Mọi Người Đã Dạy Tớ (Tái Bản 2024)
+2024-06-23 21:52:23 INFO  CartItemsServiceImpl:94 - Đã xóa sản phẩm với id #4 khỏi giỏ hàng
+2024-06-23 21:54:22 INFO  OrderServiceImpl:180 - Hủy đơn hàng IVCBESH2SO thành công
+2024-06-23 22:17:58 INFO  OrderServiceImpl:183 - Hủy đơn hàng IVCBESH2SO thành công
