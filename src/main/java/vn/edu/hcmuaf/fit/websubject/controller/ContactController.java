@@ -63,7 +63,6 @@ public class ContactController {
         }
     }
     @PutMapping("/edit/{id}")
-    @PreAuthorize("@authController.hasRole('MODERATOR') || @authController.hasRole('ADMIN')")
     public ResponseEntity<String> replyContact(@PathVariable int id, @RequestBody ContactRequest contactRequest) {
         try {
             contactService.replyContact(id, contactRequest.getEmail(), contactRequest.getTitle(), contactRequest.getContentReply());
@@ -73,8 +72,7 @@ public class ContactController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("@authController.hasRole('MODERATOR') || @authController.hasRole('ADMIN')")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteContact(@PathVariable int id) {
         try {
             contactService.deleteContact(id);
