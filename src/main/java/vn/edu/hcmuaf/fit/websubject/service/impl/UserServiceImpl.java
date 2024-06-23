@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service.impl;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -25,7 +25,7 @@ import vn.edu.hcmuaf.fit.websubject.repository.RoleRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.TokenRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserInfoRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
-import vn.edu.hcmuaf.fit.websubject.payload.service.UserService;
+import vn.edu.hcmuaf.fit.websubject.service.UserService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -180,7 +180,11 @@ public class UserServiceImpl implements UserService {
                 newInforUser.setEmail(email);
                 newInforUser.getUserInfo().setFullName(fullName);
                 newInforUser.getUserInfo().setPhoneNumber(phone);
-                newInforUser.getUserInfo().setAvatar(avatar);
+                if(avatar == null || avatar.isEmpty()) {
+                    newInforUser.getUserInfo().setAvatar(newInforUser.getUserInfo().getAvatar());
+                } else {
+                    newInforUser.getUserInfo().setAvatar(avatar);
+                }
                 newInforUser.getRoles().clear();
                 Set<Role> roles = new HashSet<>();
                 switch (role) {

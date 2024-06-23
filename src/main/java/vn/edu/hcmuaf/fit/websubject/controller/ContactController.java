@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Contact;
 import vn.edu.hcmuaf.fit.websubject.payload.request.ContactRequest;
-import vn.edu.hcmuaf.fit.websubject.payload.service.ContactService;
+import vn.edu.hcmuaf.fit.websubject.service.ContactService;
 
 @RestController
 @RequestMapping("/api/contact")

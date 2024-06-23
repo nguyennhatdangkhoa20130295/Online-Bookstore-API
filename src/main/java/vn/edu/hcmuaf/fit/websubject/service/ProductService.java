@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service;
+package vn.edu.hcmuaf.fit.websubject.service;
 
 import org.springframework.data.domain.Page;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;

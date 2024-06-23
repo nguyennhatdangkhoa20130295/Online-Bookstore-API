@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service.impl;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;

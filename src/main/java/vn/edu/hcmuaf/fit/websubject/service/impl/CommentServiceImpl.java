@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service.impl;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,7 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
-import vn.edu.hcmuaf.fit.websubject.payload.service.CommentService;
+import vn.edu.hcmuaf.fit.websubject.service.CommentService;
 import vn.edu.hcmuaf.fit.websubject.repository.CommentRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;

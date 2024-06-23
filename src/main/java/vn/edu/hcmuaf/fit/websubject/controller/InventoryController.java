@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Inventory;
 import vn.edu.hcmuaf.fit.websubject.payload.request.InventoryRequest;
-import vn.edu.hcmuaf.fit.websubject.payload.service.InventoryService;
+import vn.edu.hcmuaf.fit.websubject.service.InventoryService;
 
 import java.util.List;
 import java.util.Optional;

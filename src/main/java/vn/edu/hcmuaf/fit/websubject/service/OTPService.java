@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service;
+package vn.edu.hcmuaf.fit.websubject.service;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

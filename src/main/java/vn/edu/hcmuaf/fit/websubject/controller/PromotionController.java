@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.edu.hcmuaf.fit.websubject.entity.Promotion;
 import vn.edu.hcmuaf.fit.websubject.payload.request.AddPromoRequest;
-import vn.edu.hcmuaf.fit.websubject.payload.service.PromotionService;
+import vn.edu.hcmuaf.fit.websubject.service.PromotionService;
 
 import java.util.List;
 
@@ -94,7 +94,7 @@ public class PromotionController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("@authController.hasRole('ADMIN')")
+    @PreAuthorize("@authController.hasRole('MODERATOR') || @authController.hasRole('ADMIN')")
     public ResponseEntity<String> addPromotion(@RequestBody AddPromoRequest promotion) {
         try {
             promotionService.addPromotion(promotion.getIdProduct(), promotion.getCode(), promotion.getDiscount(), promotion.getStartDate(), promotion.getEndDate());
@@ -105,7 +105,7 @@ public class PromotionController {
     }
 
     @PutMapping("/edit/{id}")
-    @PreAuthorize("@authController.hasRole('ADMIN')")
+    @PreAuthorize("@authController.hasRole('MODERATOR') || @authController.hasRole('ADMIN')")
     public ResponseEntity<String> updatePromotion(@PathVariable int id, @RequestBody AddPromoRequest promotion) {
         try {
             promotionService.updatePromotion(id, promotion.getIdProduct(), promotion.getCode(), promotion.getDiscount(), promotion.getStartDate(), promotion.getEndDate());
@@ -116,7 +116,7 @@ public class PromotionController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("@authController.hasRole('ADMIN')")
+    @PreAuthorize("@authController.hasRole('MODERATOR') || @authController.hasRole('ADMIN')")
     public ResponseEntity<String> deletePromotion(@PathVariable int id) {
         try {
             promotionService.deletePromotion(id);

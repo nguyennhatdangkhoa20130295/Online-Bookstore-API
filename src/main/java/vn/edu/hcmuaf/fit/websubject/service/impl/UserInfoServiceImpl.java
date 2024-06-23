@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service.impl;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -6,7 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.entity.UserInfo;
-import vn.edu.hcmuaf.fit.websubject.payload.service.UserInfoService;
+import vn.edu.hcmuaf.fit.websubject.service.UserInfoService;
 import vn.edu.hcmuaf.fit.websubject.repository.UserInfoRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
 

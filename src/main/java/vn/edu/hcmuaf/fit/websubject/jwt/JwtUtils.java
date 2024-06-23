@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import vn.edu.hcmuaf.fit.websubject.payload.service.impl.CustomUserDetailsImpl;
+import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsImpl;
 
 @Component
 public class JwtUtils {

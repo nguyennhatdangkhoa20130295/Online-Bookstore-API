@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service.impl;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.AddressRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
-import vn.edu.hcmuaf.fit.websubject.payload.service.AddressService;
+import vn.edu.hcmuaf.fit.websubject.service.AddressService;
 
 import java.util.List;
 import java.util.Optional;

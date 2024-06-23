@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service.impl;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,7 +17,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.*;
 import vn.edu.hcmuaf.fit.websubject.repository.BlogCateRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.BlogRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
-import vn.edu.hcmuaf.fit.websubject.payload.service.BlogService;
+import vn.edu.hcmuaf.fit.websubject.service.BlogService;
 import org.apache.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;

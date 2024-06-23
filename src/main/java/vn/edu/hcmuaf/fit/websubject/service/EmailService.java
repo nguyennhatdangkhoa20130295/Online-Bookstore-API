@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service;
+package vn.edu.hcmuaf.fit.websubject.service;
 
 import org.springframework.stereotype.Component;
 import vn.edu.hcmuaf.fit.websubject.entity.Mail;

@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service.impl;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -10,7 +10,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.repository.FavoriteProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
-import vn.edu.hcmuaf.fit.websubject.payload.service.FavoriteProductService;
+import vn.edu.hcmuaf.fit.websubject.service.FavoriteProductService;
 
 import java.util.List;
 import java.util.Optional;

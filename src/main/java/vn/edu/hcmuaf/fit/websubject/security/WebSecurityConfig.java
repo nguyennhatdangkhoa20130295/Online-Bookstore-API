@@ -22,7 +22,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import vn.edu.hcmuaf.fit.websubject.jwt.AuthEntryPointJwt;
 import vn.edu.hcmuaf.fit.websubject.jwt.AuthTokenFilter;
-import vn.edu.hcmuaf.fit.websubject.payload.service.impl.CustomUserDetailsServiceImpl;
+import vn.edu.hcmuaf.fit.websubject.service.impl.CustomUserDetailsServiceImpl;
 
 @Configuration
 @EnableMethodSecurity

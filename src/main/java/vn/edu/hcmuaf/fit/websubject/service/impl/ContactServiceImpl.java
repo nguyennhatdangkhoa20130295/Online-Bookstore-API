@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service.impl;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
 import vn.edu.hcmuaf.fit.websubject.entity.Contact;
 import vn.edu.hcmuaf.fit.websubject.entity.User;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
-import vn.edu.hcmuaf.fit.websubject.payload.service.ContactService;
+import vn.edu.hcmuaf.fit.websubject.service.ContactService;
 import vn.edu.hcmuaf.fit.websubject.repository.ContactRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.UserRepository;
-import vn.edu.hcmuaf.fit.websubject.payload.service.EmailService;
+import vn.edu.hcmuaf.fit.websubject.service.EmailService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -96,6 +96,7 @@ public class ContactServiceImpl implements ContactService {
     public void replyContact(int id, String email, String title, String content) {
         try {
             emailService.sendEmailContact(email, title, content);
+            System.out.println(email + " " + title +" "+ content);
             contactRepository.findById(id).ifPresent(contact -> {
                 contact.setReply(true);
                 contact.setReplyContent(content);

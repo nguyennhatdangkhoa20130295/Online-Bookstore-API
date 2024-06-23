@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service.impl;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,7 +16,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.Inventory;
 import vn.edu.hcmuaf.fit.websubject.entity.Product;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.payload.request.InventoryRequest;
-import vn.edu.hcmuaf.fit.websubject.payload.service.InventoryService;
+import vn.edu.hcmuaf.fit.websubject.service.InventoryService;
 import vn.edu.hcmuaf.fit.websubject.repository.InventoryRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
 

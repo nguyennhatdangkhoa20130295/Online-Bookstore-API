@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service.impl;
+package vn.edu.hcmuaf.fit.websubject.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,7 +16,7 @@ import vn.edu.hcmuaf.fit.websubject.entity.Promotion;
 import vn.edu.hcmuaf.fit.websubject.payload.others.CurrentTime;
 import vn.edu.hcmuaf.fit.websubject.repository.ProductRepository;
 import vn.edu.hcmuaf.fit.websubject.repository.PromotionRepository;
-import vn.edu.hcmuaf.fit.websubject.payload.service.PromotionService;
+import vn.edu.hcmuaf.fit.websubject.service.PromotionService;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;

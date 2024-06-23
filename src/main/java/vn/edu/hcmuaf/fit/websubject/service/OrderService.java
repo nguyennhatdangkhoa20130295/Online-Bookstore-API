@@ -1,4 +1,4 @@
-package vn.edu.hcmuaf.fit.websubject.payload.service;
+package vn.edu.hcmuaf.fit.websubject.service;
 
 import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
