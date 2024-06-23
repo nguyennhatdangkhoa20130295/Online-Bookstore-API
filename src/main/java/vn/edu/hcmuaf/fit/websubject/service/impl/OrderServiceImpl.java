@@ -123,6 +123,14 @@ public class OrderServiceImpl implements OrderService {
         return sb.toString();
     }
 
+    private void updateInventoryCancel(int productId, int cancelQuantity) {
+        Inventory inventory = inventoryRepository.findByProductId(productId)
+                .orElseThrow(() -> new RuntimeException("Inventory not found for product: " + productId));
+        inventory.setRemainingQuantity(inventory.getRemainingQuantity() + cancelQuantity);
+        inventory.setUpdatedAt(CurrentTime.getCurrentTimeInVietnam());
+        inventoryRepository.save(inventory);
+    }
+
     private void updateInventory(int productId, int quantity) {
         try {
             Product existingProduct = productRepository.findById(productId).get();
@@ -170,6 +178,10 @@ public class OrderServiceImpl implements OrderService {
                 order.setStatus(orderStatus);
                 Log.info("Hủy đơn hàng " + order.getOrderCode() + " thành công");
                 orderRepository.save(order);
+                List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
+                for (OrderDetail orderDetail : orderDetails) {
+                    updateInventoryCancel(orderDetail.getProduct().getId(), orderDetail.getQuantity());
+                }
             }
         } catch (Exception e) {
             Log.error("Lỗi khi hủy đơn hàng: " + e.getMessage());

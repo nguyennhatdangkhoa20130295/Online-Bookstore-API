@@ -11,4 +11,6 @@ import java.util.List;
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Integer> {
     @Query("SELECT od.product FROM OrderDetail od GROUP BY od.product.id ORDER BY SUM(od.quantity) DESC")
     List<Product> findBestSellingProducts(int limit);
+
+    List<OrderDetail> findByOrderId(Integer orderId);
 }
