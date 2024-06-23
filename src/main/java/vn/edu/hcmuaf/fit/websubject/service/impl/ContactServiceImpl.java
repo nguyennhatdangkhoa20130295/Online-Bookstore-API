@@ -96,6 +96,7 @@ public class ContactServiceImpl implements ContactService {
     public void replyContact(int id, String email, String title, String content) {
         try {
             emailService.sendEmailContact(email, title, content);
+            System.out.println(email + " " + title +" "+ content);
             contactRepository.findById(id).ifPresent(contact -> {
                 contact.setReply(true);
                 contact.setReplyContent(content);
