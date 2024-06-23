@@ -92,6 +92,8 @@ public class WebSecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:3001");
+        config.addAllowedOrigin("https://online-bookstore-admin-6b166.web.app");
+        config.addAllowedOrigin("https://online-bookstore-c4357.web.app");
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);
