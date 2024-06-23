@@ -86,14 +86,18 @@ public class UserController {
 
     @PutMapping("/edit/{idUser}")
     @PreAuthorize("@authController.hasRole('ADMIN')")
-    public ResponseEntity<User> editUser(@RequestBody EditUserRequest editReq, @PathVariable Integer idUser) {
-        User editedUser = userService.editUser(idUser, editReq.getEmail(), editReq.getRole(),
-                editReq.getAvatar(), editReq.getFullName(), editReq.getPhone(),
-                editReq.getLocked(), editReq.getIsSocial());
-        if (editedUser != null) {
-            return ResponseEntity.ok(editedUser);
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<String> editUser(@RequestBody EditUserRequest editReq, @PathVariable Integer idUser) {
+        try {
+            User editedUser = userService.editUser(idUser, editReq.getEmail(), editReq.getRole(),
+                    editReq.getAvatar(), editReq.getFullName(), editReq.getPhone(),
+                    editReq.getLocked(), editReq.getIsSocial());
+            if (editedUser != null) {
+                return ResponseEntity.ok().body("Edit user successfully");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to edit user: " + e.getMessage());
         }
     }
 

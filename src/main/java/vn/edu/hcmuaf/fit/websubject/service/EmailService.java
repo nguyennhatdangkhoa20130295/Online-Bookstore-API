@@ -6,7 +6,9 @@ import vn.edu.hcmuaf.fit.websubject.entity.Mail;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
+import javax.mail.internet.MimeUtility;
 
 @Component
 public class EmailService {
@@ -50,10 +52,18 @@ public class EmailService {
         String subject = "";
         String text = "";
         if (type == 1) {
-            subject = "Đặt lại mật khẩu tài khoản GoldLeaf";
+            try {
+                subject = MimeUtility.encodeText("Đặt lại mật khẩu tài khoản GoldLeaf", "UTF-8", "B");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
             text = "<h1 style=\"padding: 0; font-size: 25px;color: #ff0000;font-family:sans-serif\">Đặt lại mật khẩu tài khoản GoldLeaf</h1><p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Để đặt lại mật khẩu cho tài khoản, hãy nhập OTP: <strong style=\"font-size: 18px; color: #ff0000; font-family:sans-serif\">" + otp + "</strong></p><p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Cảm ơn bạn,</p><p style=\"padding: 0;font-size: 14px;color: #00BFFF;font-family:sans-serif\">GoldLeaf.</p>";
         } else {
-            subject = "Tạo tài khoản GoldLeaf";
+            try {
+                subject = MimeUtility.encodeText("Tạo tài khoản GoldLeaf", "UTF-8", "B");
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException(e);
+            }
             text = "<h1 style=\"padding: 0; font-size: 25px;color: #ff0000;font-family:sans-serif\">Tạo tài khoản GoldLeaf</h1><p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Để xác nhận tạo tài khoản, hãy nhập OTP: <strong style=\"font-size: 18px; color: #ff0000; font-family:sans-serif\">" + otp + "</strong></p><p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Cảm ơn bạn,</p><p style=\"padding: 0;font-size: 14px;color: #00BFFF;font-family:sans-serif\">GoldLeaf.</p>";
         }
 
@@ -109,7 +119,11 @@ public class EmailService {
         String subject = "";
         String text = "";
 
-        subject = "Trả lời liên hệ: " + title;
+        try {
+            subject = MimeUtility.encodeText("Trả lời liên hệ: " + title, "UTF-8", "B");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
         text = "<h1 style=\"padding: 0; font-size: 25px;color: #ff0000;font-family:sans-serif\">Trả lời liên hệ GoldLeaf</h1>\n" +
                 "<p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Xin chào,</p>\n" +
                 "<p style=\"padding: 0;font-size: 14px;color: #000000;font-family:sans-serif\">Cảm ơn bạn đã liên hệ với chúng tôi. Dưới đây là câu trả lời của chúng tôi:</p>\n" +

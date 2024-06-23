@@ -68,7 +68,7 @@ public class ContactController {
             contactService.replyContact(id, contactRequest.getEmail(), contactRequest.getTitle(), contactRequest.getContentReply());
             return ResponseEntity.ok("Reply contact successfully");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to reply contact" + contactRequest);
+            return ResponseEntity.badRequest().body("Failed to reply contact" + contactRequest + e.getMessage());
         }
     }
 
