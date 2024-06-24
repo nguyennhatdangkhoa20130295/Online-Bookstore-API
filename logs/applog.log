@@ -280,3 +280,10 @@
 2024-06-23 17:39:27 INFO  AuthController:90 - Người dùng dangkhoa đã đăng nhập
 2024-06-23 21:14:26 WARN  AuthController:205 - Email đã tồn tại shuter.nsh@gmail.com
 2024-06-23 21:15:29 INFO  AuthController:215 - Gửi email thành công đến shuter.nsh@gmail.com với mã OTP 330793
+2024-06-23 22:19:42 INFO  AuthController:90 - Người dùng chuotcon đã đăng nhập
+2024-06-23 22:19:51 INFO  AuthController:90 - Người dùng randomuser đã đăng nhập
+2024-06-23 22:23:19 INFO  AuthController:90 - Người dùng testuser đã đăng nhập
+2024-06-23 23:10:44 INFO  AuthController:215 - Gửi email thành công đến truykich.nsh@gmail.com với mã OTP 621877
+2024-06-23 23:11:12 INFO  AuthController:236 - Mật khẩu đã được đặt lại cho người dùng testuser
+2024-06-23 23:11:46 INFO  AuthController:215 - Gửi email thành công đến sihoang.nsm@gmail.com với mã OTP 600770
+2024-06-23 23:12:08 INFO  AuthController:172 - Người dùng testuser2 đã đăng ký thành công
